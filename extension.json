@@ -1,0 +1,65 @@
+{
+    "identifier": "jasonplatts.TODO",
+    "name": "TODO",
+    "organization": "Jason Platts",
+    "description": "Lorem ipsum, dolor sit amet.",
+    "version": "1.0",
+    "categories": ["sidebars"],
+    
+    "main": "main.js",
+    
+    "activationEvents": [
+        "onLanguage:javascript"
+    ],
+    
+    "entitlements": {
+        
+    },
+    
+    "sidebars": [
+        {
+            "id": "mysidebar",
+            "name": "My Sidebar",
+            "smallImage": "mysidebar-small",
+            "smallSelectedImage": "mysidebar-small-selected",
+            "largeImage": "mysidebar-large",
+            "largeSelectedImage": "mysidebar-large-selected",
+            "sections": [
+                {
+                    "id": "mysidebar",
+                    "name": "Profiles",
+                    "allowMultiple": true,
+                    "placeholderText": "No profiles have been created.",
+                    "placeholderImage": "mysidebar-placeholder",
+                    "headerCommands": [
+                        {
+                            "title": "Add",
+                            "image": "__builtin.add",
+                            "tooltip": "Add a new profile",
+                            "command": "mysidebar.add"
+                        },
+                        {
+                            "title": "Remove",
+                            "image": "__builtin.remove",
+                            "tooltip": "Remove the selected profiles",
+                            "command": "mysidebar.remove",
+                            "when": "viewItem != null"
+                        }
+                    ],
+                    "contextCommands": [
+                        {
+                            "title": "Remove",
+                            "command": "mysidebar.remove",
+                            "when": "viewItem != null"
+                        },
+                        {
+                            "title": "Show in Finder",
+                            "command": "mysidebar.showInFinder",
+                            "when": "viewItem != null"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
