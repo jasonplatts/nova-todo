@@ -6,16 +6,15 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     
     let todos = this.getMatchedWorkspaceFiles(nova.workspace.path);
     
-    let file = nova.fs.open(nova.workspace.path + "/Sample Files/index.php");
+    //let file = nova.fs.open(nova.workspace.path + "/Sample Files/index.php");
     
-    let results = this.matchKeywordsInFile(file);
+    //let results = this.matchKeywordsInFile(file);
     
     console.clear();
     
-    results.forEach((result) => {
-      console.log(`Ln: ${result.line} Col: ${result.column}, ${result.comment}`);
-    })
-    
+    //results.forEach((result) => {
+      // console.log(`Ln: ${result.line} Col: ${result.column}, ${result.comment}`);
+    //})
     
     todos.forEach((f) => {
       let element = new ToDoItem(f);
@@ -31,7 +30,16 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   getMatchedWorkspaceFiles(workspacePath) {
-    return this.getWorkspaceFiles(workspacePath); 
+    // return this.getDirectoryFiles(workspacePath);
+    let files = [];
+    
+    this.getDirectoryFiles(workspacePath).forEach((file) => {
+      files.push(file.name);  
+    });
+    
+    return files;
+    
+    
     // let workspaceFiles
     // let matchedWorkspaceFiles = nova.fs.listdir(workspacePath);
     // 
@@ -42,25 +50,44 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     // return matchedWorkspaceFiles;
   }
   
-  getWorkspaceFiles(workspacePath) {
-    let workspaceItems = nova.fs.listdir(workspacePath);
-    let workspaceFiles = [];
+  getDirectoryFiles(directoryPath) {
+    const IGNORES = [".git", ".nova"];
     
-    for(let i = 0; i < workspaceItems.length; i++) {
-      let currentEvaluationPath = workspacePath + "/" + workspaceItems[i];
-      console.log(workspacePath + "/" + workspaceItems[i]);
-      if (nova.fs.stat(currentEvaluationPath).isFile()) {
-        console.log("Is File");
-        workspaceFiles.push(workspaceItems[i]);
-      } else if (nova.fs.stat(currentEvaluationPath).isDirectory())  {
-        console.log("Is Directory");
-      } else {
-        console.log("Something Else");
+    let directoryItems = nova.fs.listdir(directoryPath);
+    let directoryFiles = [];
+    
+    for(let i = 0; i < directoryItems.length; i++) {
+      let currentEvaluationPath = directoryPath + "/" + directoryItems[i];
+      
+      // console.log(directoryPath + "/" + directoryItems[i]);
+      // console.log(IGNORES.includes(directoryItems[i]));
+      
+      if (!IGNORES.includes(directoryItems[i])) {
+        if (nova.fs.stat(currentEvaluationPath).isFile()) {
+          // console.log("Is File");
+          directoryFiles.push(
+            {
+              name: directoryItems[i],
+              path: currentEvaluationPath
+            }
+          );
+        } else if (nova.fs.stat(currentEvaluationPath).isDirectory())  {
+          let subDirectories = this.getDirectoryFiles(currentEvaluationPath);
+          
+          if (subDirectories.length > 0) {
+            directoryFiles = directoryFiles.concat(subDirectories);
+          }
+          
+          // console.log("Is Directory");
+        } else {
+          console.log("Something Else"); 
+        }
       }
+      
       // console.log(nova.fs.stat(currentEvaluationPath));
     }
     
-    return workspaceFiles;
+    return directoryFiles;
   }
   
   // searchFilesInDirectory() {
