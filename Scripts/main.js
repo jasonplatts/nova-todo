@@ -1,13 +1,14 @@
 
-var treeView = null;
+const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 
+var treeView = null;
 
 exports.activate = function() {
     // Do work when the extension is activated
     
     // Create the TreeView
-    treeView = new TreeView("mysidebar", {
-        dataProvider: new FruitDataProvider()
+    treeView = new TreeView("todo", {
+        dataProvider: new ToDoDataProvider()
     });
     
     treeView.onDidChangeSelection((selection) => {
@@ -35,86 +36,24 @@ exports.deactivate = function() {
 }
 
 
-nova.commands.register("mysidebar.add", () => {
+nova.commands.register("todo.group", () => {
     // Invoked when the "add" header button is clicked
-    console.log("Add");
+    console.log("Change grouping!");
 });
 
-nova.commands.register("mysidebar.remove", () => {
+nova.commands.register("todo.refresh", () => {
     // Invoked when the "remove" header button is clicked
     let selection = treeView.selection;
-    console.log("Remove: " + selection.map((e) => e.name));
+    console.log("Refresh!");
 });
 
-nova.commands.register("mysidebar.doubleClick", () => {
+nova.commands.register("todo.doubleClick", () => {
     // Invoked when an item is double-clicked
     let selection = treeView.selection;
     console.log("DoubleClick: " + selection.map((e) => e.name));
 });
 
 
-class FruitItem {
-    constructor(name) {
-        this.name = name;
-        this.children = [];
-        this.parent = null;
-    }
-    
-    addChild(element) {
-        element.parent = this;
-        this.children.push(element);
-    }
-}
 
 
-class FruitDataProvider {
-    constructor() {
-        let rootItems = [];
-        
-        let fruits = ["Apple", "Banana", "Cherry", "Date", "Fig", "Grapefruit", "Kiwi", "Lemon", "Mango", "Nectarine", "Orange", "Pear", "Raspberry", "Strawberry", "Tangerine", "Watermellon"];
-        
-        fruits.forEach((f) => {
-            let element = new FruitItem(f);
-            
-            for (let i = 0; i < 3; i++) {
-                element.addChild(new FruitItem("Test " + (i + 1)));
-            }
-            
-            rootItems.push(element);
-        });
-        
-        this.rootItems = rootItems;
-    }
-    
-    getChildren(element) {
-        // Requests the children of an element
-        if (!element) {
-            return this.rootItems;
-        }
-        else {
-            return element.children;
-        }
-    }
-    
-    getParent(element) {
-        // Requests the parent of an element, for use with the reveal() method
-        return element.parent;
-    }
-    
-    getTreeItem(element) {
-        // Converts an element into its display (TreeItem) representation
-        let item = new TreeItem(element.name);
-        if (element.children.length > 0) {
-            item.collapsibleState = TreeItemCollapsibleState.Collapsed;
-            item.image = "__filetype.png";
-            item.contextValue = "fruit";
-        }
-        else {
-            item.image = "__filetype.txt";
-            item.command = "mysidebar.doubleClick";
-            item.contextValue = "info";
-        }
-        return item;
-    }
-}
 
