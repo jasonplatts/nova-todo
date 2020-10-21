@@ -13,48 +13,54 @@
     ],
     
     "entitlements": {
-        
+        "filesystem": "readonly"
     },
     
     "sidebars": [
         {
-            "id": "mysidebar",
-            "name": "My Sidebar",
+            "id": "todo",
+            "name": "TODO",
             "smallImage": "mysidebar-small",
             "smallSelectedImage": "mysidebar-small-selected",
             "largeImage": "mysidebar-large",
             "largeSelectedImage": "mysidebar-large-selected",
+            "headerCommands": [
+                {
+                    "title": "Remove",
+                    "image": "__builtin.refresh",
+                    "tooltip": "Remove the selected profiles",
+                    "command": "todo.remove"
+                }
+            ],
             "sections": [
                 {
-                    "id": "mysidebar",
-                    "name": "Profiles",
-                    "allowMultiple": true,
+                    "id": "todo",
+                    "name": "TODOS",
+                    "allowMultiple": false,
                     "placeholderText": "No profiles have been created.",
                     "placeholderImage": "mysidebar-placeholder",
                     "headerCommands": [
                         {
-                            "title": "Add",
-                            "image": "__builtin.add",
-                            "tooltip": "Add a new profile",
-                            "command": "mysidebar.add"
+                            "title": "Group By",
+                            "tooltip": "Group by File or Tag",
+                            "command": "todo.group"
                         },
                         {
                             "title": "Remove",
-                            "image": "__builtin.remove",
-                            "tooltip": "Remove the selected profiles",
-                            "command": "mysidebar.remove",
-                            "when": "viewItem != null"
+                            "image": "__builtin.refresh",
+                            "tooltip": "Force Refresh",
+                            "command": "todo.refresh"
                         }
                     ],
                     "contextCommands": [
                         {
-                            "title": "Remove",
-                            "command": "mysidebar.remove",
+                            "title": "Open",
+                            "command": "todo.remove",
                             "when": "viewItem != null"
                         },
                         {
                             "title": "Show in Finder",
-                            "command": "mysidebar.showInFinder",
+                            "command": "todo.showInFinder",
                             "when": "viewItem != null"
                         }
                     ]
