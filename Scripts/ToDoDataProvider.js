@@ -1,108 +1,101 @@
-const { ToDoItem } = require("./ToDoItem.js");
+const { ToDoListItem } = require("./ToDoListItem.js");
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
+    const GROUP_BY = "file"; // Could also be "todo".
+    
     let rootItems = [];
     
-    let todos = this.getMatchedWorkspaceFiles(nova.workspace.path);
-    
-    //let file = nova.fs.open(nova.workspace.path + "/Sample Files/index.php");
-    
-    //let results = this.matchKeywordsInFile(file);
+    let files = this.getMatchedWorkspaceFilePaths(nova.workspace.path);
+    files.sort(this.sortByFileName);
     
     console.clear();
+    
+    if (GROUP_BY == "file") {
+      files.forEach((file) => {
+        // console.log("f: ", file);
+        let element = new ToDoListItem(nova.path.basename(file));
+        
+        for (let i = 0; i < 3; i++) {
+          element.addChild(new ToDoListItem("Comment that doesn't fit. " + (i + 1)));
+        }
+        
+        rootItems.push(element);
+      });
+      
+      this.rootItems = rootItems;
+    } else {
+      // Group by Todo Tags (Todo or Fixme).
+    }
     
     //results.forEach((result) => {
       // console.log(`Ln: ${result.line} Col: ${result.column}, ${result.comment}`);
     //})
     
-    todos.forEach((f) => {
-      let element = new ToDoItem(f);
-      
-      for (let i = 0; i < 3; i++) {
-        element.addChild(new ToDoItem("Comment that doesn't fit. " + (i + 1)));
-      }
-      
-      rootItems.push(element);
-    });
-    
-    this.rootItems = rootItems;
+    // todos.forEach((listItem) => {
+    //   console.log("f: ", listItem);
+    //   let groupBy = "file";
+    //   let element = null;
+    //   if (groupBy == "file") {
+    //     // If grouping by file, the item will be a path.
+    //     element = new ToDoListItem("A FILE NAME");
+    //   } else {
+    //     // Group by Tag  
+    //     element = new ToDoListItem("TAG NAME");
+    //   }
+    //   
+    //   
+    //   for (let i = 0; i < 3; i++) {
+    //     element.addChild(new ToDoListItem("Comment that doesn't fit. " + (i + 1)));
+    //   }
+    //   
+    //   rootItems.push(element);
+    // });
+    // 
+    // this.rootItems = rootItems;
   }
   
-  getMatchedWorkspaceFiles(workspacePath) {
-    // return this.getDirectoryFiles(workspacePath);
+  sortByFileName(a, b) {
+    a = nova.path.basename(a).toLowerCase();
+    b = nova.path.basename(b).toLowerCase();
+    
+    return a > b ? 1 : b > a ? -1 : 0;   
+  }
+  
+  getMatchedWorkspaceFilePaths(workspacePath) {
     let files = [];
     
-    this.getDirectoryFiles(workspacePath).forEach((file) => {
-      files.push(file.name);  
+    this.getDirectoryFilePaths(workspacePath).forEach((file) => {
+      files.push(file);  
     });
     
     return files;
-    
-    
-    // let workspaceFiles
-    // let matchedWorkspaceFiles = nova.fs.listdir(workspacePath);
-    // 
-    // for(let i = 0; i < matchedWorkspaceFiles.length; i++) {
-    //   console.log(workspacePath + matchedWorkspaceFiles[i]);
-    // }
-    // 
-    // return matchedWorkspaceFiles;
   }
   
-  getDirectoryFiles(directoryPath) {
+  getDirectoryFilePaths(directoryPath) {
     const IGNORES = [".git", ".nova"];
     
     let directoryItems = nova.fs.listdir(directoryPath);
     let directoryFiles = [];
     
     for(let i = 0; i < directoryItems.length; i++) {
-      let currentEvaluationPath = directoryPath + "/" + directoryItems[i];
-      
-      // console.log(directoryPath + "/" + directoryItems[i]);
-      // console.log(IGNORES.includes(directoryItems[i]));
-      
+      let currentEvaluationPath = nova.path.join(directoryPath, directoryItems[i]);
+
       if (!IGNORES.includes(directoryItems[i])) {
         if (nova.fs.stat(currentEvaluationPath).isFile()) {
-          // console.log("Is File");
-          directoryFiles.push(
-            {
-              name: directoryItems[i],
-              path: currentEvaluationPath
-            }
-          );
+          directoryFiles.push(currentEvaluationPath);
         } else if (nova.fs.stat(currentEvaluationPath).isDirectory())  {
-          let subDirectories = this.getDirectoryFiles(currentEvaluationPath);
+          let subDirectories = this.getDirectoryFilePaths(currentEvaluationPath);
           
           if (subDirectories.length > 0) {
             directoryFiles = directoryFiles.concat(subDirectories);
           }
-          
-          // console.log("Is Directory");
-        } else {
-          console.log("Something Else"); 
         }
       }
-      
-      // console.log(nova.fs.stat(currentEvaluationPath));
     }
     
     return directoryFiles;
   }
-  
-  // searchFilesInDirectory() {
-    // const fileContent = 
-    // if(REGEX.test(contents)) {
-    //   console.log(file.tell());
-    //   console.log(nova.fs.stat(nova.workspace.path + "/Sample Files/index.php").size);
-    //   console.log('TODO FOUND!');
-    // } else {
-    //   console.log('NOTHING FOUND!');
-    // }
-    // const REGEX = new RegExp('\\b' + "TODO" + '\\b');
-    
-    // let contents = file.read();
-  //}
   
   matchKeywordsInFile(file) {
     const KEYWORDS = ["TODO", "FIXME"];
@@ -161,16 +154,19 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   getTreeItem(element) {
+    // Element could be 1) A file, 2) A TODO, 3), A FIXME
     // Converts an element into its display (TreeItem) representation
     let item = new TreeItem(element.name);
     if (element.children.length > 0) {
       item.collapsibleState = TreeItemCollapsibleState.Collapsed;
       item.image = "__filetype.erb";
       item.contextValue = "fruit";
+      item.tooltip = "This is a parent.";
     } else {
       item.image = "__symbol.todo";
       item.command = "todo.doubleClick";
       item.contextValue = "info";
+      item.tooltip = "This is a parent.";
     }
     return item;
   }

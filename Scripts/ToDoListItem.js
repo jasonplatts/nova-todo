@@ -1,6 +1,10 @@
-module.exports.ToDoItem = class ToDoItem {
+module.exports.ToDoListItem = class ToDoListItem {
     constructor(name) {
         this.name = name;
+        this.type = null;
+        this.filePath = null;
+        this.line = null;
+        this.column = null;
         this.children = [];
         this.parent = null;
     }
