@@ -6,8 +6,14 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     
     let rootItems = [];
     
-    let files = this.getMatchedWorkspaceFilePaths(nova.workspace.path);
-    files.sort(this.sortByFileName);
+    //let files = this.getMatchedWorkspaceFilePaths(nova.workspace.path);
+    
+    let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path);
+    workspaceFiles.sort(this.sortByFileName);
+    
+    let matchedFiles = this.findToDoItemsInFilePathArray(workspaceFiles);
+    
+    let files = workspaceFiles
     
     console.clear();
     
@@ -28,9 +34,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       // Group by Todo Tags (Todo or Fixme).
     }
     
-    //results.forEach((result) => {
-      // console.log(`Ln: ${result.line} Col: ${result.column}, ${result.comment}`);
-    //})
+    // results.forEach((result) => {
+    //   console.log(`Ln: ${result.line} Col: ${result.column}, ${result.comment}`);
+    // })
     
     // todos.forEach((listItem) => {
     //   console.log("f: ", listItem);
@@ -55,6 +61,77 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     // this.rootItems = rootItems;
   }
   
+  findToDoItemsInFilePathArray(filepathArray) {
+    let toDoListItemArray = [];
+    
+    filepathArray.forEach((filepath) => {
+      console.log(filepath);
+      let file = nova.fs.open(filepath);
+      let matches = this.findKeywordsInFile(file);
+      file.close();
+      console.log("FIND KEYWORDS IN FILE PATH ARRAY: ", matches);
+    });
+    
+    // let element = new ToDoListItem(nova.path.basename(file));
+    
+    // this.getDirectoryFilePaths(workspacePath).forEach((file) => {
+    //   files.push(file);  
+    // });
+    
+    return toDoListItemArray;
+  }
+  
+  /*
+    Searches a file line by line for "TODO" or "FIXME"
+    keywords and returns an array of ToDoListItem objects.
+  */
+  findKeywordsInFile(file) {
+    let contents = file.readlines();
+    
+    let matches = [];
+
+    for(let i = 0; i < contents.length; i++) {
+      let lineMatches = this.findKeywordsInLine(contents[i]);
+      
+      if (lineMatches.length > 0) {
+        matches = matches.concat(lineMatches);
+        console.log("FIND KEYWORDS IN FILE: ", JSON.stringify(matches[0]));
+      }
+    }
+    
+    return matches;
+  }
+  
+  /*
+    Searches a line of code for "TODO" or "FIXME" keywords
+    and returns an array of objects containing the keyword,
+    column number of the match as well as the text
+    (most likely a comment) following the keyword.
+  */
+  findKeywordsInLine(line) {
+    const KEYWORDS = ["TODO", "FIXME"];
+    
+    let lineMatches = [];
+    
+    KEYWORDS.forEach((keyword) => {
+      let lineMatchIndex = line.indexOf(keyword);
+      
+      while(lineMatchIndex >= 0) {
+        lineMatches.push(
+          {
+            type: keyword,
+            column: lineMatchIndex + 1,
+            comment: line.substring(lineMatchIndex)
+          }
+        );
+        
+        lineMatchIndex = line.indexOf(keyword, (lineMatchIndex + 1)); 
+      }
+    });
+    
+    return lineMatches;
+  }
+  
   sortByFileName(a, b) {
     a = nova.path.basename(a).toLowerCase();
     b = nova.path.basename(b).toLowerCase();
@@ -62,16 +139,10 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     return a > b ? 1 : b > a ? -1 : 0;   
   }
   
-  getMatchedWorkspaceFilePaths(workspacePath) {
-    let files = [];
-    
-    this.getDirectoryFilePaths(workspacePath).forEach((file) => {
-      files.push(file);  
-    });
-    
-    return files;
-  }
-  
+  /*
+    Returns an array of all files within a directory and its
+    subdirectories, except for specified ignored files.
+  */
   getDirectoryFilePaths(directoryPath) {
     const IGNORES = [".git", ".nova"];
     
@@ -80,7 +151,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     
     for(let i = 0; i < directoryItems.length; i++) {
       let currentEvaluationPath = nova.path.join(directoryPath, directoryItems[i]);
-
+  
       if (!IGNORES.includes(directoryItems[i])) {
         if (nova.fs.stat(currentEvaluationPath).isFile()) {
           directoryFiles.push(currentEvaluationPath);
@@ -95,47 +166,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     }
     
     return directoryFiles;
-  }
-  
-  matchKeywordsInFile(file) {
-    const KEYWORDS = ["TODO", "FIXME"];
-    
-    let contents = file.readlines();
-    
-    let matches = [];
-
-    for(let i = 0; i < contents.length; i++) {
-      let lineMatches = this.matchKeywordsInLine(i, contents[i], KEYWORDS);
-      
-      if (lineMatches.length > 0) {
-        matches = matches.concat(lineMatches);
-      }
-    }
-    
-    return matches;
-  }
-  
-  matchKeywordsInLine(lineNumber, line, keywords) {
-    let lineMatches = [];
-    
-    keywords.forEach((keyword) => {
-      let lineMatchIndex = line.indexOf(keyword);
-      
-      while(lineMatchIndex >= 0) {
-        lineMatches.push(
-          {
-            type: keyword,
-            line: lineNumber,
-            column: lineMatchIndex + 1,
-            comment: line.substring(lineMatchIndex)
-          }
-        );
-        
-        lineMatchIndex = line.indexOf(keyword, (lineMatchIndex + 1)); 
-      }
-    });
-    
-    return lineMatches;
   }
   
   getChildren(element) {
