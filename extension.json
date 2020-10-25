@@ -20,9 +20,9 @@
         {
             "id": "todo",
             "name": "TODO",
-            "smallImage": "mysidebar-small",
+            "smallImage": "todo-small",
             "smallSelectedImage": "mysidebar-small-selected",
-            "largeImage": "mysidebar-large",
+            "largeImage": "todo-large",
             "largeSelectedImage": "mysidebar-large-selected",
             "headerCommands": [
                 {
