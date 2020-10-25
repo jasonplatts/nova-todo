@@ -16,7 +16,16 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     if (GROUP_BY == "file") {
       let distrinceFileNames = this.getUniqueFileNames(tempToDoListItems);
       console.log(distrinceFileNames);
-
+      
+      // For each unique file, add a ToDoListItem object with type file.
+        // For each ToDoListItem object with type file add todo and fixme children ToDoListItems.
+        // concat toDoListItems;
+    } else {
+      // add ToDoListItem object called ToDo and type as ToDo
+      // For each ToDoListItem with type of ToDo add todos as child
+      
+      // add ToDoListItem object called FixMe and type as FixMe
+      // For each ToDoListItem object with type of FixMe add fixme as child
     }
     
     let toDoListItems = tempToDoListItems;
