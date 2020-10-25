@@ -11,7 +11,15 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path);
     workspaceFiles.sort(this.sortByFileName);
     
-    let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles);
+    let tempToDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles);
+    
+    if (GROUP_BY == "file") {
+      let distrinceFileNames = this.getUniqueFileNames(tempToDoListItems);
+      console.log(distrinceFileNames);
+
+    }
+    
+    let toDoListItems = tempToDoListItems;
     
     toDoListItems.forEach((toDoListItem) => {
       rootItems.push(toDoListItem);
@@ -125,6 +133,17 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   /*
+    Accepts an array of ToDoListItem objects and returns an array
+    of primitive file name values.
+  */
+  getUniqueFileNames(toDoListItems) {
+    // 1) Map array to a new array containing only primitive values (don't want objects, just file names.
+    // 2) Then use the Set object to store a collection of unique values,
+    // 3) Which then uses the spread operator to construct a new array.
+    return [...new Set(toDoListItems.map(item => item.name))];
+  }
+  
+  /*
     Returns an array of all files within a directory and its
     subdirectories, except for specified ignored files.
   */
@@ -177,6 +196,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       item.image = "__symbol.todo";
       item.command = "todo.doubleClick";
       item.contextValue = "info";
+      item.descriptiveText = "Ln: 4, Col: 3";
       item.tooltip = "This is a parent.";
     }
     return item;
