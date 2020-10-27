@@ -2,14 +2,13 @@ const { ToDoListItem } = require("./ToDoListItem.js");
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
+    console.clear();
+    
     const GROUP_BY = "file"; // Could also be "tag".
     
     let rootItems = [];
     
-    console.clear();
-    
     let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path);
-    workspaceFiles.sort(this.sortByFileName);
     
     let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles);
     
@@ -176,6 +175,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
         }
       }
     }
+    
+    directoryFiles.sort(this.sortByFileName);
     
     return directoryFiles;
   }
