@@ -2,7 +2,7 @@ const { ToDoListItem } = require("./ToDoListItem.js");
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
-    const GROUP_BY = "file"; // Could also be "todo".
+    const GROUP_BY = "file"; // Could also be "tag".
     
     let rootItems = [];
     
@@ -12,30 +12,22 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     workspaceFiles.sort(this.sortByFileName);
     
     let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles);
+    
     let groupedtoDoListItems = [];
     
     if (GROUP_BY == "file") {
-      let distinctFileNames = this.getUniqueFileNames(toDoListItems);
-      // console.log(distinctFileNames);
+      let distinctFilePaths = this.getUniqueFiles(toDoListItems);
       
-      distinctFileNames.forEach((distinctFileName) => {
-        groupedtoDoListItems.push(new ToDoListItem(distinctFileName));
+      distinctFilePaths.forEach((distinctFilePath) => {
+        groupedtoDoListItems.push(new ToDoListItem(nova.path.basename(distinctFilePath)));
         
-        let tempFileToDoArray = toDoListItems.filter(toDoListItem => toDoListItem.name == distinctFileName);
-        console.log(JSON.stringify(tempFileToDoArray));
+        let filePathToDoItems = toDoListItems.filter(toDoListItem => toDoListItem.filePath == distinctFilePath);
+        console.log(JSON.stringify(filePathToDoItems));
         
-        tempFileToDoArray.forEach(fileToDo => {
-          groupedtoDoListItems[groupedtoDoListItems.length - 1].addChild(fileToDo);
+        filePathToDoItems.forEach(filePathToDoItem => {
+          groupedtoDoListItems[groupedtoDoListItems.length - 1].addChild(filePathToDoItem);
         });
-        
-        // while ()
-        
-        // groupedtoDoListItems.concat(distinctFileName)
       });
-      // console.log(`${groupedtoDoListItems[0].name}, ${groupedtoDoListItems[1].name}, ${groupedtoDoListItems[2].name}`);
-      // For each unique file, add a ToDoListItem object with type file.
-        // For each ToDoListItem object with type file add todo and fixme children ToDoListItems.
-        // concat toDoListItems;
     } else {
       // add ToDoListItem object called ToDo and type as ToDo
       // For each ToDoListItem with type of ToDo add todos as child
@@ -44,10 +36,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       // For each ToDoListItem object with type of FixMe add fixme as child
     }
     
-    // let toDoListItems = tempToDoListItems;
-    
     groupedtoDoListItems.forEach((toDoListItem) => {
-      // rootItems.push(toDoListItem);
       rootItems = [...rootItems, toDoListItem];
     });
 
@@ -112,8 +101,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       let lineMatches = this.findKeywordsInLine(contents[i]);
       
       lineMatches.forEach((match) => {
-        let toDoListItem = new ToDoListItem(nova.path.basename(file.path));
-        toDoListItem.type = match.type;
+        let toDoListItem = new ToDoListItem(match.name);
+        toDoListItem.filePath = file.path;
         fileMatches = fileMatches.concat(toDoListItem); 
       });
     }
@@ -138,7 +127,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       while(lineMatchIndex >= 0) {
         lineMatches.push(
           {
-            type: keyword,
+            name: keyword,
             column: lineMatchIndex + 1,
             comment: line.substring(lineMatchIndex)
           }
@@ -162,11 +151,11 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     Accepts an array of ToDoListItem objects and returns an array
     of primitive file name values.
   */
-  getUniqueFileNames(toDoListItems) {
+  getUniqueFiles(toDoListItems) {
     // 1) Map array to a new array containing only primitive values (don't want objects, just file names.
     // 2) Then use the Set object to store a collection of unique values,
     // 3) Which then uses the spread operator to construct a new array.
-    return [...new Set(toDoListItems.map(item => item.name))];
+    return [...new Set(toDoListItems.map(item => item.filePath))];
   }
   
   /*
@@ -213,6 +202,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   
   getTreeItem(toDoListItem) {
     let item = new TreeItem(toDoListItem.name);
+    
     if (toDoListItem.children.length > 0) {
       item.collapsibleState = TreeItemCollapsibleState.Collapsed;
       item.image = "__filetype.erb";
@@ -225,6 +215,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       item.descriptiveText = "Ln: 4, Col: 3";
       item.tooltip = "This is a parent.";
     }
+    
     return item;
   }
 }
