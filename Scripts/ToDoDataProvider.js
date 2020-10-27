@@ -93,6 +93,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
         toDoListItem.filePath = file.path;
         toDoListItem.line     = i + 1;
         toDoListItem.column   = match.column;
+        match.comment         = match.comment.replace(/(TODO:|FIXME:|TODO|FIXME)/, "");
         toDoListItem.comment  = match.comment.trim();
         
         fileMatches = fileMatches.concat(toDoListItem); 
