@@ -13,22 +13,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     
     let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles);
     
-    let groupedtoDoListItems = [];
-    
     if (GROUP_BY == "file") {
-      let distinctFilePaths = this.getUniqueFiles(toDoListItems);
-      
-      distinctFilePaths.forEach((distinctFilePath) => {
-        groupedtoDoListItems.push(new ToDoListItem(nova.path.basename(distinctFilePath)));
-        groupedtoDoListItems[groupedtoDoListItems.length - 1].filePath = distinctFilePath;
-        
-        let filePathToDoItems = toDoListItems.filter(toDoListItem => toDoListItem.filePath == distinctFilePath);
-        console.log(JSON.stringify(filePathToDoItems));
-        
-        filePathToDoItems.forEach(filePathToDoItem => {
-          groupedtoDoListItems[groupedtoDoListItems.length - 1].addChild(filePathToDoItem);
-        });
-      });
+      var groupedtoDoListItems = this.groupListItemsByFile(toDoListItems);
     } else {
       // add ToDoListItem object called ToDo and type as ToDo
       // For each ToDoListItem with type of ToDo add todos as child
@@ -42,6 +28,30 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     });
 
     this.rootItems = rootItems; 
+  }
+  
+  /*
+    Accepts an ungrouped array of ToDoListItem objects and
+    returns an array of ToDoListItem objects grouped by file.
+  */
+  groupListItemsByFile(toDoListItems) {
+    let groupedtoDoListItems = [];
+    let distinctFilePaths    = this.getUniqueFiles(toDoListItems);
+    
+    distinctFilePaths.forEach((distinctFilePath) => {
+      groupedtoDoListItems.push(new ToDoListItem(nova.path.basename(distinctFilePath)));
+      groupedtoDoListItems[groupedtoDoListItems.length - 1].filePath = distinctFilePath;
+      
+      let filePathToDoItems = toDoListItems.filter(
+        toDoListItem => toDoListItem.filePath == distinctFilePath
+      );
+      
+      filePathToDoItems.forEach(filePathToDoItem => {
+        groupedtoDoListItems[groupedtoDoListItems.length - 1].addChild(filePathToDoItem);
+      });
+    });
+    
+    return groupedtoDoListItems;
   }
   
   /*
@@ -188,15 +198,16 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     
     if (toDoListItem.children.length > 0) {
       item.collapsibleState = TreeItemCollapsibleState.Expanded;
-      item.image = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
-      item.contextValue = "fruit";
-      item.tooltip = "This is a parent.";
+      item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
+      item.contextValue     = "fruit";
+      item.tooltip          = "This is a parent.";
     } else {
-      item.image = "__symbol.todo";
-      item.command = "todo.doubleClick";
-      item.contextValue = "info";
-      item.descriptiveText = `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`;
-      item.tooltip = "This is a parent.";
+      item.image            = "__symbol.todo";
+      item.command          = "todo.doubleClick";
+      item.contextValue     = "info";
+      item.descriptiveText  = 
+        `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`;
+      item.tooltip          = "This is a parent.";
     }
     
     return item;
