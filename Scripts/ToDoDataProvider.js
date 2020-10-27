@@ -20,6 +20,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       
       distinctFilePaths.forEach((distinctFilePath) => {
         groupedtoDoListItems.push(new ToDoListItem(nova.path.basename(distinctFilePath)));
+        groupedtoDoListItems[groupedtoDoListItems.length - 1].filePath = distinctFilePath;
         
         let filePathToDoItems = toDoListItems.filter(toDoListItem => toDoListItem.filePath == distinctFilePath);
         console.log(JSON.stringify(filePathToDoItems));
@@ -204,8 +205,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     let item = new TreeItem(toDoListItem.name);
     
     if (toDoListItem.children.length > 0) {
-      item.collapsibleState = TreeItemCollapsibleState.Collapsed;
-      item.image = "__filetype.erb";
+      item.collapsibleState = TreeItemCollapsibleState.Expanded;
+      item.image = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
       item.contextValue = "fruit";
       item.tooltip = "This is a parent.";
     } else {
