@@ -42,28 +42,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     });
 
     this.rootItems = rootItems; 
-    
-    // let files = workspaceFiles
-    // 
-    // console.log(JSON.stringify(workspaceFiles));
-    // 
-    // if (GROUP_BY == "file") {
-    //   files.forEach((file) => {
-    //     
-    //     let element = new ToDoListItem(nova.path.basename(file));
-    //     element.type = "TODO";
-    //     
-    //     for (let i = 0; i < 3; i++) {
-    //       element.addChild(new ToDoListItem("Comment that doesn't fit. " + (i + 1)));
-    //     }
-    //     
-    //     rootItems.push(element);
-    //   });
-    //   
-    //   this.rootItems = rootItems;
-    // }
-    
-    // console.log("ROOT ITEMS: ", rootItems);
   }
   
   /*
@@ -102,8 +80,12 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       let lineMatches = this.findKeywordsInLine(contents[i]);
       
       lineMatches.forEach((match) => {
-        let toDoListItem = new ToDoListItem(match.name);
+        let toDoListItem      = new ToDoListItem(match.name);
         toDoListItem.filePath = file.path;
+        toDoListItem.line     = i + 1;
+        toDoListItem.column   = match.column;
+        toDoListItem.comment  = match.comment.trim();
+        
         fileMatches = fileMatches.concat(toDoListItem); 
       });
     }
@@ -213,7 +195,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       item.image = "__symbol.todo";
       item.command = "todo.doubleClick";
       item.contextValue = "info";
-      item.descriptiveText = "Ln: 4, Col: 3";
+      item.descriptiveText = `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`;
       item.tooltip = "This is a parent.";
     }
     
