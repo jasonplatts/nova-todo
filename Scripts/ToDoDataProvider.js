@@ -11,12 +11,28 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path);
     workspaceFiles.sort(this.sortByFileName);
     
-    let tempToDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles);
+    let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles);
+    let groupedtoDoListItems = [];
     
     if (GROUP_BY == "file") {
-      let distrinceFileNames = this.getUniqueFileNames(tempToDoListItems);
-      console.log(distrinceFileNames);
+      let distinctFileNames = this.getUniqueFileNames(toDoListItems);
+      // console.log(distinctFileNames);
       
+      distinctFileNames.forEach((distinctFileName) => {
+        groupedtoDoListItems.push(new ToDoListItem(distinctFileName));
+        
+        let tempFileToDoArray = toDoListItems.filter(toDoListItem => toDoListItem.name == distinctFileName);
+        console.log(JSON.stringify(tempFileToDoArray));
+        
+        tempFileToDoArray.forEach(fileToDo => {
+          groupedtoDoListItems[groupedtoDoListItems.length - 1].addChild(fileToDo);
+        });
+        
+        // while ()
+        
+        // groupedtoDoListItems.concat(distinctFileName)
+      });
+      // console.log(`${groupedtoDoListItems[0].name}, ${groupedtoDoListItems[1].name}, ${groupedtoDoListItems[2].name}`);
       // For each unique file, add a ToDoListItem object with type file.
         // For each ToDoListItem object with type file add todo and fixme children ToDoListItems.
         // concat toDoListItems;
@@ -28,10 +44,11 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       // For each ToDoListItem object with type of FixMe add fixme as child
     }
     
-    let toDoListItems = tempToDoListItems;
+    // let toDoListItems = tempToDoListItems;
     
-    toDoListItems.forEach((toDoListItem) => {
-      rootItems.push(toDoListItem);
+    groupedtoDoListItems.forEach((toDoListItem) => {
+      // rootItems.push(toDoListItem);
+      rootItems = [...rootItems, toDoListItem];
     });
 
     this.rootItems = rootItems; 
