@@ -5,17 +5,17 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     console.clear();
     console.log("DATA PROVIDER START");
     
+    const MAX_FILES = 500;
+    const EXCLUDES = this.addExcludes();
     const GROUP_BY = "file"; // Could also be "tag".
     
     let rootItems = [];
     
-    this.addGitIgnoreToExclude();
-    
-    let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path);
+    let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path, EXCLUDES);
     
     // console.log(workspaceFiles.length);
     
-    if (workspaceFiles.length <= 1000) {
+    if (workspaceFiles.length <= MAX_FILES) {
       
       let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles);
       
@@ -45,8 +45,43 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     this.rootItems = rootItems; 
   }
   
-  addGitIgnoreToExclude() {
+  addExcludes() {
+    let defaultExcludes = [
+      ".git",
+      ".gitignore",
+      "ToDoDataProvider.js",
+      "extension.json"
+    ];
     
+    let gitExcludes = this.readGitIgnoreFile();
+    
+    let excludes = [...defaultExcludes, ...gitExcludes];
+  
+    return excludes;
+  }
+  
+  readGitIgnoreFile() {
+    let gitIgnorePath = nova.path.join(nova.workspace.path, ".gitignore");
+    let fileContentArray = [];
+    let gitIgnoreFiles = [];
+    
+    if (nova.fs.access(gitIgnorePath, nova.fs.F_OK)) {
+      let gitIgnoreFile = nova.fs.open(gitIgnorePath);
+      fileContentArray = gitIgnoreFile.readlines();
+      
+      for (let i = 0; i < fileContentArray.length; i++) {
+        let line = fileContentArray[i].trim();
+        
+        if (line !== "") {
+          gitIgnoreFiles = [...gitIgnoreFiles, line]
+        }
+      }
+      
+      console.log(gitIgnoreFiles);
+      console.log(gitIgnoreFiles.length);
+    }
+    
+    return gitIgnoreFiles;
   }
   
   /*
@@ -175,20 +210,19 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     Returns an array of all files within a directory and its
     subdirectories, except for specified ignored files.
   */
-  getDirectoryFilePaths(directoryPath) {
-    const EXCLUDE_FILES = [".git", ".gitignore", ".nova", "ToDoDataProvider.js", "extension.json"];
-    
+  getDirectoryFilePaths(directoryPath, EXCLUDES) {
+
     let directoryItems = nova.fs.listdir(directoryPath);
     let directoryFiles = [];
     
     for(let i = 0; i < directoryItems.length; i++) {
       let currentEvaluationPath = nova.path.join(directoryPath, directoryItems[i]);
   
-      if (!EXCLUDE_FILES.includes(directoryItems[i])) {
+      if (!EXCLUDES.includes(directoryItems[i])) {
         if (nova.fs.stat(currentEvaluationPath).isFile()) {
           directoryFiles.push(currentEvaluationPath);
         } else if (nova.fs.stat(currentEvaluationPath).isDirectory())  {
-          let subDirectories = this.getDirectoryFilePaths(currentEvaluationPath);
+          let subDirectories = this.getDirectoryFilePaths(currentEvaluationPath, EXCLUDES);
           
           if (subDirectories.length > 0) {
             directoryFiles = directoryFiles.concat(subDirectories);
