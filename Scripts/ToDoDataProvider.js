@@ -3,30 +3,50 @@ const { ToDoListItem } = require("./ToDoListItem.js");
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
     console.clear();
+    console.log("DATA PROVIDER START");
     
     const GROUP_BY = "file"; // Could also be "tag".
     
     let rootItems = [];
     
+    this.addGitIgnoreToExclude();
+    
     let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path);
     
-    let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles);
+    // console.log(workspaceFiles.length);
     
-    if (GROUP_BY == "file") {
-      var groupedtoDoListItems = this.groupListItemsByFile(toDoListItems);
-    } else {
-      // add ToDoListItem object called ToDo and type as ToDo
-      // For each ToDoListItem with type of ToDo add todos as child
+    if (workspaceFiles.length <= 1000) {
       
-      // add ToDoListItem object called FixMe and type as FixMe
-      // For each ToDoListItem object with type of FixMe add fixme as child
+      let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles);
+      
+      if (GROUP_BY == "file") {
+        var groupedtoDoListItems = this.groupListItemsByFile(toDoListItems);
+      } else {
+        // add ToDoListItem object called ToDo and type as ToDo
+        // For each ToDoListItem with type of ToDo add todos as child
+        
+        // add ToDoListItem object called FixMe and type as FixMe
+        // For each ToDoListItem object with type of FixMe add fixme as child
+      }
+      
+      groupedtoDoListItems.forEach((toDoListItem) => {
+        rootItems = [...rootItems, toDoListItem];
+      });
+    } else {
+      let request = new NotificationRequest("Too Many Files");
+      
+      request.title = nova.localize("Too Many Workspace Files");
+      request.body = nova.localize("Monitoring the current workspace would cause this extension to become unresponsive. Please consider adding additional excluded paths in preferences or including a git ignore file.");
+      
+      request.actions = [nova.localize("OK")];
+      let promise = nova.notifications.add(request);
     }
-    
-    groupedtoDoListItems.forEach((toDoListItem) => {
-      rootItems = [...rootItems, toDoListItem];
-    });
 
     this.rootItems = rootItems; 
+  }
+  
+  addGitIgnoreToExclude() {
+    
   }
   
   /*
@@ -58,11 +78,11 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     keywords and returns an array of ToDoListItem objects
     for all specified files. Accepts an array of file path string.
   */
-  findToDoItemsInFilePathArray(filepathArray) {
+  findToDoItemsInFilePathArray(filePathArray) {
     let toDoListItemArray = [];
     
-    filepathArray.forEach((filepath) => {
-      let file = nova.fs.open(filepath);
+    filePathArray.forEach((filePath) => {
+      let file = nova.fs.open(filePath);
       let fileSearchResults = this.findKeywordsInFile(file);
       
       if (fileSearchResults.length > 0) {
@@ -156,7 +176,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     subdirectories, except for specified ignored files.
   */
   getDirectoryFilePaths(directoryPath) {
-    const IGNORES = [".git", ".gitignore", ".nova", "ToDoDataProvider.js", "extension.json"];
+    const EXCLUDE_FILES = [".git", ".gitignore", ".nova", "ToDoDataProvider.js", "extension.json"];
     
     let directoryItems = nova.fs.listdir(directoryPath);
     let directoryFiles = [];
@@ -164,7 +184,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     for(let i = 0; i < directoryItems.length; i++) {
       let currentEvaluationPath = nova.path.join(directoryPath, directoryItems[i]);
   
-      if (!IGNORES.includes(directoryItems[i])) {
+      if (!EXCLUDE_FILES.includes(directoryItems[i])) {
         if (nova.fs.stat(currentEvaluationPath).isFile()) {
           directoryFiles.push(currentEvaluationPath);
         } else if (nova.fs.stat(currentEvaluationPath).isDirectory())  {

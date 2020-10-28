@@ -5,7 +5,7 @@ var treeView = null;
 
 exports.activate = function() {
     // Do work when the extension is activated
-    
+    console.log("ACTIVATED");
     // Create the TreeView
     treeView = new TreeView("todo", {
         dataProvider: new ToDoDataProvider()
