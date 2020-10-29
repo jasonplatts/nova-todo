@@ -5,7 +5,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
     console.clear();
     
-    const EXCLUDES = this.addExcludes();
+    // const EXCLUDES = this.addExcludes();
+    const EXCLUDES = [];
     
     const GROUP_BY = "file"; // Could also be "tag".
     
@@ -15,13 +16,18 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     // let workspaceFiles = this.getDirectoryFilePaths("/Users/jasonplatts/Sites/Personal/nova-extensions/sidebars/todo/todo.novaextension/Sample Files", EXCLUDES);
     // console.log(workspaceFiles.files);
     // console.log(workspaceFiles.count);
-    console.log(workspaceFiles.files.length);
+    console.log("TOTAL NUMBER OF NON-EXCLUDED WORKSPACE FILES:", workspaceFiles.files.length);
+    console.log("NON-EXCLUDED WORKSPACE FILES:");
+    workspaceFiles.files.forEach(file => {
+      console.log(file);
+    });
     
     // console.log(workspaceFiles.length);
     if (workspaceFiles.max_count !== true) {
     // if (workspaceFiles.files.length <= MAX_FILES) {
       
       let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles.files);
+      console.log("TOTAL NUMBER OF TODO & FIXME KEYWORDS FOUND:", toDoListItems.length);
       
       if (GROUP_BY == "file") {
         var groupedtoDoListItems = this.groupListItemsByFile(toDoListItems);
@@ -47,21 +53,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     }
 
     this.rootItems = rootItems; 
-  }
-  
-  addExcludes() {
-    let defaultExcludes = [
-      ".git",
-      ".gitignore",
-      "ToDoDataProvider.js",
-      "extension.json"
-    ];
-    
-    let gitExcludes = this.readGitIgnoreFile();
-    
-    let excludes = [...defaultExcludes, ...gitExcludes];
-  
-    return excludes;
   }
   
   readGitIgnoreFile() {
@@ -211,13 +202,15 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   /*
-    Returns an array of all files within a directory and its
-    subdirectories, except for specified ignored files.
+    Returns an array of all FILES within a directory and its
+    subdirectories, except for those excluded.
   */
   getDirectoryFilePaths(directoryPath, EXCLUDES) {
     // const MAX_FILES = 200;
     
     let directoryItems = nova.fs.listdir(directoryPath);
+    // fileCount will be a count of all the files in the directory, not a count of those
+    // with TODO keywords. This occurs in the findToDoItemsInFilePathArray method.
     let directory = {
       'max_count': false,
       'fileCount': 0,
@@ -229,7 +222,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     while (i < directoryItems.length && directory.max_count == false) {
       let currentEvaluationPath = nova.path.join(directoryPath, directoryItems[i]);
   
-      if (!EXCLUDES.includes(directoryItems[i])) {
+      // if (!EXCLUDES.includes(directoryItems[i])) {
+        // console.log("EXT INCLUDED: ", `${currentEvaluationPath} - ${this.isAllowedDirectoryItem(currentEvaluationPath)}`);
+      if (this.isAllowedDirectoryItem(currentEvaluationPath)) {
         if (nova.fs.stat(currentEvaluationPath).isFile()) {
           directory.fileCount += 1;
           directory.files.push(currentEvaluationPath);
@@ -253,6 +248,53 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     directory.files.sort(this.sortByFileName);
     
     return directory;
+  }
+  
+  isAllowedDirectoryItem(path) {
+    if (this.isAllowedName(path) && this.isAllowedPath(path) && 
+      this.isAllowedExtension(path)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /*
+    Used to exclude specific file and directory names.
+  */
+  isAllowedName(path) {
+    const DEFAULT_EXCLUDED_NAMES = [
+      "node_modules", "tmp", ".git", "vendor", ".nova", ".gitignore"
+    ];
+    
+    // console.log(nova.path.basename(path));
+    if (!DEFAULT_EXCLUDED_NAMES.includes(nova.path.basename(path))) {
+      return true;
+    } else {
+      return false;
+    }
+    return true;
+  }
+  
+  /*
+    Used to exclude specific file and directory paths.
+  */
+  isAllowedPath(path) {
+    return true;
+  }
+  
+  /*
+    Used to exclude specific extensions.
+  */
+  isAllowedExtension(path) {
+    const DEFAULT_EXCLUDED_EXTENSIONS = [".json", ".jpg", ".png", ".sketch", ".psd",
+      ".bmp", ".svg"];
+    
+    if (!DEFAULT_EXCLUDED_EXTENSIONS.includes(nova.path.extname(path))) {
+      return true;
+    } else {
+      return false;
+    }
   }
   
   getChildren(toDoListItem) {
