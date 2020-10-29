@@ -1,23 +1,27 @@
 const { ToDoListItem } = require("./ToDoListItem.js");
+const MAX_FILES = 500;
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
     console.clear();
-    console.log("DATA PROVIDER START");
     
-    const MAX_FILES = 500;
     const EXCLUDES = this.addExcludes();
+    
     const GROUP_BY = "file"; // Could also be "tag".
     
     let rootItems = [];
     
     let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path, EXCLUDES);
+    // let workspaceFiles = this.getDirectoryFilePaths("/Users/jasonplatts/Sites/Personal/nova-extensions/sidebars/todo/todo.novaextension/Sample Files", EXCLUDES);
+    // console.log(workspaceFiles.files);
+    // console.log(workspaceFiles.count);
+    console.log(workspaceFiles.files.length);
     
     // console.log(workspaceFiles.length);
-    
-    if (workspaceFiles.length <= MAX_FILES) {
+    if (workspaceFiles.max_count !== true) {
+    // if (workspaceFiles.files.length <= MAX_FILES) {
       
-      let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles);
+      let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles.files);
       
       if (GROUP_BY == "file") {
         var groupedtoDoListItems = this.groupListItemsByFile(toDoListItems);
@@ -77,8 +81,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
         }
       }
       
-      console.log(gitIgnoreFiles);
-      console.log(gitIgnoreFiles.length);
+      // console.log(gitIgnoreFiles);
+      // console.log(gitIgnoreFiles.length);
     }
     
     return gitIgnoreFiles;
@@ -211,29 +215,44 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     subdirectories, except for specified ignored files.
   */
   getDirectoryFilePaths(directoryPath, EXCLUDES) {
-
-    let directoryItems = nova.fs.listdir(directoryPath);
-    let directoryFiles = [];
+    // const MAX_FILES = 200;
     
-    for(let i = 0; i < directoryItems.length; i++) {
+    let directoryItems = nova.fs.listdir(directoryPath);
+    let directory = {
+      'max_count': false,
+      'fileCount': 0,
+      'files':[]
+    };
+    
+    let i = 0;
+    
+    while (i < directoryItems.length && directory.max_count == false) {
       let currentEvaluationPath = nova.path.join(directoryPath, directoryItems[i]);
   
       if (!EXCLUDES.includes(directoryItems[i])) {
         if (nova.fs.stat(currentEvaluationPath).isFile()) {
-          directoryFiles.push(currentEvaluationPath);
+          directory.fileCount += 1;
+          directory.files.push(currentEvaluationPath);
         } else if (nova.fs.stat(currentEvaluationPath).isDirectory())  {
           let subDirectories = this.getDirectoryFilePaths(currentEvaluationPath, EXCLUDES);
           
-          if (subDirectories.length > 0) {
-            directoryFiles = directoryFiles.concat(subDirectories);
+          if (subDirectories.files.length > 0) {
+            directory.files = directory.files.concat(subDirectories.files);
+            directory.fileCount += subDirectories.fileCount;
           }
         }
       }
+      
+      if (directory.fileCount > MAX_FILES - 1) {
+        directory.max_count = true;
+      }
+
+      i++;
     }
     
-    directoryFiles.sort(this.sortByFileName);
+    directory.files.sort(this.sortByFileName);
     
-    return directoryFiles;
+    return directory;
   }
   
   getChildren(toDoListItem) {
