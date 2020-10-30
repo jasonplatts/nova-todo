@@ -5,27 +5,20 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
     console.clear();
     
-    // const EXCLUDES = this.addExcludes();
-    const EXCLUDES = [];
-    
     const GROUP_BY = "file"; // Could also be "tag".
     
     let rootItems = [];
     
-    let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path, EXCLUDES);
-    // let workspaceFiles = this.getDirectoryFilePaths("/Users/jasonplatts/Sites/Personal/nova-extensions/sidebars/todo/todo.novaextension/Sample Files", EXCLUDES);
-    // console.log(workspaceFiles.files);
-    // console.log(workspaceFiles.count);
+    let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path);
+
     console.log("TOTAL NUMBER OF NON-EXCLUDED WORKSPACE FILES:", workspaceFiles.files.length);
     console.log("NON-EXCLUDED WORKSPACE FILES:");
+    
     workspaceFiles.files.forEach(file => {
       console.log(file);
     });
     
-    // console.log(workspaceFiles.length);
     if (workspaceFiles.max_count !== true) {
-    // if (workspaceFiles.files.length <= MAX_FILES) {
-      
       let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles.files);
       console.log("TOTAL NUMBER OF TODO & FIXME KEYWORDS FOUND:", toDoListItems.length);
       
@@ -55,29 +48,29 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     this.rootItems = rootItems; 
   }
   
-  readGitIgnoreFile() {
-    let gitIgnorePath = nova.path.join(nova.workspace.path, ".gitignore");
-    let fileContentArray = [];
-    let gitIgnoreFiles = [];
-    
-    if (nova.fs.access(gitIgnorePath, nova.fs.F_OK)) {
-      let gitIgnoreFile = nova.fs.open(gitIgnorePath);
-      fileContentArray = gitIgnoreFile.readlines();
-      
-      for (let i = 0; i < fileContentArray.length; i++) {
-        let line = fileContentArray[i].trim();
-        
-        if (line !== "") {
-          gitIgnoreFiles = [...gitIgnoreFiles, line]
-        }
-      }
-      
-      // console.log(gitIgnoreFiles);
-      // console.log(gitIgnoreFiles.length);
-    }
-    
-    return gitIgnoreFiles;
-  }
+  // readGitIgnoreFile() {
+  //   let gitIgnorePath = nova.path.join(nova.workspace.path, ".gitignore");
+  //   let fileContentArray = [];
+  //   let gitIgnoreFiles = [];
+  //   
+  //   if (nova.fs.access(gitIgnorePath, nova.fs.F_OK)) {
+  //     let gitIgnoreFile = nova.fs.open(gitIgnorePath);
+  //     fileContentArray = gitIgnoreFile.readlines();
+  //     
+  //     for (let i = 0; i < fileContentArray.length; i++) {
+  //       let line = fileContentArray[i].trim();
+  //       
+  //       if (line !== "") {
+  //         gitIgnoreFiles = [...gitIgnoreFiles, line]
+  //       }
+  //     }
+  //     
+  //     // console.log(gitIgnoreFiles);
+  //     // console.log(gitIgnoreFiles.length);
+  //   }
+  //   
+  //   return gitIgnoreFiles;
+  // }
   
   /*
     Accepts an ungrouped array of ToDoListItem objects and
@@ -202,12 +195,10 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   /*
-    Returns an array of all FILES within a directory and its
-    subdirectories, except for those excluded.
+    Returns an object with a max_count boolean, fileCount, and an array of all FILES
+    within a directory and its subdirectories, except for those excluded.
   */
-  getDirectoryFilePaths(directoryPath, EXCLUDES) {
-    // const MAX_FILES = 200;
-    
+  getDirectoryFilePaths(directoryPath) {
     let directoryItems = nova.fs.listdir(directoryPath);
     // fileCount will be a count of all the files in the directory, not a count of those
     // with TODO keywords. This occurs in the findToDoItemsInFilePathArray method.
@@ -221,15 +212,15 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     
     while (i < directoryItems.length && directory.max_count == false) {
       let currentEvaluationPath = nova.path.join(directoryPath, directoryItems[i]);
-  
-      // if (!EXCLUDES.includes(directoryItems[i])) {
-        // console.log("EXT INCLUDED: ", `${currentEvaluationPath} - ${this.isAllowedDirectoryItem(currentEvaluationPath)}`);
+
+      // console.log("EXT INCLUDED: ", `${currentEvaluationPath} - ${this.isAllowedDirectoryItem(currentEvaluationPath)}`);
+
       if (this.isAllowedDirectoryItem(currentEvaluationPath)) {
         if (nova.fs.stat(currentEvaluationPath).isFile()) {
           directory.fileCount += 1;
           directory.files.push(currentEvaluationPath);
         } else if (nova.fs.stat(currentEvaluationPath).isDirectory())  {
-          let subDirectories = this.getDirectoryFilePaths(currentEvaluationPath, EXCLUDES);
+          let subDirectories = this.getDirectoryFilePaths(currentEvaluationPath);
           
           if (subDirectories.files.length > 0) {
             directory.files = directory.files.concat(subDirectories.files);
@@ -267,7 +258,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       "node_modules", "tmp", ".git", "vendor", ".nova", ".gitignore"
     ];
     
-    // console.log(nova.path.basename(path));
     if (!DEFAULT_EXCLUDED_NAMES.includes(nova.path.basename(path))) {
       return true;
     } else {
