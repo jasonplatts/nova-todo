@@ -312,14 +312,14 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   
   getTreeItem(toDoListItem) {
     let item = new TreeItem(toDoListItem.name);
-    
+    // If children.length > 0, then the item is a file name. Else, it's a TODO or FIXME item.
     if (toDoListItem.children.length > 0) {
       item.collapsibleState = TreeItemCollapsibleState.Expanded;
       item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
       item.contextValue     = "fruit";
       item.tooltip          = "This is a parent.";
     } else {
-      item.image            = "__symbol.todo";
+      item.image            = toDoListItem.name.toLowerCase();
       item.command          = "todo.doubleClick";
       item.contextValue     = "info";
       item.descriptiveText  = 
