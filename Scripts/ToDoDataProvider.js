@@ -50,30 +50,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     this.rootItems = rootItems; 
   }
   
-  // readGitIgnoreFile() {
-  //   let gitIgnorePath = nova.path.join(nova.workspace.path, ".gitignore");
-  //   let fileContentArray = [];
-  //   let gitIgnoreFiles = [];
-  //   
-  //   if (nova.fs.access(gitIgnorePath, nova.fs.F_OK)) {
-  //     let gitIgnoreFile = nova.fs.open(gitIgnorePath);
-  //     fileContentArray = gitIgnoreFile.readlines();
-  //     
-  //     for (let i = 0; i < fileContentArray.length; i++) {
-  //       let line = fileContentArray[i].trim();
-  //       
-  //       if (line !== "") {
-  //         gitIgnoreFiles = [...gitIgnoreFiles, line]
-  //       }
-  //     }
-  //     
-  //     // console.log(gitIgnoreFiles);
-  //     // console.log(gitIgnoreFiles.length);
-  //   }
-  //   
-  //   return gitIgnoreFiles;
-  // }
-  
   /*
     Accepts an ungrouped array of ToDoListItem objects and
     returns an array of ToDoListItem objects grouped by file.
@@ -218,8 +194,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     
     while (i < directoryItems.length && directory.max_count == false) {
       let currentEvaluationPath = nova.path.join(directoryPath, directoryItems[i]);
-
-      // console.log("EXT INCLUDED: ", `${currentEvaluationPath} - ${this.isAllowedDirectoryItem(currentEvaluationPath)}`);
 
       if (this.isAllowedDirectoryItem(currentEvaluationPath)) {
         if (nova.fs.stat(currentEvaluationPath).isFile()) {
