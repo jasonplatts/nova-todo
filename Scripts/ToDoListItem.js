@@ -4,6 +4,7 @@ module.exports.ToDoListItem = class ToDoListItem {
         this.filePath = null;
         this.line = null;
         this.column = null;
+        this.position = null;
         this.comment = null;
         
         this.children = [];

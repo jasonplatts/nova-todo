@@ -48,7 +48,9 @@ nova.commands.register("todo.refresh", () => {
 nova.commands.register("todo.doubleClick", () => {
   // Invoked when an item is double-clicked
   let selection = treeView.selection;
-  console.log("DoubleClick: " + selection.map((e) => e.name));
+  // console.log("DoubleClick: " + selection.map((e) => e.name));
+  nova.workspace.openFile(selection.map((e) => e.filePath));
+  nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position));
 });
 
 

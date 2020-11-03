@@ -4,6 +4,8 @@ const MAX_FILES = 500;
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
     console.clear();
+    console.log("GLOBAL CONFIG EXAMPLE:",nova.config.get("todo.default-file"));
+    console.log("WORKSPACE CONFIG EXAMPLE:",nova.workspace.config.get("todo.default-config.printWidth"));
     
     const GROUP_BY = "file"; // Could also be "tag".
     
@@ -127,6 +129,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     let contents = file.readlines();
     
     let fileMatches = [];
+    let fileLineStartPosition = 0;
 
     for(let i = 0; i < contents.length; i++) {
       let lineMatches = this.findKeywordsInLine(contents[i]);
@@ -136,11 +139,14 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
         toDoListItem.filePath = file.path;
         toDoListItem.line     = i + 1;
         toDoListItem.column   = match.column;
+        toDoListItem.position = fileLineStartPosition + match.column;
         match.comment         = match.comment.replace(/(TODO:|FIXME:|TODO|FIXME)/, "");
         toDoListItem.comment  = match.comment.trim();
         
-        fileMatches = fileMatches.concat(toDoListItem); 
+        fileMatches = fileMatches.concat(toDoListItem);
       });
+      
+      fileLineStartPosition += contents[i].length;
     }
     
     return fileMatches;
@@ -306,7 +312,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     if (toDoListItem.children.length > 0) {
       item.collapsibleState = TreeItemCollapsibleState.Expanded;
       item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
-      item.contextValue     = "fruit";
+      item.contextValue     = "file";
       item.tooltip          = "This is a parent.";
     } else {
       item.image            = toDoListItem.name.toLowerCase();
