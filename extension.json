@@ -22,17 +22,39 @@
   
   "config": [
     {
-      "key": "todo.global-ignore-names",
-      "title": "Ignored Names",
-      "description": "Provide a list of comma separated directory and file names that should be ignored in all workspaces. File names must include the file extension. For example: test.txt, example.js, sample.php.",
-      "type": "text"
+      "key": "todo.exclude-global-names.section",
+      "title": "Global Ignored File & Directory Names",
+      "description": "Add file & directory names that should be excluded globally.",
+      "type": "section",
+      "children": [
+        {
+          "key": "todo.global-ignore-names",
+          "title": "Ignored Names",
+          "description": "Provide a list of comma separated directory and file names that should be ignored in all workspaces. File names must include the file extension. For example: test.txt, example.js, sample.php.",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "key": "todo.exclude-global-extensions.section",
+      "title": "Global Ignored File Extensions",
+      "description": "Add file extensions that should be excluded globally.",
+      "type": "section",
+      "children": [
+        {
+          "key": "todo.global-ignore-extensions",
+          "title": "Ignored Extensions",
+          "description": "Provide a list of comma separated file extensions that should be ignored. Extensions should include \".\" before the extension. For example: .txt, .js, .php.",
+          "type": "text"
+        }
+      ]
     }
   ],
   
   "config-workspace": [
     {
       "key": "todo.exclude-workspace-paths.section",
-      "title": "Ignore File & Directory Paths",
+      "title": "Ignored File & Directory Paths",
       "description": "Add specific file and directory paths that should be excluded in the current workspace.",
       "type": "section",
       "children": [
@@ -60,7 +82,7 @@
     },
     {
       "key": "todo.exclude-workspace-names.section",
-      "title": "Ignore File & Directory Names",
+      "title": "Ignored File & Directory Names",
       "description": "Add file and directory names that should be excluded in the current workspace, regardless of path.",
       "type": "section",
       "children": [
@@ -68,6 +90,20 @@
           "key": "todo.workspace-ignore-names",
           "title": "Ignored Names",
           "description": "Provide a list of comma separated directory and file names that should be ignored in the current workspace. File names must include the file extension. For example: test.txt, example.js, sample.php.",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "key": "todo.exclude-workspace-extensions.section",
+      "title": "Ignored File Extensions",
+      "description": "Add file extensions that should be excluded in the current workspace.",
+      "type": "section",
+      "children": [
+        {
+          "key": "todo.workspace-ignore-extensions",
+          "title": "Ignored Extensions",
+          "description": "Provide a list of comma separated file extensions that should be ignored. Extensions should include \".\" before the extension. For example: .txt, .js, .php.",
           "type": "text"
         }
       ]
