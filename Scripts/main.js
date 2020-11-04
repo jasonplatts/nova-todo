@@ -2,7 +2,7 @@ const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 
 var treeView = null;
 
-exports.activate = function() {
+var activate = exports.activate = function() {
   // Do work when the extension is activated
   
   // Create the TreeView 
@@ -50,6 +50,12 @@ nova.commands.register("todo.openFile", () => {
   }
 });
 
+nova.commands.register("todo.ignoreFile", () => {
+  let selection = treeView.selection;
+  
+  addWorkspaceIgnorePath(nova.path.normalize(selection.map((e) => e.filePath)));
+});
+
 nova.commands.register("todo.ignoreParentDirectory", () => {
   let selection = treeView.selection;
   
@@ -64,11 +70,11 @@ function addWorkspaceIgnorePath(path) {
   workspaceIgnorePaths = workspaceIgnorePaths.replace("null,", "");
   
   nova.workspace.config.set("todo.workspace-ignore-paths", workspaceIgnorePaths);
-  treeView.reload();
+  reloadData();
 }
 
 nova.commands.register("todo.refresh", () => {
-  treeView.reload();
+  reloadData();
 });
 
 nova.commands.register("todo.doubleClick", () => {
@@ -78,14 +84,9 @@ nova.commands.register("todo.doubleClick", () => {
   nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position));
 });
 
-nova.fs.watch(null, watched);
+nova.fs.watch(null, reloadData);
 
-function watched() {
-  treeView.reload();
+function reloadData() {
+  treeView = null;
+  activate();
 }
-
-
-
-
-
-
