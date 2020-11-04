@@ -5,7 +5,7 @@ var treeView = null;
 exports.activate = function() {
   // Do work when the extension is activated
   
-  // Create the TreeView
+  // Create the TreeView 
   treeView = new TreeView("todo", {
     dataProvider: new ToDoDataProvider()
   });
@@ -67,8 +67,7 @@ function addWorkspaceIgnorePath(path) {
 }
 
 nova.commands.register("todo.refresh", () => {
-  let selection = treeView.selection;
-  console.log("Refresh!");
+  treeView.reload();
 });
 
 nova.commands.register("todo.doubleClick", () => {
