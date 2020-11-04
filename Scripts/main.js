@@ -73,10 +73,6 @@ function addWorkspaceIgnorePath(path) {
   reloadData();
 }
 
-nova.commands.register("todo.refresh", () => {
-  reloadData();
-});
-
 nova.commands.register("todo.doubleClick", () => {
   // Invoked when an item is double-clicked
   let selection = treeView.selection;
@@ -84,7 +80,14 @@ nova.commands.register("todo.doubleClick", () => {
   nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position));
 });
 
+nova.commands.register("todo.refresh", () => {
+  reloadData();
+});
+
 nova.fs.watch(null, reloadData);
+nova.config.observe("todo.global-ignore-names", reloadData());
+nova.workspace.config.observe("todo.workspace-ignore-paths", reloadData());
+nova.workspace.config.observe("todo.workspace-ignore-names", reloadData());
 
 function reloadData() {
   treeView = null;
