@@ -64,13 +64,10 @@ nova.commands.register("todo.ignoreParentDirectory", () => {
 
 function addWorkspaceIgnorePath(path) {
   path = nova.path.normalize(path);
-  
   let workspaceIgnorePaths = nova.workspace.config.get("todo.workspace-ignore-paths") + "," + path;
-  
   workspaceIgnorePaths = workspaceIgnorePaths.replace("null,", "");
   
   nova.workspace.config.set("todo.workspace-ignore-paths", workspaceIgnorePaths);
-  reloadData();
 }
 
 nova.commands.register("todo.doubleClick", () => {
@@ -84,10 +81,12 @@ nova.commands.register("todo.refresh", () => {
   reloadData();
 });
 
-nova.fs.watch(null, reloadData);
+nova.fs.watch(null, reloadData());
 nova.config.observe("todo.global-ignore-names", reloadData());
+nova.config.observe("todo.global-ignore-extensions", reloadData());
 nova.workspace.config.observe("todo.workspace-ignore-paths", reloadData());
 nova.workspace.config.observe("todo.workspace-ignore-names", reloadData());
+nova.workspace.config.observe("todo.workspace-ignore-extensions", reloadData());
 
 function reloadData() {
   treeView = null;
