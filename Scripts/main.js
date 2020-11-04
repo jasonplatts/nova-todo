@@ -35,33 +35,9 @@ exports.deactivate = function() {
 }
 
 nova.commands.register("todo.addPath", () => {
-  let workspaceIgnorePaths = nova.workspace.config.get("todo.workspace-ignore-paths") + "," +
-    nova.workspace.config.get("todo.selected-ignore-path");
-    
-  nova.workspace.config.set("todo.workspace-ignore-paths", workspaceIgnorePaths);
+  addWorkspaceIgnorePath(nova.workspace.config.get("todo.selected-ignore-path"));
+
   nova.workspace.config.set("todo.selected-ignore-path", "");
-});
-
-// nova.commands.register("todo.group", () => {
-//   console.log("Change grouping!");
-// }); 
-
-nova.commands.register("todo.refresh", () => {
-  let selection = treeView.selection;
-  console.log("Refresh!");
-});
-
-nova.commands.register("todo.ignoreDirectory", () => {
-  let selection = treeView.selection;
-  // nova.workspace.openFile(selection.map((e) => e.filePath));
-  console.log("IGNORE DIR!", selection.map((e) => e.filePath));
-});
-
-nova.commands.register("todo.doubleClick", () => {
-  // Invoked when an item is double-clicked
-  let selection = treeView.selection;
-  nova.workspace.openFile(selection.map((e) => e.filePath));
-  nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position));
 });
 
 nova.commands.register("todo.openFile", () => {
@@ -73,6 +49,35 @@ nova.commands.register("todo.openFile", () => {
     nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position));
   }
 });
+
+nova.commands.register("todo.ignoreParentDirectory", () => {
+  let selection = treeView.selection;
+  
+  addWorkspaceIgnorePath(nova.path.dirname(selection.map((e) => e.filePath)));
+});
+
+function addWorkspaceIgnorePath(path) {
+  path = nova.path.normalize(path);
+  
+  let workspaceIgnorePaths = nova.workspace.config.get("todo.workspace-ignore-paths") + "," + path;
+  
+  workspaceIgnorePaths = workspaceIgnorePaths.replace("null,", "");
+  
+  nova.workspace.config.set("todo.workspace-ignore-paths", workspaceIgnorePaths);
+}
+
+nova.commands.register("todo.refresh", () => {
+  let selection = treeView.selection;
+  console.log("Refresh!");
+});
+
+nova.commands.register("todo.doubleClick", () => {
+  // Invoked when an item is double-clicked
+  let selection = treeView.selection;
+  nova.workspace.openFile(selection.map((e) => e.filePath));
+  nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position));
+});
+
 
 
 

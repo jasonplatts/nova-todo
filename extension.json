@@ -107,9 +107,8 @@
               
             },
             {
-              "title": "Ignore Directory",
-              "command": "todo.ignoreDirectory"
-              
+              "title": "Ignore Parent Directory",
+              "command": "todo.ignoreParentDirectory"
             }
           ]
         }
