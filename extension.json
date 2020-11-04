@@ -1,71 +1,119 @@
 {
-    "identifier": "jasonplatts.TODO",
-    "name": "TODO",
-    "organization": "Jason Platts",
-    "description": "Lorem ipsum, dolor sit amet.",
-    "version": "1.0",
-    "categories": ["sidebars"],
-    
-    "main": "main.js",
-    
-    "activationEvents": [
-        "onLanguage:javascript"
-    ],
-    
-    "entitlements": {
-        "filesystem": "readonly"
-    },
-    
-    "sidebars": [
+  "identifier": "jasonplatts.TODO",
+  "name": "TODO",
+  "organization": "Jason Platts",
+  "description": "Displays TODO and FIXME tags within a sidebar tree view.",
+  "license":"MIT",
+  "version": "1.0",
+  "repository":"https://github.com/jasonplatts/nova-todo",
+  "bugs":"https://github.com/jasonplatts/nova-todo/issues",
+  "funding":"https://github.com/sponsors/jasonplatts",
+  "categories": ["sidebars"],
+  
+  "main": "main.js",
+  
+  "activationEvents": [
+    "onLanguage:javascript"
+  ],
+  
+  "entitlements": {
+    "filesystem": "readonly"
+  },
+  
+  "config": [
+    {
+      "key": "todo.global-ignore-names",
+      "title": "Ignored Names",
+      "description": "Provide a list of comma separated directory and file names that should be ignored in all workspaces. File names must include the file extension. For example: test.txt, example.js, sample.php.",
+      "type": "text"
+    }
+  ],
+  
+  "config-workspace": [
+    {
+      "key": "todo.exclude-workspace-paths.section",
+      "title": "Ignore File & Directory Paths",
+      "description": "Add specific file and directory paths that should be excluded in the current workspace.",
+      "type": "section",
+      "children": [
         {
-            "id": "todo",
-            "name": "TODO",
-            "smallImage": "todo-small",
-            "smallSelectedImage": "mysidebar-small-selected",
-            "largeImage": "todo-large",
-            "largeSelectedImage": "mysidebar-large-selected",
-            "headerCommands": [
-                {
-                    "title": "Remove",
-                    "image": "__builtin.refresh",
-                    "tooltip": "Remove the selected profiles",
-                    "command": "todo.remove"
-                }
-            ],
-            "sections": [
-                {
-                    "id": "todo",
-                    "name": "TODOS",
-                    "allowMultiple": false,
-                    "placeholderText": "No profiles have been created.",
-                    "placeholderImage": "mysidebar-placeholder",
-                    "headerCommands": [
-                        {
-                            "title": "Group By",
-                            "tooltip": "Group by File or Tag",
-                            "command": "todo.group"
-                        },
-                        {
-                            "title": "Remove",
-                            "image": "__builtin.refresh",
-                            "tooltip": "Force Refresh",
-                            "command": "todo.refresh"
-                        }
-                    ],
-                    "contextCommands": [
-                        {
-                            "title": "Open",
-                            "command": "todo.remove",
-                            "when": "viewItem != null"
-                        },
-                        {
-                            "title": "Show in Finder",
-                            "command": "todo.showInFinder",
-                            "when": "viewItem != null"
-                        }
-                    ]
-                }
-            ]
+          "key": "todo.selected-ignore-path",
+          "title": "Path",
+          "description": "Select a file or directory path to be ignored in the current workspace.",
+          "type": "path",
+          "allowFiles": true,
+          "allowFolders": true
+        },
+        {
+          "key": "todo.add-selected-path",
+          "title": "Ignore Above Path",
+          "type": "command",
+          "command": "todo.addPath"
+        },
+        {
+          "key": "todo.workspace-ignore-paths",
+          "title": "Ignored Paths",
+          "description": "Provide a list of comma separated directory and file names that should be ignored by the extension in the current workspace.",
+          "type": "text"
         }
-    ]
+      ]
+    },
+    {
+      "key": "todo.exclude-workspace-names.section",
+      "title": "Ignore File & Directory Names",
+      "description": "Add file and directory names that should be excluded in the current workspace, regardless of path.",
+      "type": "section",
+      "children": [
+        {
+          "key": "todo.workspace-ignore-names",
+          "title": "Ignored Names",
+          "description": "Provide a list of comma separated directory and file names that should be ignored in the current workspace. File names must include the file extension. For example: test.txt, example.js, sample.php.",
+          "type": "text"
+        }
+      ]
+    }
+  ],
+  
+  "sidebars": [
+    {
+      "id": "todo",
+      "name": "TODO",
+      "smallImage": "todo-small",
+      "largeImage": "todo-large",
+      "sections": [
+        {
+          "id": "todo",
+          "name": "TODOS",
+          "allowMultiple": false,
+          "placeholderText": "No profiles have been created.",
+          "placeholderImage": "mysidebar-placeholder",
+          "headerCommands": [
+            {
+              "title": "Refresh",
+              "image": "__builtin.refresh",
+              "tooltip": "Force Refresh",
+              "command": "todo.refresh"
+            }
+          ],
+          "contextCommands": [
+            {
+              "title": "Open",
+              "command": "todo.openFile"
+              
+            },
+            {
+              "title": "Ignore File",
+              "command": "todo.ignoreFile"
+              
+            },
+            {
+              "title": "Ignore Directory",
+              "command": "todo.ignoreDirectory"
+              
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

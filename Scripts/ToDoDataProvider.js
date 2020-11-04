@@ -250,7 +250,29 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     Used to exclude specific file and directory paths.
   */
   isAllowedPath(path) {
-    return true;
+    const USER_EXCLUDED_PATHS = this.getExcludedPaths();
+    
+    if (!USER_EXCLUDED_PATHS.includes(path)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  getExcludedPaths() {
+    let workspaceIgnorePaths = nova.workspace.config.get("todo.workspace-ignore-paths");
+    
+    if (workspaceIgnorePaths !== null) {
+      workspaceIgnorePaths = workspaceIgnorePaths.split(",");
+      
+      let normalizedPaths = workspaceIgnorePaths.map(function (path) {
+        return nova.path.normalize(path);
+      });
+      
+      return normalizedPaths;
+    } else {
+      return [];
+    }
   }
   
   /*

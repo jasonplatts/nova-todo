@@ -34,23 +34,44 @@ exports.deactivate = function() {
   // Clean up state before the extension is deactivated
 }
 
-nova.commands.register("todo.group", () => {
-  // Invoked when the "add" header button is clicked
-  console.log("Change grouping!");
+nova.commands.register("todo.addPath", () => {
+  let workspaceIgnorePaths = nova.workspace.config.get("todo.workspace-ignore-paths") + "," +
+    nova.workspace.config.get("todo.selected-ignore-path");
+    
+  nova.workspace.config.set("todo.workspace-ignore-paths", workspaceIgnorePaths);
+  nova.workspace.config.set("todo.selected-ignore-path", "");
 });
 
+// nova.commands.register("todo.group", () => {
+//   console.log("Change grouping!");
+// }); 
+
 nova.commands.register("todo.refresh", () => {
-  // Invoked when the "remove" header button is clicked
   let selection = treeView.selection;
   console.log("Refresh!");
+});
+
+nova.commands.register("todo.ignoreDirectory", () => {
+  let selection = treeView.selection;
+  // nova.workspace.openFile(selection.map((e) => e.filePath));
+  console.log("IGNORE DIR!", selection.map((e) => e.filePath));
 });
 
 nova.commands.register("todo.doubleClick", () => {
   // Invoked when an item is double-clicked
   let selection = treeView.selection;
-  // console.log("DoubleClick: " + selection.map((e) => e.name));
   nova.workspace.openFile(selection.map((e) => e.filePath));
   nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position));
+});
+
+nova.commands.register("todo.openFile", () => {
+  let selection = treeView.selection;
+  
+  nova.workspace.openFile(selection.map((e) => e.filePath));
+
+  if (selection.map((e) => e.position) !== null) {
+    nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position));
+  }
 });
 
 
