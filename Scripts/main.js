@@ -64,6 +64,7 @@ function addWorkspaceIgnorePath(path) {
   workspaceIgnorePaths = workspaceIgnorePaths.replace("null,", "");
   
   nova.workspace.config.set("todo.workspace-ignore-paths", workspaceIgnorePaths);
+  treeView.reload();
 }
 
 nova.commands.register("todo.refresh", () => {
@@ -76,6 +77,12 @@ nova.commands.register("todo.doubleClick", () => {
   nova.workspace.openFile(selection.map((e) => e.filePath));
   nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position));
 });
+
+nova.fs.watch(null, watched);
+
+function watched() {
+  treeView.reload();
+}
 
 
 
