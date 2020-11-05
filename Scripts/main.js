@@ -50,10 +50,6 @@ nova.commands.register("todo.openFile", () => {
   let selection = treeView.selection;
   
   nova.workspace.openFile(selection.map((e) => e.filePath));
-
-  if (selection.map((e) => e.position) !== null) {
-    nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position));
-  }
 });
 
 nova.commands.register("todo.ignoreFile", () => {
@@ -79,8 +75,11 @@ function addWorkspaceIgnorePath(path) {
 nova.commands.register("todo.doubleClick", () => {
   // Invoked when an item is double-clicked
   let selection = treeView.selection;
-  nova.workspace.openFile(selection.map((e) => e.filePath));
-  nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position));
+  let fileStatus = nova.workspace.openFile(selection.map((e) => e.filePath));
+  
+  fileStatus.then (
+    function() { nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position)); }
+  );
 });
 
 nova.commands.register("todo.refresh", () => {
