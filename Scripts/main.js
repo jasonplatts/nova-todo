@@ -30,6 +30,12 @@ var activate = exports.activate = function() {
   nova.subscriptions.add(treeView);
 }
 
+function setTreeView() {
+  treeView = new TreeView("todo", {
+    dataProvider: new ToDoDataProvider()
+  });
+}
+
 exports.deactivate = function() {
   // Clean up state before the extension is deactivated
 }
@@ -81,14 +87,17 @@ nova.commands.register("todo.refresh", () => {
   reloadData();
 });
 
-nova.fs.watch(null, reloadData());
-nova.config.observe("todo.global-ignore-names", reloadData());
-nova.config.observe("todo.global-ignore-extensions", reloadData());
-nova.workspace.config.observe("todo.workspace-ignore-paths", reloadData());
-nova.workspace.config.observe("todo.workspace-ignore-names", reloadData());
-nova.workspace.config.observe("todo.workspace-ignore-extensions", reloadData());
+// nova.fs.watch(null, reloadData());
+// nova.config.observe("todo.global-ignore-names", reloadData());
+// nova.config.observe("todo.global-ignore-extensions", reloadData());
+// nova.workspace.config.observe("todo.workspace-ignore-paths", reloadData());
+// nova.workspace.config.observe("todo.workspace-ignore-names", reloadData());
+// nova.workspace.config.observe("todo.workspace-ignore-extensions", reloadData());
 
 function reloadData() {
+  // console.log("RELOADED");
   treeView = null;
+  // console.log("TREE NULL");
   activate();
+  // console.log("ACTIVATED");
 }

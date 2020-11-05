@@ -222,10 +222,16 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   isAllowedDirectoryItem(path) {
+    // console.log("DIRECTORY ITEM", path);
+    // console.log("ALLOWED NAME", this.isAllowedName(path));
+    // console.log("ALLOWED PATH", this.isAllowedPath(path));
+    // console.log("ALLOWED EXT", this.isAllowedExtension(path));
     if (this.isAllowedName(path) && this.isAllowedPath(path) && 
       this.isAllowedExtension(path)) {
+      // console.log("ALLOWED");
       return true;
     } else {
+      // console.log("NOT ALLOWED");
       return false;
     }
   }
@@ -234,16 +240,42 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     Used to exclude specific file and directory names.
   */
   isAllowedName(path) {
-    const DEFAULT_EXCLUDED_NAMES = [
-      "node_modules", "tmp", ".git", "vendor", ".nova", ".gitignore"
-    ];
-    
-    if (!DEFAULT_EXCLUDED_NAMES.includes(nova.path.basename(path))) {
+    let excludedNames = this.getExcludedNames();
+  
+    if (!excludedNames.includes(nova.path.basename(path))) {
       return true;
     } else {
       return false;
     }
     return true;
+  }
+  
+  getExcludedNames() {
+    const DEFAULT_EXCLUDED_NAMES = [
+      "node_modules", "tmp", ".git", "vendor", ".nova", ".gitignore"
+    ];
+    
+    let workspaceIgnoreNames = nova.workspace.config.get("todo.workspace-ignore-names");
+    
+    if (workspaceIgnoreNames !== null) {
+      workspaceIgnoreNames = workspaceIgnoreNames.split(",");
+    } else {
+      workspaceIgnoreNames = [];
+    }
+    
+    let globalIgnoreNames = nova.config.get("todo.global-ignore-names");
+    
+    if (globalIgnoreNames !== null) {
+      globalIgnoreNames = globalIgnoreNames.split(",");
+    } else {
+      globalIgnoreNames = [];
+    }
+    
+    let excludedNames = [...DEFAULT_EXCLUDED_NAMES, ...workspaceIgnoreNames, ...globalIgnoreNames];
+    
+    excludedNames = this.cleanArray(excludedNames);
+    
+    return excludedNames;
   }
   
   /*
@@ -279,14 +311,62 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     Used to exclude specific extensions.
   */
   isAllowedExtension(path) {
-    const DEFAULT_EXCLUDED_EXTENSIONS = [".json", ".jpg", ".png", ".sketch", ".psd",
-      ".bmp", ".svg"];
-    
-    if (!DEFAULT_EXCLUDED_EXTENSIONS.includes(nova.path.extname(path))) {
-      return true;
+    if (nova.fs.stat(path).isFile() == true) {
+      let excludedExtensions = this.getExcludedExtensions();
+      // console.log(excludedExtensions);
+      // console.log("IS DIR?", nova.fs.stat(path).isDirectory());
+      if (!excludedExtensions.includes(nova.path.extname(path))) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
-      return false;
+      return true;
     }
+  }
+  
+  getExcludedExtensions() {
+    const DEFAULT_EXCLUDED_EXTENSIONS = [".json", ".jpg", ".png",
+      ".sketch", ".psd", ".bmp", ".svg", ".ai"];
+    
+    let workspaceIgnoreExtensions = nova.workspace.config.get("todo.workspace-ignore-extensions");
+    
+    if (workspaceIgnoreExtensions !== null) {
+      workspaceIgnoreExtensions = workspaceIgnoreExtensions.split(",");
+    } else {
+      workspaceIgnoreExtensions = [];
+    }
+    
+    let globalIgnoreExtensions = nova.config.get("todo.global-ignore-extensions");
+    
+    if (globalIgnoreExtensions !== null) {
+      globalIgnoreExtensions = globalIgnoreExtensions.split(",");
+    } else {
+      globalIgnoreExtensions = [];
+    }
+    
+    let excludedExtensions = [...DEFAULT_EXCLUDED_EXTENSIONS, ...workspaceIgnoreExtensions,
+      ...globalIgnoreExtensions];
+    
+    // console.log("PRE-CLEAN", excludedExtensions);
+    excludedExtensions = this.cleanArray(excludedExtensions);
+    // console.log("POST-CLEAN", excludedExtensions);
+    
+    // excludedExtensions = excludedExtensions.map(extension => extension.trim());
+    
+    return excludedExtensions;
+  }
+  
+  cleanArray(array) {
+    array = array.filter(function(el) {
+      if (el !== null && el !== "" && el!== 'undefined') {
+        return el;
+      }
+    });
+    
+    array = array.map(element => element.trim());
+    
+    return array;
   }
   
   getChildren(toDoListItem) {
