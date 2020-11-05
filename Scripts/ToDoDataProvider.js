@@ -1,5 +1,5 @@
 const { ToDoListItem } = require("./ToDoListItem.js");
-const MAX_FILES = 500;
+const MAX_FILES = 250;
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
