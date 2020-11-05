@@ -3,6 +3,10 @@ const MAX_FILES = 300;
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
+    this.process();
+  }
+  
+  process() {
     // console.clear();
     // console.log("GLOBAL CONFIG EXAMPLE:",nova.config.get("todo.default-file"));
     // console.log("WORKSPACE CONFIG EXAMPLE:",nova.workspace.config.get("todo.default-config.printWidth"));

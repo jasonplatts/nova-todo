@@ -1,13 +1,14 @@
 const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 
 var treeView = null;
+var dataProvider = new ToDoDataProvider();
 
 var activate = exports.activate = function() {
   // Do work when the extension is activated
   
   // Create the TreeView 
   treeView = new TreeView("todo", {
-    dataProvider: new ToDoDataProvider()
+    dataProvider: dataProvider
   });
   
   treeView.onDidChangeSelection((selection) => {
@@ -86,14 +87,18 @@ nova.commands.register("todo.refresh", () => {
   reloadData();
 });
 
-nova.fs.watch(null, reloadData);
 nova.config.observe("todo.global-ignore-names", reloadData);
 nova.config.observe("todo.global-ignore-extensions", reloadData);
 nova.workspace.config.observe("todo.workspace-ignore-paths", reloadData);
 nova.workspace.config.observe("todo.workspace-ignore-names", reloadData);
 nova.workspace.config.observe("todo.workspace-ignore-extensions", reloadData);
+nova.fs.watch(null, reloadData);
 
 function reloadData() {
-  treeView = null;
-  activate();
+  if (treeView !== null) {
+    // treeView = null;
+    // activate();
+    dataProvider.process();
+    treeView.reload();
+  }
 }
