@@ -4,6 +4,8 @@
 
 Displays TODO and FIXME tags within a sidebar tree view in Panic's macOS code editor, Nova.
 
+**There are several known issues with this release mostly related to the setting and observation of preferences. After setting a configuration, please press the "Refresh" button on the sidebar header to see these changes reflected in the tree view. For this reason, it is a pre-1.0 release.**
+
 ## Installing
 
 Enable the extension in the extension library within Nova.
@@ -18,7 +20,12 @@ For global ignore settings, go to the extension within the extension library and
 
 ## Known Issues
 
-* The extension currently finds TODO and FIXME keywords that occur anywhere within a file. Future releases will search only within comments.
+* The tree view does not refresh after changing the extension preferences.
+* The sidebar currently displays TODO and FIXME keywords that occur anywhere within a file. Future releases will search only within comments.
+
+## Future Features
+
+* TODO and FIXME keyword highlighting.
 
 ## Report a Bug or Feature Request
 
