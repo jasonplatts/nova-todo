@@ -4,8 +4,8 @@ const MAX_FILES = 250;
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
     console.clear();
-    console.log("GLOBAL CONFIG EXAMPLE:",nova.config.get("todo.default-file"));
-    console.log("WORKSPACE CONFIG EXAMPLE:",nova.workspace.config.get("todo.default-config.printWidth"));
+    // console.log("GLOBAL CONFIG EXAMPLE:",nova.config.get("todo.default-file"));
+    // console.log("WORKSPACE CONFIG EXAMPLE:",nova.workspace.config.get("todo.default-config.printWidth"));
     
     const GROUP_BY = "file"; // Could also be "tag".
     
@@ -13,16 +13,16 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     
     let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path);
 
-    console.log("TOTAL NUMBER OF NON-EXCLUDED WORKSPACE FILES:", workspaceFiles.files.length);
-    console.log("NON-EXCLUDED WORKSPACE FILES:");
+    // console.log("TOTAL NUMBER OF NON-EXCLUDED WORKSPACE FILES:", workspaceFiles.files.length);
+    // console.log("NON-EXCLUDED WORKSPACE FILES:");
     
-    workspaceFiles.files.forEach(file => {
-      console.log(file);
-    });
+    // workspaceFiles.files.forEach(file => {
+    //   console.log(file);
+    // });
     
     if (workspaceFiles.max_count !== true) {
       let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles.files);
-      console.log("TOTAL NUMBER OF TODO & FIXME KEYWORDS FOUND:", toDoListItems.length);
+      // console.log("TOTAL NUMBER OF TODO & FIXME KEYWORDS FOUND:", toDoListItems.length);
       
       if (GROUP_BY == "file") {
         var groupedtoDoListItems = this.groupListItemsByFile(toDoListItems);
