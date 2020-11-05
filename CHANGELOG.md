@@ -1,3 +1,7 @@
+## Version 0.3
+
+* Fixed issue preventing tag elements from loading in the tree view.
+
 ## Version 0.2
 
 * Fixed issue causing the tree view to fail to update after file and extension configuration changes.
