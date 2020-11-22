@@ -98,7 +98,7 @@ function reloadData() {
   if (treeView !== null) {
     // treeView = null;
     // activate();
-    dataProvider.process();
+    // dataProvider.process();
     treeView.reload();
   }
 }

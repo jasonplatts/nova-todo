@@ -1,9 +1,33 @@
 const { ToDoListItem } = require("./ToDoListItem.js");
-const MAX_FILES = 300;
+const { FileLoader } = require("./FileLoader.js");
+
+// const MAX_FILES = 300;
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
-    this.process();
+    console.clear();
+    let matchedFiles = this.getMatchedWorkspaceFiles();
+    // console.log("MATCHED FILES", matchedFiles);
+    // this.process();
+  }
+  
+  getMatchedWorkspaceFiles() {
+    let fileHandler = new FileLoader(nova.workspace.path);
+    let files = fileHandler.mdFindExec();
+    
+    files.then((response, reject) => {
+        let filteredFiles = response.stdout;
+        
+        // console.log("BEFORE:", filteredFiles.length);
+        
+        filteredFiles = filteredFiles.filter(filePath => this.isAllowedName(filePath)); 
+        filteredFiles = filteredFiles.filter(filePath => this.isAllowedExtension(filePath));
+          
+        filteredFiles = filteredFiles.filter(filePath => this.isAllowedPath(filePath)); // Need to get rid of it if = from beginning of path. Anything can be after it. eg excl. a/b path so excl. a/b/c.t, but allow b/a/b/c.t
+        
+        console.log("AFTER:", filteredFiles.length, filteredFiles);
+        // return filteredFiles;
+    });
   }
   
   process() {
@@ -173,90 +197,61 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     Accepts an array of ToDoListItem objects and returns an array
     of primitive file name values.
   */
-  getUniqueFiles(toDoListItems) {
+  // getUniqueFiles(toDoListItems) {
     // 1) Map array to a new array containing only primitive values (don't want objects, just file names.
     // 2) Then use the Set object to store a collection of unique values,
     // 3) Which then uses the spread operator to construct a new array.
-    return [...new Set(toDoListItems.map(item => item.filePath))];
-  }
+    // return [...new Set(toDoListItems.map(item => item.filePath))];
+  // }
   
   /*
     Returns an object with a max_count boolean, fileCount, and an array of all FILES
     within a directory and its subdirectories, except for those excluded.
   */
-  getDirectoryFilePaths(directoryPath) {
-    let directoryItems = nova.fs.listdir(directoryPath);
-    // fileCount will be a count of all the files in the directory, not a count of those
-    // with TODO keywords. This occurs in the findToDoItemsInFilePathArray method.
-    let directory = {
-      'max_count': false,
-      'fileCount': 0,
-      'files':[]
-    };
-    
-    let i = 0;
-    
-    while (i < directoryItems.length && directory.max_count == false) {
-      let currentEvaluationPath = nova.path.join(directoryPath, directoryItems[i]);
-
-      if (this.isAllowedDirectoryItem(currentEvaluationPath)) {
-        if (nova.fs.stat(currentEvaluationPath).isFile()) {
-          directory.fileCount += 1;
-          directory.files.push(currentEvaluationPath);
-        } else if (nova.fs.stat(currentEvaluationPath).isDirectory())  {
-          let subDirectories = this.getDirectoryFilePaths(currentEvaluationPath);
-          
-          if (subDirectories.files.length > 0) {
-            directory.files = directory.files.concat(subDirectories.files);
-            directory.fileCount += subDirectories.fileCount;
-          }
-        }
-      }
-      
-      if (directory.fileCount > MAX_FILES - 1) {
-        directory.max_count = true;
-      }
-
-      i++;
-    }
-    
-    directory.files.sort(this.sortByFileName);
-    
-    return directory;
-  }
-  
-  isAllowedDirectoryItem(path) {
-    // console.log("DIRECTORY ITEM", path);
-    // console.log("ALLOWED NAME", this.isAllowedName(path));
-    // console.log("ALLOWED PATH", this.isAllowedPath(path));
-    // console.log("ALLOWED EXT", this.isAllowedExtension(path));
-    if (this.isAllowedName(path) && this.isAllowedPath(path) && 
-      this.isAllowedExtension(path)) {
-      // console.log("ALLOWED");
-      return true;
-    } else {
-      // console.log("NOT ALLOWED");
-      return false;
-    }
-  }
-  
-  /*
-    Used to exclude specific file and directory names.
-  */
-  isAllowedName(path) {
-    let excludedNames = this.getExcludedNames();
-  
-    if (!excludedNames.includes(nova.path.basename(path))) {
-      return true;
-    } else {
-      return false;
-    }
-    return true;
-  }
+//   getDirectoryFilePaths(directoryPath) {
+//     let directoryItems = nova.fs.listdir(directoryPath);
+//     // fileCount will be a count of all the files in the directory, not a count of those
+//     // with TODO keywords. This occurs in the findToDoItemsInFilePathArray method.
+//     let directory = {
+//       'max_count': false,
+//       'fileCount': 0,
+//       'files':[]
+//     };
+//     
+//     let i = 0;
+//     
+//     while (i < directoryItems.length && directory.max_count == false) {
+//       let currentEvaluationPath = nova.path.join(directoryPath, directoryItems[i]);
+// 
+//       if (this.isAllowedDirectoryItem(currentEvaluationPath)) {
+//         if (nova.fs.stat(currentEvaluationPath).isFile()) {
+//           directory.fileCount += 1;
+//           directory.files.push(currentEvaluationPath);
+//         } else if (nova.fs.stat(currentEvaluationPath).isDirectory())  {
+//           let subDirectories = this.getDirectoryFilePaths(currentEvaluationPath);
+//           
+//           if (subDirectories.files.length > 0) {
+//             directory.files = directory.files.concat(subDirectories.files);
+//             directory.fileCount += subDirectories.fileCount;
+//           }
+//         }
+//       }
+//       
+//       if (directory.fileCount > MAX_FILES - 1) {
+//         directory.max_count = true;
+//       }
+// 
+//       i++;
+//     }
+//     
+//     directory.files.sort(this.sortByFileName);
+//     
+//     return directory;
+//   }
   
   getExcludedNames() {
     const DEFAULT_EXCLUDED_NAMES = [
-      "node_modules", "tmp", ".git", "vendor", ".nova", ".gitignore"
+      "node_modules", "tmp", ".git", "vendor", ".nova", ".gitignore", "packs", "packs-test"
     ];
     
     let workspaceIgnoreNames = nova.workspace.config.get("todo.workspace-ignore-names");
@@ -283,12 +278,54 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   /*
+    Used to exclude specific file and directory names.
+  */
+  isAllowedName(path) {
+    let excludedNames = this.getExcludedNames();
+    
+    let pathElementArray = path.split("/");
+    let exclusionFound = false;
+    let count = 0;
+    
+    while (count < pathElementArray.length && exclusionFound !== true) {
+      if (excludedNames.includes(pathElementArray[count])) {
+        exclusionFound = true;
+      }
+      
+      count++;
+    }
+    
+    if (exclusionFound == true) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  
+  /*
+    Used to exclude specific extensions.
+  */
+  isAllowedExtension(path) {
+    if (nova.fs.stat(path).isFile() == true) {
+      let excludedExtensions = this.getExcludedExtensions();
+
+      if (!excludedExtensions.includes(nova.path.extname(path))) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }
+  
+  /*
     Used to exclude specific file and directory paths.
   */
   isAllowedPath(path) {
     const USER_EXCLUDED_PATHS = this.getExcludedPaths();
     
-    if (!USER_EXCLUDED_PATHS.includes(path)) {
+    if (!USER_EXCLUDED_PATHS.includes(nova.path.normalize(path))) {
       return true;
     } else {
       return false;
@@ -311,27 +348,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     }
   }
   
-  /*
-    Used to exclude specific extensions.
-  */
-  isAllowedExtension(path) {
-    if (nova.fs.stat(path).isFile() == true) {
-      let excludedExtensions = this.getExcludedExtensions();
-      // console.log(excludedExtensions);
-      // console.log("IS DIR?", nova.fs.stat(path).isDirectory());
-      if (!excludedExtensions.includes(nova.path.extname(path))) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return true;
-    }
-  }
-  
   getExcludedExtensions() {
-    const DEFAULT_EXCLUDED_EXTENSIONS = [".json", ".jpg", ".png",
-      ".sketch", ".psd", ".bmp", ".svg", ".ai"];
+    const DEFAULT_EXCLUDED_EXTENSIONS = [".json", ".map"];
     
     let workspaceIgnoreExtensions = nova.workspace.config.get("todo.workspace-ignore-extensions");
     
@@ -352,11 +370,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     let excludedExtensions = [...DEFAULT_EXCLUDED_EXTENSIONS, ...workspaceIgnoreExtensions,
       ...globalIgnoreExtensions];
     
-    // console.log("PRE-CLEAN", excludedExtensions);
     excludedExtensions = this.cleanArray(excludedExtensions);
-    // console.log("POST-CLEAN", excludedExtensions);
-    
-    // excludedExtensions = excludedExtensions.map(extension => extension.trim());
     
     return excludedExtensions;
   }

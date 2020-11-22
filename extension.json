@@ -17,7 +17,8 @@
   ],
   
   "entitlements": {
-    "filesystem": "readonly"
+    "filesystem": "readonly",
+    "process": true
   },
   
   "config": [
