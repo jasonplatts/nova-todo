@@ -28,18 +28,21 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   
   getMatchedWorkspaceFiles() {
     return new Promise((resolve, reject) => {
+      let excludedPaths      = this.getExcludedPaths();
+      let excludedExtensions = this.getExcludedExtensions();
+      let excludedNames      = this.getExcludedNames();
+      
       let fileHandler = new FileLoader(nova.workspace.path);
       
       let files = fileHandler.mdFindExec();
       
       files.then((response, reject) => {
-          let filteredFiles = response.stdout;
-
-          filteredFiles = filteredFiles.filter(filePath => this.isAllowedName(filePath)); 
-          filteredFiles = filteredFiles.filter(filePath => this.isAllowedExtension(filePath));
-          filteredFiles = filteredFiles.filter(filePath => this.isAllowedPath(filePath));
-          
-          resolve(filteredFiles);
+        let filteredFiles = response.stdout;
+        filteredFiles = filteredFiles.filter(filePath => this.isAllowedName(filePath, excludedNames)); 
+        filteredFiles = filteredFiles.filter(filePath => this.isAllowedExtension(filePath, excludedExtensions));
+        filteredFiles = filteredFiles.filter(filePath => this.isAllowedPath(filePath, excludedPaths));
+        
+        resolve(filteredFiles);
       });
     });
   }
@@ -200,9 +203,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   /*
     Used to exclude specific file and directory names.
   */
-  isAllowedName(path) {
-    let excludedNames = this.getExcludedNames();
-    
+  isAllowedName(path, excludedNames) {
     let pathElementArray = path.split("/");
     let exclusionFound = false;
     let count = 0;
@@ -225,10 +226,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   /*
     Used to exclude specific extensions.
   */
-  isAllowedExtension(path) {
+  isAllowedExtension(path, excludedExtensions) {
     if (nova.fs.stat(path).isFile() == true) {
-      let excludedExtensions = this.getExcludedExtensions();
-
       if (!excludedExtensions.includes(nova.path.extname(path))) {
         return true;
       } else {
@@ -242,13 +241,23 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   /*
     Used to exclude specific file and directory paths.
   */
-  isAllowedPath(path) {
-    const USER_EXCLUDED_PATHS = this.getExcludedPaths();
+  isAllowedPath(path, excludedPaths) {
+    excludedPaths = this.cleanArray(excludedPaths);
+    let pathFound = false;
+    let excludedPathsIndex = 0;
     
-    if (!USER_EXCLUDED_PATHS.includes(nova.path.normalize(path))) {
-      return true;
-    } else {
+    while ((excludedPathsIndex < excludedPaths.length) && pathFound !== true) {
+      if (nova.path.normalize(path).includes(excludedPaths[excludedPathsIndex])) {
+        pathFound = true;
+      }
+      
+      excludedPathsIndex++;
+    }
+
+    if (pathFound == true) {
       return false;
+    } else {
+      return true;
     }
   }
   
