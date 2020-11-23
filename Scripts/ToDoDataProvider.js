@@ -329,14 +329,12 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       item.collapsibleState = TreeItemCollapsibleState.Expanded;
       item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
       item.contextValue     = "file";
-      item.tooltip          = "This is a parent.";
+      item.tooltip          = toDoListItem.filePath;
     } else {
       item.image            = toDoListItem.name.toLowerCase();
       item.command          = "todo.doubleClick";
       item.contextValue     = "info";
-      item.descriptiveText  = 
-        `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`;
-      item.tooltip          = "This is a parent.";
+      item.descriptiveText  = `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`;
     }
     
     return item;
