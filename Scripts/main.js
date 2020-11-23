@@ -1,15 +1,15 @@
 const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 
+console.clear();
+
 var treeView = null;
-var dataProvider = new ToDoDataProvider();
+var dataProvider = null;
 
 var activate = exports.activate = function() {
   // Do work when the extension is activated
   
   // Create the TreeView 
-  treeView = new TreeView("todo", {
-    dataProvider: dataProvider
-  });
+  loadData();
   
   treeView.onDidChangeSelection((selection) => {
     // console.log("New selection: " + selection.map((e) => e.name));
@@ -39,6 +39,8 @@ function setTreeView() {
 
 exports.deactivate = function() {
   // Clean up state before the extension is deactivated
+  treeView = null;
+  dataProvider = null;
 }
 
 nova.commands.register("todo.addPath", () => {
@@ -84,21 +86,20 @@ nova.commands.register("todo.doubleClick", () => {
 });
 
 nova.commands.register("todo.refresh", () => {
-  reloadData();
+  loadData();
 });
 
-nova.config.observe("todo.global-ignore-names", reloadData);
-nova.config.observe("todo.global-ignore-extensions", reloadData);
-nova.workspace.config.observe("todo.workspace-ignore-paths", reloadData);
-nova.workspace.config.observe("todo.workspace-ignore-names", reloadData);
-nova.workspace.config.observe("todo.workspace-ignore-extensions", reloadData);
-nova.fs.watch(null, reloadData);
+nova.config.observe("todo.global-ignore-names", loadData);
+nova.config.observe("todo.global-ignore-extensions", loadData);
+nova.workspace.config.observe("todo.workspace-ignore-paths", loadData);
+nova.workspace.config.observe("todo.workspace-ignore-names", loadData);
+nova.workspace.config.observe("todo.workspace-ignore-extensions", loadData);
+nova.fs.watch(null, loadData);
 
-function reloadData() {
-  if (treeView !== null) {
-    // treeView = null;
-    // activate();
-    dataProvider.getRootItems();
-    treeView.reload();
-  }
+function loadData() {
+  dataProvider = new ToDoDataProvider();
+  
+  treeView = new TreeView("todo", {
+    dataProvider: dataProvider
+  });
 }
