@@ -5,77 +5,45 @@ const { FileLoader } = require("./FileLoader.js");
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
-    console.clear();
-    let matchedFiles = this.getMatchedWorkspaceFiles();
-    // console.log("MATCHED FILES", matchedFiles);
-    // this.process();
+    this.rootItems = this.getRootItems();
+  }
+  
+  getRootItems() {
+    return new Promise((resolve, reject) => {
+      let rootItems = [];
+      let fileSearchResponse = this.getMatchedWorkspaceFiles();
+      
+      fileSearchResponse.then((response, reject) => {
+        
+        let toDoListItems = this.findToDoItemsInFilePathArray(response);
+        
+        let groupedtoDoListItems = this.groupListItemsByFile(toDoListItems);
+        
+        groupedtoDoListItems.forEach((toDoListItem) => {
+          rootItems = [...rootItems, toDoListItem];
+        });
+        
+        resolve(rootItems);
+      });
+    })
   }
   
   getMatchedWorkspaceFiles() {
-    let fileHandler = new FileLoader(nova.workspace.path);
-    let files = fileHandler.mdFindExec();
-    
-    files.then((response, reject) => {
-        let filteredFiles = response.stdout;
-        
-        // console.log("BEFORE:", filteredFiles.length);
-        
-        filteredFiles = filteredFiles.filter(filePath => this.isAllowedName(filePath)); 
-        filteredFiles = filteredFiles.filter(filePath => this.isAllowedExtension(filePath));
+    return new Promise((resolve, reject) => {
+      let fileHandler = new FileLoader(nova.workspace.path);
+      
+      let files = fileHandler.mdFindExec();
+      
+      files.then((response, reject) => {
+          let filteredFiles = response.stdout;
+
+          filteredFiles = filteredFiles.filter(filePath => this.isAllowedName(filePath)); 
+          filteredFiles = filteredFiles.filter(filePath => this.isAllowedExtension(filePath));
+          filteredFiles = filteredFiles.filter(filePath => this.isAllowedPath(filePath));
           
-        filteredFiles = filteredFiles.filter(filePath => this.isAllowedPath(filePath)); // Need to get rid of it if = from beginning of path. Anything can be after it. eg excl. a/b path so excl. a/b/c.t, but allow b/a/b/c.t
-        
-        console.log("AFTER:", filteredFiles.length, filteredFiles);
-        // return filteredFiles;
-    });
-  }
-  
-  process() {
-    // console.clear();
-    // console.log("GLOBAL CONFIG EXAMPLE:",nova.config.get("todo.default-file"));
-    // console.log("WORKSPACE CONFIG EXAMPLE:",nova.workspace.config.get("todo.default-config.printWidth"));
-    
-    const GROUP_BY = "file"; // Could also be "tag".
-    
-    let rootItems = [];
-    
-    let workspaceFiles = this.getDirectoryFilePaths(nova.workspace.path);
-
-    // console.log("TOTAL NUMBER OF NON-EXCLUDED WORKSPACE FILES:", workspaceFiles.files.length);
-    // console.log("NON-EXCLUDED WORKSPACE FILES:");
-    
-    // workspaceFiles.files.forEach(file => {
-    //   console.log(file);
-    // });
-    
-    if (workspaceFiles.max_count !== true) {
-      let toDoListItems = this.findToDoItemsInFilePathArray(workspaceFiles.files);
-      // console.log("TOTAL NUMBER OF TODO & FIXME KEYWORDS FOUND:", toDoListItems.length);
-      
-      if (GROUP_BY == "file") {
-        var groupedtoDoListItems = this.groupListItemsByFile(toDoListItems);
-      } else {
-        // add ToDoListItem object called ToDo and type as ToDo
-        // For each ToDoListItem with type of ToDo add todos as child
-        
-        // add ToDoListItem object called FixMe and type as FixMe
-        // For each ToDoListItem object with type of FixMe add fixme as child
-      }
-      
-      groupedtoDoListItems.forEach((toDoListItem) => {
-        rootItems = [...rootItems, toDoListItem];
+          resolve(filteredFiles);
       });
-    } else {
-      let request = new NotificationRequest("Too Many Files");
-      
-      request.title = nova.localize("Too Many Workspace Files");
-      request.body = nova.localize("Monitoring the current workspace would cause this extension to become unresponsive. Please consider adding additional excluded paths in preferences or including a git ignore file.");
-      
-      request.actions = [nova.localize("OK")];
-      let promise = nova.notifications.add(request);
-    }
-
-    this.rootItems = rootItems; 
+    });
   }
   
   /*
@@ -85,7 +53,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   groupListItemsByFile(toDoListItems) {
     let groupedtoDoListItems = [];
     let distinctFilePaths    = this.getUniqueFiles(toDoListItems);
-    
     distinctFilePaths.forEach((distinctFilePath) => {
       groupedtoDoListItems.push(new ToDoListItem(nova.path.basename(distinctFilePath)));
       groupedtoDoListItems[groupedtoDoListItems.length - 1].filePath = distinctFilePath;
@@ -100,6 +67,17 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     });
     
     return groupedtoDoListItems;
+  }
+  
+  /*
+    Accepts an array of ToDoListItem objects and returns an array
+    of primitive file name values.
+  */
+  getUniqueFiles(toDoListItems) {
+    // 1) Map array to a new array containing only primitive values (don't want objects, just file names.
+    // 2) Then use the Set object to store a collection of unique values,
+    // 3) Which then uses the spread operator to construct a new array.
+    return [...new Set(toDoListItems.map(item => item.filePath))];
   }
   
   /*
@@ -193,65 +171,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     return a > b ? 1 : b > a ? -1 : 0;   
   }
   
-  /*
-    Accepts an array of ToDoListItem objects and returns an array
-    of primitive file name values.
-  */
-  // getUniqueFiles(toDoListItems) {
-    // 1) Map array to a new array containing only primitive values (don't want objects, just file names.
-    // 2) Then use the Set object to store a collection of unique values,
-    // 3) Which then uses the spread operator to construct a new array.
-    // return [...new Set(toDoListItems.map(item => item.filePath))];
-  // }
-  
-  /*
-    Returns an object with a max_count boolean, fileCount, and an array of all FILES
-    within a directory and its subdirectories, except for those excluded.
-  */
-//   getDirectoryFilePaths(directoryPath) {
-//     let directoryItems = nova.fs.listdir(directoryPath);
-//     // fileCount will be a count of all the files in the directory, not a count of those
-//     // with TODO keywords. This occurs in the findToDoItemsInFilePathArray method.
-//     let directory = {
-//       'max_count': false,
-//       'fileCount': 0,
-//       'files':[]
-//     };
-//     
-//     let i = 0;
-//     
-//     while (i < directoryItems.length && directory.max_count == false) {
-//       let currentEvaluationPath = nova.path.join(directoryPath, directoryItems[i]);
-// 
-//       if (this.isAllowedDirectoryItem(currentEvaluationPath)) {
-//         if (nova.fs.stat(currentEvaluationPath).isFile()) {
-//           directory.fileCount += 1;
-//           directory.files.push(currentEvaluationPath);
-//         } else if (nova.fs.stat(currentEvaluationPath).isDirectory())  {
-//           let subDirectories = this.getDirectoryFilePaths(currentEvaluationPath);
-//           
-//           if (subDirectories.files.length > 0) {
-//             directory.files = directory.files.concat(subDirectories.files);
-//             directory.fileCount += subDirectories.fileCount;
-//           }
-//         }
-//       }
-//       
-//       if (directory.fileCount > MAX_FILES - 1) {
-//         directory.max_count = true;
-//       }
-// 
-//       i++;
-//     }
-//     
-//     directory.files.sort(this.sortByFileName);
-//     
-//     return directory;
-//   }
-  
   getExcludedNames() {
     const DEFAULT_EXCLUDED_NAMES = [
-      "node_modules", "tmp", ".git", "vendor", ".nova", ".gitignore", "packs", "packs-test"
+      "node_modules", "tmp", ".git", "vendor", ".nova", ".gitignore"
     ];
     
     let workspaceIgnoreNames = nova.workspace.config.get("todo.workspace-ignore-names");

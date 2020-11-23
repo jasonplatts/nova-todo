@@ -17,15 +17,10 @@ module.exports.FileLoader = class FileLoader {
       };
       
       let keywordQuery = "kMDItemTextContent == " + this.keywords.join(" || kMDItemTextContent == ");
-      // let keywordQuery = "kMDItemTextContent == 'TODO'";
-      // let keywordQuery = ["kMDItemTextContent", "==" + this.keywords.join(" || kMDItemTextContent == ");
       
       let options = {
-        args: [keywordQuery, "-onlyin", "/Users/jasonplatts/Sites/FiopLabs/squid-dock"]
+        args: [keywordQuery, "-onlyin", this.rootPath]
       };
-      // this.rootPath = ;
-        // console.log("HERE", JSON.stringify(options));
-        // console.log("HERE", keywordQuery);
         
       let process = new Process("/usr/bin/mdfind", options);
       
