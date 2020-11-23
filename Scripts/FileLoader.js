@@ -29,7 +29,6 @@ module.exports.FileLoader = class FileLoader {
       });
       
       process.onStderr((l) => {
-        console.log("HERE", l);
         returnValue.stderr.push(l.trim());
       });
       
@@ -38,7 +37,6 @@ module.exports.FileLoader = class FileLoader {
         if (status === 0) {
           resolve(returnValue);
         } else {
-          console.log("HERE", l);
           reject(returnValue);
         }
       });

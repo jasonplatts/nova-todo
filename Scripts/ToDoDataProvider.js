@@ -1,8 +1,6 @@
 const { ToDoListItem } = require("./ToDoListItem.js");
 const { FileLoader } = require("./FileLoader.js");
 
-// const MAX_FILES = 300;
-
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
     this.rootItems = this.getRootItems();
