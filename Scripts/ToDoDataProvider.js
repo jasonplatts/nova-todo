@@ -3,7 +3,13 @@ const { FileLoader } = require("./FileLoader.js");
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
+    this.loadData();
+  }
+  
+  loadData() {
+    this.rootItems = [];
     this.rootItems = this.getRootItems();
+    return this.rootItems;
   }
   
   getRootItems() {
@@ -14,7 +20,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       fileSearchResponse.then((response, reject) => {
         
         let toDoListItems = this.findToDoItemsInFilePathArray(response);
-        
         let groupedtoDoListItems = this.groupListItemsByFile(toDoListItems);
         
         groupedtoDoListItems.forEach((toDoListItem) => {
@@ -330,6 +335,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   getTreeItem(toDoListItem) {
+    // console.log("GETTING TREE ITEM");
     let item = new TreeItem(toDoListItem.name);
     // If children.length > 0, then the item is a file name. Else, it's a TODO or FIXME item.
     if (toDoListItem.children.length > 0) {

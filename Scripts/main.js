@@ -3,13 +3,15 @@ const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 console.clear();
 
 var treeView = null;
-var dataProvider = null;
+var dataProvider = new ToDoDataProvider();  
 
 var activate = exports.activate = function() {
   // Do work when the extension is activated
-  
   // Create the TreeView 
-  loadData();
+  // treeView = new TreeView("todo", {
+  //   dataProvider: dataProvider
+  // });
+  setTreeView();
   
   treeView.onDidChangeSelection((selection) => {
     // console.log("New selection: " + selection.map((e) => e.name));
@@ -86,20 +88,73 @@ nova.commands.register("todo.doubleClick", () => {
 });
 
 nova.commands.register("todo.refresh", () => {
-  loadData();
+  reloadData();
 });
 
-nova.config.observe("todo.global-ignore-names", loadData);
-nova.config.observe("todo.global-ignore-extensions", loadData);
-nova.workspace.config.observe("todo.workspace-ignore-paths", loadData);
-nova.workspace.config.observe("todo.workspace-ignore-names", loadData);
-nova.workspace.config.observe("todo.workspace-ignore-extensions", loadData);
-nova.fs.watch(null, loadData);
+nova.config.observe("todo.global-ignore-names", reloadData);
+nova.config.observe("todo.global-ignore-extensions", reloadData);
+nova.workspace.config.observe("todo.workspace-ignore-paths", reloadData);
+nova.workspace.config.observe("todo.workspace-ignore-names", reloadData);
+nova.workspace.config.observe("todo.workspace-ignore-extensions", reloadData);
+nova.fs.watch(null, reloadData);
 
-function loadData() {
-  dataProvider = new ToDoDataProvider();
+function change(path) {
+  console.clear();
+  // // console.log("ROOT", dataProvider.rootItems);
+  // // console.log(path);
+  // // console.log(dataProvider.loadData());
+  // console.log("CHANGE");
+  // setTimeout(() => {
+  //   dataProvider = new ToDoDataProvider();
+  //   
+  //   dataProvider.rootItems.then(() => {
+  //     console.log("LOADED");
+  //     setTreeView();
+  //     treeView.reload();
+  //   })
+  //   // let updateResponse = dataProvider.loadData();
+  //     console.log("REALOADING");
+  //     // treeView.dispose()
+  //     // setTreeView();
+  //     
+  //   // 
+  //   // updateResponse.then((response) => {
+  //   // });
+  // }, 5000);
   
-  treeView = new TreeView("todo", {
-    dataProvider: dataProvider
-  });
+  // setTimeout(() => {
+  //   console.log("HERE NOW");
+  //   treeView.reload();
+  // }, 1000);
+  
+  // let file = nova.fs.open(path);
+  // let fileEvaluation = dataProvider.findKeywordsInFile(file);
+  // if (fileEvaluation.length > 0) {
+  //   console.log("THERE IS A KEYWORD FOUND");
+  //   // Remove any any ref. to that file and add the new parent element.
+  //   // console.log(t)
+  //   // console.log("ROOT ITEMS", dataProvider.rootItems);
+  //   let results = dataProvider.getRootItems();
+  //   
+  //   results.then((items) => {
+  //     console.log("DONE");
+  //     console.log("ITEMS", JSON.stringify(items));
+  //     // treeView.reload()
+  //   });
+  //   // console.log("TREE VIEW", JSON.stringify(treeView));
+  // } else {
+  //  console.log("NO KEYWORDS FOUND");
+  //  // Remove any ref. to that file in RootItems array by removing parent element.
+  // }
+  // loadData();
+}
+
+function reloadData() {
+  console.clear();
+  if (treeView !== null) {
+    // treeView.dispose();
+    // setTreeView();
+    dataProvider.loadData();
+    treeView.reload();
+  }
 }
