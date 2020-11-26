@@ -35,7 +35,7 @@ var activate = exports.activate = function() {
 
 function setTreeView() {
   treeView = new TreeView("todo", {
-    dataProvider: new ToDoDataProvider()
+    dataProvider: dataProvider
   });
 }
 
@@ -150,7 +150,8 @@ function change(path) {
 }
 
 function reloadData() {
-  console.clear();
+  // console.clear();
+  console.log("RELOAD DATA");
   if (treeView !== null) {
     // treeView.dispose();
     // setTreeView();
