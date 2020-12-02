@@ -5,37 +5,19 @@ const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 // TODO: Issue#6 - Add check for workspace. Process open files, if no workspace.
 console.clear();
 var treeView = null;
-var dataProvider = new ToDoDataProvider();  
+var dataProvider = null;
 
 var activate = exports.activate = function() {
   // Do work when the extension is activated
-  // Create the TreeView 
-  setTreeView();
+  dataProvider = new ToDoDataProvider();
   
-  treeView.onDidChangeSelection((selection) => {
-    // console.log("New selection: " + selection.map((e) => e.name));
-  });
-  
-  treeView.onDidExpandElement((element) => {
-    // console.log("Expanded: " + element.name);
-  });
-  
-  treeView.onDidCollapseElement((element) => {
-    // console.log("Collapsed: " + element.name);
-  });
-  
-  treeView.onDidChangeVisibility(() => {
-    // console.log("Visibility Changed");
+  // Create the TreeView
+  treeView = new TreeView("todo", {
+    dataProvider: dataProvider
   });
   
   // TreeView implements the Disposable interface
   nova.subscriptions.add(treeView);
-}
-
-function setTreeView() {
-  treeView = new TreeView("todo", {
-    dataProvider: dataProvider
-  });
 }
 
 exports.deactivate = function() {
@@ -89,10 +71,12 @@ nova.commands.register("todo.refresh", () => {
   reloadData();
 });
 
-nova.config.observe("todo.global-ignore-names", reloadData);
-nova.config.observe("todo.global-ignore-extensions", reloadData);
-// It is not necessary to observe the workspace config because the file system watch detects these changes.
-nova.fs.watch(null, reloadData);
+if (nova.workspace.path !== undefined && nova.workspace.path !== null) {
+  nova.config.observe("todo.global-ignore-names", reloadData);
+  nova.config.observe("todo.global-ignore-extensions", reloadData);
+  // It is not necessary to observe the workspace config because the file system watch detects these changes.
+  nova.fs.watch(null, reloadData);
+}
 
 function reloadData() {
   if (treeView !== null) {

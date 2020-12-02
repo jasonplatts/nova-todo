@@ -8,11 +8,42 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   
   loadData() {
     this.rootItems = [];
-    this.rootItems = this.getRootItems();
+    
+    if (nova.workspace.path == undefined || nova.workspace.path == null) {
+      this.rootItems = this.getOpenDocumentsRootItems();
+    } else {
+      this.rootItems = this.getWorkspaceRootItems();
+    }
+    
     return this.rootItems;
   }
   
-  getRootItems() {
+  getOpenDocumentsRootItems() {
+    return new Promise((resolve, reject) => {
+      let rootItems = [];
+      
+      let openDocuments = nova.workspace.textDocuments.filter(doc => {
+        if (doc.path !== undefined || doc.path !== null) {
+          return doc.path;
+        }
+      });
+      
+      openDocuments = openDocuments.map(doc => {
+        return (doc.path).toString();
+      });
+      
+      let toDoListItems = this.findToDoItemsInFilePathArray(openDocuments);
+      let groupedToDoListItems = this.groupListItemsByFile(toDoListItems);
+      
+      groupedToDoListItems.forEach((toDoListItem) => {
+        rootItems = [...rootItems, toDoListItem];
+      });
+      
+      resolve(rootItems);
+    });
+  }
+  
+  getWorkspaceRootItems() {
     return new Promise((resolve, reject) => {
       let rootItems = [];
       let fileSearchResponse = this.getMatchedWorkspaceFiles();
@@ -20,9 +51,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       fileSearchResponse.then((response, reject) => {
         
         let toDoListItems = this.findToDoItemsInFilePathArray(response);
-        let groupedtoDoListItems = this.groupListItemsByFile(toDoListItems);
+        let groupedToDoListItems = this.groupListItemsByFile(toDoListItems);
         
-        groupedtoDoListItems.forEach((toDoListItem) => {
+        groupedToDoListItems.forEach((toDoListItem) => {
           rootItems = [...rootItems, toDoListItem];
         });
         
@@ -340,9 +371,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   getTreeItem(toDoListItem) {
-    // console.log("GETTING TREE ITEM");
     let item = new TreeItem(toDoListItem.name);
-    // If children.length > 0, then the item is a file name. Else, it's a TODO or FIXME item.
+    // If children.length > 0, then the item is a file name. Else, it's a tag item.
     if (toDoListItem.children.length > 0) {
       item.collapsibleState = TreeItemCollapsibleState.Expanded;
       item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
