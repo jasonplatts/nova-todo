@@ -39,7 +39,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       
       let fileHandler = new FileLoader(nova.workspace.path);
       
-      let files = fileHandler.mdFindExec();
+      let files = fileHandler.egrepExec();
       
       files.then((response, reject) => {
         let filteredFiles = response.stdout;

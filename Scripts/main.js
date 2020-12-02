@@ -1,6 +1,7 @@
 const { ToDoDataProvider } = require("./ToDoDataProvider.js");
-
-console.clear();
+// TODO: Docs
+// TODO: Icon revision
+// TODO: No Todo Items
 
 var treeView = null;
 var dataProvider = new ToDoDataProvider();  
@@ -8,9 +9,6 @@ var dataProvider = new ToDoDataProvider();
 var activate = exports.activate = function() {
   // Do work when the extension is activated
   // Create the TreeView 
-  // treeView = new TreeView("todo", {
-  //   dataProvider: dataProvider
-  // });
   setTreeView();
   
   treeView.onDidChangeSelection((selection) => {
@@ -98,63 +96,8 @@ nova.workspace.config.observe("todo.workspace-ignore-names", reloadData);
 nova.workspace.config.observe("todo.workspace-ignore-extensions", reloadData);
 nova.fs.watch(null, reloadData);
 
-function change(path) {
-  console.clear();
-  // // console.log("ROOT", dataProvider.rootItems);
-  // // console.log(path);
-  // // console.log(dataProvider.loadData());
-  // console.log("CHANGE");
-  // setTimeout(() => {
-  //   dataProvider = new ToDoDataProvider();
-  //   
-  //   dataProvider.rootItems.then(() => {
-  //     console.log("LOADED");
-  //     setTreeView();
-  //     treeView.reload();
-  //   })
-  //   // let updateResponse = dataProvider.loadData();
-  //     console.log("REALOADING");
-  //     // treeView.dispose()
-  //     // setTreeView();
-  //     
-  //   // 
-  //   // updateResponse.then((response) => {
-  //   // });
-  // }, 5000);
-  
-  // setTimeout(() => {
-  //   console.log("HERE NOW");
-  //   treeView.reload();
-  // }, 1000);
-  
-  // let file = nova.fs.open(path);
-  // let fileEvaluation = dataProvider.findKeywordsInFile(file);
-  // if (fileEvaluation.length > 0) {
-  //   console.log("THERE IS A KEYWORD FOUND");
-  //   // Remove any any ref. to that file and add the new parent element.
-  //   // console.log(t)
-  //   // console.log("ROOT ITEMS", dataProvider.rootItems);
-  //   let results = dataProvider.getRootItems();
-  //   
-  //   results.then((items) => {
-  //     console.log("DONE");
-  //     console.log("ITEMS", JSON.stringify(items));
-  //     // treeView.reload()
-  //   });
-  //   // console.log("TREE VIEW", JSON.stringify(treeView));
-  // } else {
-  //  console.log("NO KEYWORDS FOUND");
-  //  // Remove any ref. to that file in RootItems array by removing parent element.
-  // }
-  // loadData();
-}
-
 function reloadData() {
-  // console.clear();
-  console.log("RELOAD DATA");
   if (treeView !== null) {
-    // treeView.dispose();
-    // setTreeView();
     dataProvider.loadData();
     treeView.reload();
   }
