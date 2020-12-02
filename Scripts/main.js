@@ -2,7 +2,6 @@ const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 
 // TODO: Icon revision
 // TODO: No Todo Items message
-// TODO: Issue#6 - Add check for workspace. Process open files, if no workspace.
 console.clear();
 var treeView = null;
 var dataProvider = null;

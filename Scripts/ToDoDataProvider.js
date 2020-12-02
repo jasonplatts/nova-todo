@@ -1,26 +1,36 @@
 const { ToDoListItem } = require("./ToDoListItem.js");
 const { FileLoader } = require("./FileLoader.js");
+const { Configuration } = require("./Configuration.js");
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
-  constructor() {
+  constructor() { 
+    this.loadData();
+  }
+  
+  loadData() {
+    this.configuration = new Configuration;
+    this.rootItems = [];
     this.KEYWORDS = [
       "TODO",
       "FIXME"
     ];
     
-    this.loadData();
-  }
-  
-  loadData() {
-    this.rootItems = [];
-    
-    if (nova.workspace.path == undefined || nova.workspace.path == null) {
-      this.rootItems = this.getOpenDocumentsRootItems();
-    } else {
+    if (this.isWorkspace()) {
+      this.KEYWORDS = this.KEYWORDS.concat(this.configuration.getKeywords())
       this.rootItems = this.getWorkspaceRootItems();
+    } else {
+      this.rootItems = this.getOpenDocumentsRootItems();
     }
     
     return this.rootItems;
+  }
+  
+  isWorkspace() {
+    if (nova.workspace.path == undefined || nova.workspace.path == null) {
+      return false;
+    } else {
+      return true;
+    }
   }
   
   getOpenDocumentsRootItems() {
