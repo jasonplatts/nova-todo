@@ -1,8 +1,9 @@
 const { ToDoDataProvider } = require("./ToDoDataProvider.js");
-// TODO: Docs
-// TODO: Icon revision
-// TODO: No Todo Items
 
+// TODO: Icon revision
+// TODO: No Todo Items message
+// TODO: Issue#6 - Add check for workspace. Process open files, if no workspace.
+console.clear();
 var treeView = null;
 var dataProvider = new ToDoDataProvider();  
 
@@ -76,7 +77,6 @@ function addWorkspaceIgnorePath(path) {
 }
 
 nova.commands.register("todo.doubleClick", () => {
-  // Invoked when an item is double-clicked
   let selection = treeView.selection;
   let fileStatus = nova.workspace.openFile(selection.map((e) => e.filePath));
   
@@ -91,9 +91,7 @@ nova.commands.register("todo.refresh", () => {
 
 nova.config.observe("todo.global-ignore-names", reloadData);
 nova.config.observe("todo.global-ignore-extensions", reloadData);
-nova.workspace.config.observe("todo.workspace-ignore-paths", reloadData);
-nova.workspace.config.observe("todo.workspace-ignore-names", reloadData);
-nova.workspace.config.observe("todo.workspace-ignore-extensions", reloadData);
+// It is not necessary to observe the workspace config because the file system watch detects these changes.
 nova.fs.watch(null, reloadData);
 
 function reloadData() {
