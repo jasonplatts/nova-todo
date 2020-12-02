@@ -64,7 +64,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       let fileSearchResponse = this.getMatchedWorkspaceFiles();
       
       fileSearchResponse.then((response, reject) => {
-        
         let toDoListItems = this.findToDoItemsInFilePathArray(response);
         let groupedToDoListItems = this.groupListItemsByFile(toDoListItems);
         
@@ -164,6 +163,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     
     let fileMatches = [];
     let fileLineStartPosition = 0;
+    
+    let replacements = [...this.KEYWORDS.map(elem => elem + ":"), ...this.KEYWORDS];
+    let regex = new RegExp(replacements.join("|"), "g");
 
     for(let i = 0; i < contents.length; i++) {
       let lineMatches = this.findKeywordsInLine(contents[i]);
@@ -174,7 +176,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
         toDoListItem.line     = i + 1;
         toDoListItem.column   = match.column;
         toDoListItem.position = fileLineStartPosition + match.column;
-        match.comment         = match.comment.replace(/(TODO:|FIXME:|TODO|FIXME)/, "");
+        match.comment         = match.comment.replace(regex, "");
         toDoListItem.comment  = match.comment.trim();
         
         fileMatches = fileMatches.concat(toDoListItem);
