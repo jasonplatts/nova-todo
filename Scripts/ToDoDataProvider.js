@@ -3,6 +3,11 @@ const { FileLoader } = require("./FileLoader.js");
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() {
+    this.KEYWORDS = [
+      "TODO",
+      "FIXME"
+    ];
+    
     this.loadData();
   }
   
@@ -64,16 +69,11 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   
   getMatchedWorkspaceFiles() {
     return new Promise((resolve, reject) => {
-      let keywords = [
-        "FIXME",
-        "TODO"
-      ];
-      
       let excludedPaths      = this.getExcludedPaths();
       let excludedExtensions = this.getExcludedExtensions();
       let excludedNames      = this.getExcludedNames();
       
-      let fileHandler = new FileLoader(nova.workspace.path, keywords);
+      let fileHandler = new FileLoader(nova.workspace.path, this.KEYWORDS);
       
       let files = fileHandler.egrepExec();
       
@@ -123,9 +123,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   /*
-    Searches an array of files for "TODO" or "FIXME"
-    keywords and returns an array of ToDoListItem objects
-    for all specified files. Accepts an array of file path string.
+    Searches an array of files for keywords and returns an array
+    of ToDoListItem objects for all specified files. Accepts an 
+    array of file path string.
   */
   findToDoItemsInFilePathArray(filePathArray) {
     let toDoListItemArray = [];
@@ -145,8 +145,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   /*
-    Searches a file line by line for "TODO" or "FIXME"
-    keywords and returns an array of ToDoListItem objects
+    Searches a file line by line for keywords
+    and returns an array of ToDoListItem objects
     for a specific file. Accepts a Nova file object.
   */
   findKeywordsInFile(file) {
@@ -177,17 +177,15 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   /*
-    Searches a line of code for "TODO" or "FIXME" keywords
+    Searches a line of code for keywords
     and returns an array of objects containing the keyword,
     column number of the match as well as the text
     (most likely a comment) following the keyword.
   */
   findKeywordsInLine(line) {
-    const KEYWORDS = ["TODO", "FIXME"];
-    
     let lineMatches = [];
     
-    KEYWORDS.forEach((keyword) => {
+    this.KEYWORDS.forEach((keyword) => {
       let lineMatchIndex = line.indexOf(keyword);
       
       while(lineMatchIndex >= 0) {
