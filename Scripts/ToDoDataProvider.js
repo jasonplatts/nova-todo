@@ -33,11 +33,16 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   
   getMatchedWorkspaceFiles() {
     return new Promise((resolve, reject) => {
+      let keywords = [
+        "FIXME",
+        "TODO"
+      ];
+      
       let excludedPaths      = this.getExcludedPaths();
       let excludedExtensions = this.getExcludedExtensions();
       let excludedNames      = this.getExcludedNames();
       
-      let fileHandler = new FileLoader(nova.workspace.path);
+      let fileHandler = new FileLoader(nova.workspace.path, keywords);
       
       let files = fileHandler.egrepExec();
       

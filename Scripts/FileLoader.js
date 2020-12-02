@@ -1,7 +1,7 @@
 module.exports.FileLoader = class FileLoader {
-  constructor(rootPath) {
+  constructor(rootPath, keywords) {
     this.setRootPath(rootPath);
-    this.keywords = ["FIXME", "TODO"];
+    this.keywords = keywords;
   }
   
   setRootPath(path) {
