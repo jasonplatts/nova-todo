@@ -6,6 +6,7 @@ const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 console.clear();
 var treeView = null;
 var dataProvider = null;
+var refreshTimer = null;
 
 var activate = exports.activate = function() {
   // Do work when the extension is activated
@@ -24,6 +25,9 @@ exports.deactivate = function() {
   // Clean up state before the extension is deactivated
   treeView = null;
   dataProvider = null;
+  if (refreshTimer !== null) {
+    clearInterval(refreshTimer);
+  }
 }
 
 nova.commands.register("todo.addPath", () => {
@@ -76,6 +80,9 @@ if (nova.workspace.path !== undefined && nova.workspace.path !== null) {
   nova.config.observe("todo.global-ignore-extensions", reloadData);
   // It is not necessary to observe the workspace config because the file system watch detects these changes.
   nova.fs.watch(null, reloadData);
+} else {
+  // Must use polling because nova.fs.watch requires a current workspace.
+  refreshTimer = setInterval(reloadData, 15000);
 }
 
 function reloadData() {
