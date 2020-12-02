@@ -1,3 +1,7 @@
+## Version 0.4
+
+* Updated the file searching method to eliminate the number of files limitation.
+
 ## Version 0.3
 
 * Fixed issue preventing tag elements from loading in the tree view.
