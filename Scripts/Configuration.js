@@ -6,7 +6,7 @@ module.exports.Configuration = class Configuration {
     and the tags selected by the user in the workspace preferences.
   */
   getKeywords() {
-    let keywords = ["todo", "fixme"];
+    const DEFAULT_KEYWORDS = ["todo", "fixme"];
     let preferenceKeywords = [];
     
     //  A workspace must exist in order to retrieve saved preferences.
@@ -22,11 +22,11 @@ module.exports.Configuration = class Configuration {
       });
     }
     
-    keywords = keywords.concat(preferenceKeywords);
+    let keywords = [...DEFAULT_KEYWORDS, ...preferenceKeywords];
     keywords = keywords.map(elem => { return elem.toUpperCase() });
     
     return keywords;
- }
+  }
  
   /*
     Returns array of excluded file and directory names, including default exclusions
