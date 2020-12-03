@@ -290,6 +290,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     }
   }
   
+  /*
+    Returns the children tree item(s).
+  */
   getChildren(toDoListItem) {
     if (!toDoListItem) {
       return this.rootItems;
@@ -299,10 +302,16 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     }
   }
   
+  /*
+    Returns the parent tree item.
+  */
   getParent(toDoListItem) {
     return toDoListItem.parent;
   }
   
+  /*
+    Returns a specific tree item.
+  */
   getTreeItem(toDoListItem) {
     let item = new TreeItem(toDoListItem.name);
     // If children.length > 0, then the item is a file name. Else, it's a tag item.
