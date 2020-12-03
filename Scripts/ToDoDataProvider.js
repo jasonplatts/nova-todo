@@ -21,7 +21,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     } else {
       this.rootItems = this.getOpenDocumentsRootItems();
     }
-    
+
     return this.rootItems;
   }
   
@@ -132,12 +132,26 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   /*
+    Sorts an array of file paths by file name alphabetically.
+    Called in conjunction with the JS sort function.
+    Eg: filePathArray.sort(this.sortByFileName);
+  */
+  sortByFileName(a, b) {
+    a = nova.path.basename(a).toLowerCase();
+    b = nova.path.basename(b).toLowerCase();
+    
+    return a > b ? 1 : b > a ? -1 : 0;   
+  }
+  
+  /*
     Searches an array of files for keywords and returns an array
     of ToDoListItem objects for all specified files. Accepts an 
     array of file path string.
   */
   findToDoItemsInFilePathArray(filePathArray) {
     let toDoListItemArray = [];
+
+    filePathArray.sort(this.sortByFileName);
     
     filePathArray.forEach((filePath) => {
       let file = nova.fs.open(filePath);
@@ -214,13 +228,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     });
     
     return lineMatches;
-  }
-  
-  sortByFileName(a, b) {
-    a = nova.path.basename(a).toLowerCase();
-    b = nova.path.basename(b).toLowerCase();
-    
-    return a > b ? 1 : b > a ? -1 : 0;   
   }
   
   getExcludedNames() {
