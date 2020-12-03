@@ -36,6 +36,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   */
   getOpenDocumentsRootItems() {
     return new Promise((resolve, reject) => {
+      let excludedExtensions = this.configuration.getExcludedExtensions();
+      let excludedNames = this.configuration.getExcludedNames();
       let rootItems = [];
       
       let openDocuments = nova.workspace.textDocuments.filter(doc => {
@@ -47,6 +49,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       openDocuments = openDocuments.map(doc => {
         return (doc.path).toString();
       });
+      openDocuments = openDocuments.filter(filePath => this.isAllowedName(filePath, excludedNames)); 
+      openDocuments = openDocuments.filter(filePath => this.isAllowedExtension(filePath, excludedExtensions));
       
       let toDoListItems = this.findToDoItemsInFilePathArray(openDocuments);
       let groupedToDoListItems = this.groupListItemsByFile(toDoListItems);
