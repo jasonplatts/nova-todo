@@ -1,8 +1,5 @@
 const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 
-// TODO: Icon revision
-// TODO: No Todo Items message
-console.clear();
 var treeView = null;
 var dataProvider = null;
 var refreshTimer = null;

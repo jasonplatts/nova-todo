@@ -1,3 +1,6 @@
+/*
+ Module provides an interface to macOS command line functionality.
+*/
 module.exports.FileLoader = class FileLoader {
   constructor(rootPath, keywords) {
     this.setRootPath(rootPath);
