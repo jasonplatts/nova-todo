@@ -1,6 +1,6 @@
 # TODO Extension for Panic's Nova Code Editor
 
-<img src="https://user-images.githubusercontent.com/48892071/98032424-ffb79300-1de1-11eb-8d3c-b016df4ffde6.png" width="200" alt="TODO Extension Logo">
+<img src="https://user-images.githubusercontent.com/48892071/101074075-54c7ff80-356e-11eb-86d5-df8cd793ecce.png" width="200" alt="TODO Extension Logo">
 
 Displays tags, such as TODO and FIXME, within a sidebar tree view in Panic's macOS code editor, Nova.
 
@@ -18,12 +18,14 @@ For global ignore settings, go to the extension within the extension library and
 
 ## Known Issues
 
-* Updates to preferences are not always saved. **As a temporary workaround, click into another text box in the preferences window to trigger the save event, prior to clicking "Done". This forces the input to lose focus and save.**
+* Updates to preferences are not always saved. **As a temporary workaround, click into another text box in the preferences window to trigger the save event, prior to clicking "Done". This forces the input to lose focus and save.** This issue should be fixed in a future Nova update.
 * The sidebar currently displays tags that occur anywhere within a file. Future releases will search only within comments.
 
-## Future Features
+## Planned Future Features
 
 * Tag highlighting within the code.
+* Tag notification in the sidebar icon.
+* Filtering and sorting of tag items.
 
 ## Report a Bug or Feature Request
 

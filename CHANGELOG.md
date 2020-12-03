@@ -1,3 +1,9 @@
+## Version 1.0
+
+* Changed message displayed in the sidebar when no tags are found.
+* Added global preference recognition in non-workspace environments.
+* Polished extension icons.
+
 ## Version 0.5
 
 * Added the ability to search for additional keyword tags, such as ERROR, INFO, and NOTE, in preferences (Issue #4).
