@@ -1,6 +1,7 @@
 const { ToDoListItem } = require("./ToDoListItem.js");
 const { FileLoader } = require("./FileLoader.js");
 const { Configuration } = require("./Configuration.js");
+const FUNCTIONS = require("./functions.js");
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
   constructor() { 
@@ -13,34 +14,18 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     activation and on reload.
   */
   loadData() {
-    this.configuration = new Configuration;
     this.rootItems = [];
-    this.KEYWORDS = [
-      "TODO",
-      "FIXME"
-    ];
     
-    if (this.isWorkspace()) {
-      this.KEYWORDS = this.KEYWORDS.concat(this.configuration.getKeywords())
+    this.configuration = new Configuration;
+    this.KEYWORDS = this.configuration.getKeywords();
+    
+    if (FUNCTIONS.isWorkspace()) {
       this.rootItems = this.getWorkspaceRootItems();
     } else {
       this.rootItems = this.getOpenDocumentsRootItems();
     }
 
     return this.rootItems;
-  }
-  
-  /*
-    Returns a boolean representing whether or not the current
-    environment is a workspace or Nova window without a 
-    workspace.
-  */
-  isWorkspace() {
-    if (nova.workspace.path == undefined || nova.workspace.path == null) {
-      return false;
-    } else {
-      return true;
-    }
   }
   
   /*
@@ -104,9 +89,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   */
   getMatchedWorkspaceFiles() {
     return new Promise((resolve, reject) => {
-      let excludedPaths      = this.getExcludedPaths();
-      let excludedExtensions = this.getExcludedExtensions();
-      let excludedNames      = this.getExcludedNames();
+      let excludedPaths      = this.configuration.getExcludedPaths();
+      let excludedExtensions = this.configuration.getExcludedExtensions();
+      let excludedNames      = this.configuration.getExcludedNames();
       
       let fileHandler = new FileLoader(nova.workspace.path, this.KEYWORDS);
       
@@ -158,18 +143,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   /*
-    Sorts an array of file paths by file name alphabetically.
-    Called in conjunction with the JS sort function.
-    Eg: filePathArray.sort(this.sortByFileName);
-  */
-  sortByFileName(a, b) {
-    a = nova.path.basename(a).toLowerCase();
-    b = nova.path.basename(b).toLowerCase();
-    
-    return a > b ? 1 : b > a ? -1 : 0;   
-  }
-  
-  /*
     Searches an array of files for keywords and returns an array
     of ToDoListItem objects for all specified files. Accepts an 
     array of file path string.
@@ -177,7 +150,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   findToDoItemsInFilePathArray(filePathArray) {
     let toDoListItemArray = [];
 
-    filePathArray.sort(this.sortByFileName);
+    filePathArray.sort(FUNCTIONS.sortByFileName);
     
     filePathArray.forEach((filePath) => {
       let file = nova.fs.open(filePath);
@@ -256,34 +229,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     return lineMatches;
   }
   
-  getExcludedNames() {
-    const DEFAULT_EXCLUDED_NAMES = [
-      "node_modules", "tmp", ".git", "vendor", ".nova", ".gitignore"
-    ];
-    
-    let workspaceIgnoreNames = nova.workspace.config.get("todo.workspace-ignore-names");
-    
-    if (workspaceIgnoreNames !== null) {
-      workspaceIgnoreNames = workspaceIgnoreNames.split(",");
-    } else {
-      workspaceIgnoreNames = [];
-    }
-    
-    let globalIgnoreNames = nova.config.get("todo.global-ignore-names");
-    
-    if (globalIgnoreNames !== null) {
-      globalIgnoreNames = globalIgnoreNames.split(",");
-    } else {
-      globalIgnoreNames = [];
-    }
-    
-    let excludedNames = [...DEFAULT_EXCLUDED_NAMES, ...workspaceIgnoreNames, ...globalIgnoreNames];
-    
-    excludedNames = this.cleanArray(excludedNames);
-    
-    return excludedNames;
-  }
-  
   /*
     Used to exclude specific file and directory names.
   */
@@ -326,7 +271,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     Used to exclude specific file and directory paths.
   */
   isAllowedPath(path, excludedPaths) {
-    excludedPaths = this.cleanArray(excludedPaths);
+    excludedPaths = excludedPaths;
     let pathFound = false;
     let excludedPathsIndex = 0;
     
@@ -343,61 +288,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     } else {
       return true;
     }
-  }
-  
-  getExcludedPaths() {
-    let workspaceIgnorePaths = nova.workspace.config.get("todo.workspace-ignore-paths");
-    
-    if (workspaceIgnorePaths !== null) {
-      workspaceIgnorePaths = workspaceIgnorePaths.split(",");
-      
-      let normalizedPaths = workspaceIgnorePaths.map(function (path) {
-        return nova.path.normalize(path);
-      });
-      
-      return normalizedPaths;
-    } else {
-      return [];
-    }
-  }
-  
-  getExcludedExtensions() {
-    const DEFAULT_EXCLUDED_EXTENSIONS = [".json", ".map"];
-    
-    let workspaceIgnoreExtensions = nova.workspace.config.get("todo.workspace-ignore-extensions");
-    
-    if (workspaceIgnoreExtensions !== null) {
-      workspaceIgnoreExtensions = workspaceIgnoreExtensions.split(",");
-    } else {
-      workspaceIgnoreExtensions = [];
-    }
-    
-    let globalIgnoreExtensions = nova.config.get("todo.global-ignore-extensions");
-    
-    if (globalIgnoreExtensions !== null) {
-      globalIgnoreExtensions = globalIgnoreExtensions.split(",");
-    } else {
-      globalIgnoreExtensions = [];
-    }
-    
-    let excludedExtensions = [...DEFAULT_EXCLUDED_EXTENSIONS, ...workspaceIgnoreExtensions,
-      ...globalIgnoreExtensions];
-    
-    excludedExtensions = this.cleanArray(excludedExtensions);
-    
-    return excludedExtensions;
-  }
-  
-  cleanArray(array) {
-    array = array.filter(function(el) {
-      if (el !== null && el !== "" && el!== undefined) {
-        return el;
-      }
-    });
-    
-    array = array.map(element => element.trim());
-    
-    return array;
   }
   
   getChildren(toDoListItem) {
