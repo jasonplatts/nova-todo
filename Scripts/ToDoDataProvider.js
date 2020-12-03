@@ -325,12 +325,25 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       item.contextValue     = "file";
       item.tooltip          = toDoListItem.filePath;
     } else {
-      item.image            = toDoListItem.name.toLowerCase();
+      item.image            = this.getIconImage(toDoListItem);
       item.command          = "todo.doubleClick";
       item.contextValue     = "info";
       item.descriptiveText  = `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`;
     }
     
     return item;
+  }
+  
+  /*
+    Returns an appropriate icon name for a non-file tree item.
+  */
+  getIconImage(toDoListItem) {
+    let itemType = toDoListItem.name.toLowerCase();
+    
+    if (itemType == 'todo' || itemType == 'fixme') {
+      return toDoListItem.name.toLowerCase();
+    } else {
+      return "user";
+    }
   }
 }
