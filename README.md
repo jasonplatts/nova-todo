@@ -11,7 +11,7 @@ Enable the extension in the extension library within Nova.
 ## Configuration
 
 ### Workspace Configuration
-To ignore files or directories for a specific workspace, go to the project settings.
+To ignore files or directories or include additional tags for a specific workspace, go to the project settings.
 
 ### Global Configuration
 For global ignore settings, go to the extension within the extension library and click on "Preferences".
