@@ -28,33 +28,31 @@ module.exports.Configuration = class Configuration {
     return keywords;
  }
  
- getExcludedNames() {
-   const DEFAULT_EXCLUDED_NAMES = [
-     "node_modules", "tmp", ".git", "vendor", ".nova", ".gitignore"
-   ];
-   
-   let workspaceIgnoreNames = nova.workspace.config.get("todo.workspace-ignore-names");
-   
-   if (workspaceIgnoreNames !== null) {
-     workspaceIgnoreNames = workspaceIgnoreNames.split(",");
-   } else {
-     workspaceIgnoreNames = [];
-   }
-   
-   let globalIgnoreNames = nova.config.get("todo.global-ignore-names");
-   
-   if (globalIgnoreNames !== null) {
-     globalIgnoreNames = globalIgnoreNames.split(",");
-   } else {
-     globalIgnoreNames = [];
-   }
-   
-   let excludedNames = [...DEFAULT_EXCLUDED_NAMES, ...workspaceIgnoreNames, ...globalIgnoreNames];
-   
-   excludedNames = this.cleanArray(excludedNames);
-   
-   return excludedNames;
- }
+  /*
+    Returns array of excluded file and directory names, including default exclusions
+    and global and workspace user preference exclusions.
+  */
+  getExcludedNames() {
+    const DEFAULT_EXCLUDED_NAMES = [
+      "node_modules", "tmp", ".git", "vendor", ".nova", ".gitignore"
+    ];
+    
+    let workspaceIgnoreNames = [];
+    let globalIgnoreNames = [];
+    
+    if (FUNCTIONS.isWorkspace()) {
+      workspaceIgnoreNames = nova.workspace.config.get("todo.workspace-ignore-names");
+      workspaceIgnoreNames = workspaceIgnoreNames.split(",");
+    }
+    
+    globalIgnoreNames = nova.config.get("todo.global-ignore-names");
+    globalIgnoreNames = globalIgnoreNames.split(",");
+    
+    let excludedNames = [...DEFAULT_EXCLUDED_NAMES, ...workspaceIgnoreNames, ...globalIgnoreNames];
+    excludedNames = this.cleanArray(excludedNames);
+    
+    return excludedNames;
+  }
  
  getExcludedPaths() {
    let workspaceIgnorePaths = nova.workspace.config.get("todo.workspace-ignore-paths");
@@ -103,6 +101,8 @@ module.exports.Configuration = class Configuration {
  
  cleanArray(array) {
    array = array.filter(function(el) {
+     el = el.trim();
+     
      if (el !== null && el !== "" && el!== undefined) {
        return el;
      }
