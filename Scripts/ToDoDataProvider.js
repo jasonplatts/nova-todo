@@ -7,6 +7,11 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     this.loadData();
   }
   
+  /*
+    This is the entry point for the data provider class.
+    It serves to load tree items on initial extension
+    activation and on reload.
+  */
   loadData() {
     this.configuration = new Configuration;
     this.rootItems = [];
@@ -25,6 +30,11 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     return this.rootItems;
   }
   
+  /*
+    Returns a boolean representing whether or not the current
+    environment is a workspace or Nova window without a 
+    workspace.
+  */
   isWorkspace() {
     if (nova.workspace.path == undefined || nova.workspace.path == null) {
       return false;
@@ -33,6 +43,12 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     }
   }
   
+  /*
+    Returns a promise to generates tree view items
+    based on files open in the current Nova window.
+    This is needed when the user does not have a
+    current workspace open.
+  */
   getOpenDocumentsRootItems() {
     return new Promise((resolve, reject) => {
       let rootItems = [];
@@ -58,6 +74,10 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     });
   }
   
+  /*
+    Returns a promise to generate tree view items
+    based on files that exist in the current workspace.
+  */
   getWorkspaceRootItems() {
     return new Promise((resolve, reject) => {
       let rootItems = [];
@@ -76,6 +96,12 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     })
   }
   
+  /*
+    Uses the FileLoader class to search the current workspace
+    path for files containing tag keywords. The search method
+    makes use of the egrep command line application available
+    in Unix based operating systems.
+  */
   getMatchedWorkspaceFiles() {
     return new Promise((resolve, reject) => {
       let excludedPaths      = this.getExcludedPaths();
