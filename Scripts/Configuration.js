@@ -54,23 +54,23 @@ module.exports.Configuration = class Configuration {
     return excludedNames;
   }
  
- getExcludedPaths() {
-   let workspaceIgnorePaths = nova.workspace.config.get("todo.workspace-ignore-paths");
-   
-   if (workspaceIgnorePaths !== null) {
-     workspaceIgnorePaths = workspaceIgnorePaths.split(",");
-     
-     let normalizedPaths = workspaceIgnorePaths.map(function (path) {
-       return nova.path.normalize(path);
-     });
-     
-     normalizedPaths = this.cleanArray(normalizedPaths);
-     
-     return normalizedPaths;
-   } else {
-     return [];
-   }
- }
+  /*
+    Returns array of excluded paths specified by the user in the workspace preferences.
+  */
+  getExcludedPaths() {
+    let workspaceIgnorePaths = [];
+    
+    if (FUNCTIONS.isWorkspace()) {
+      workspaceIgnorePaths = nova.workspace.config.get("todo.workspace-ignore-paths");
+      workspaceIgnorePaths = workspaceIgnorePaths.split(",");
+      workspaceIgnorePaths = workspaceIgnorePaths.map(function (path) {
+        return nova.path.normalize(path);
+      });
+      workspaceIgnorePaths = this.cleanArray(workspaceIgnorePaths);
+    }
+    
+    return workspaceIgnorePaths;
+  }
  
  getExcludedExtensions() {
    const DEFAULT_EXCLUDED_EXTENSIONS = [".json", ".map"];
