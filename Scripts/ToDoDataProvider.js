@@ -364,7 +364,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   
   cleanArray(array) {
     array = array.filter(function(el) {
-      if (el !== null && el !== "" && el!== 'undefined') {
+      if (el !== null && el !== "" && el!== undefined) {
         return el;
       }
     });
