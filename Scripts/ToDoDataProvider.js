@@ -324,6 +324,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
       item.contextValue     = "file";
       item.tooltip          = toDoListItem.filePath;
+      item.descriptiveText  = "(" + toDoListItem.children.length + ")";
     } else {
       item.image            = this.getIconImage(toDoListItem);
       item.command          = "todo.doubleClick";
