@@ -1,3 +1,10 @@
+## Version 1.1
+
+* Added markdown files to the default exclusions.
+* Improved the recognition of tag comments.
+* Fixed incorrect recognition of the warn tag in some situations.
+* Added tag count to the tree view for each file.
+
 ## Version 1.0
 
 * Changed message displayed in the sidebar when no tags are found.
