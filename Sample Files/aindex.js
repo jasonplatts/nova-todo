@@ -1,4 +1,5 @@
 // TODO: A message goes here.
+// [TODO] A message goes here.
 // FIXME: A message goes here.
 // BROKEN: A message goes here.
 // BUG: A message goes here.
