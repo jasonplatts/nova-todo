@@ -66,7 +66,7 @@ module.exports.Configuration = class Configuration {
     and global and workspace user preference exclusions.
   */
   getExcludedExtensions() {
-    const DEFAULT_EXCLUDED_EXTENSIONS = [".json", ".map"];
+    const DEFAULT_EXCLUDED_EXTENSIONS = [".json", ".map", ".md"];
     
     let workspaceIgnoreExtensions = [];
     let globalIgnoreExtensions = [];
