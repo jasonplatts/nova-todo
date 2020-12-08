@@ -1,5 +1,7 @@
 const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 
+// console.clear();
+
 var treeView = null;
 var dataProvider = null;
 var refreshTimer = null;

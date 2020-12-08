@@ -180,9 +180,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     
     let fileMatches = [];
     let fileLineStartPosition = 0;
-    
-    let replacements = [...this.KEYWORDS.map(elem => elem + ":"), ...this.KEYWORDS];
-    let regex = new RegExp(replacements.join("|"), "g");
 
     for(let i = 0; i < contents.length; i++) {
       let lineMatches = this.findKeywordsInLine(contents[i]);
@@ -193,8 +190,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
         toDoListItem.line     = i + 1;
         toDoListItem.column   = match.column;
         toDoListItem.position = fileLineStartPosition + match.column;
-        match.comment         = match.comment.replace(regex, "");
-        toDoListItem.comment  = match.comment.trim();
+        toDoListItem.comment  = match.comment;
         
         fileMatches = fileMatches.concat(toDoListItem);
       });
@@ -212,25 +208,54 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     (most likely a comment) following the keyword.
   */
   findKeywordsInLine(line) {
+    let matchRegex = new RegExp(`${this.KEYWORDS.join("|")}`);
     let lineMatches = [];
-    
+     
     this.KEYWORDS.forEach((keyword) => {
       let lineMatchIndex = line.indexOf(keyword);
       
       while(lineMatchIndex >= 0) {
-        lineMatches.push(
-          {
-            name: keyword,
-            column: lineMatchIndex + 1,
-            comment: line.substring(lineMatchIndex)
-          }
-        );
+        this.extractCommentFromLine(keyword, lineMatchIndex, line);
         
-        lineMatchIndex = line.indexOf(keyword, (lineMatchIndex + 1)); 
+        if (this.isTag(keyword, lineMatchIndex, line)) {  
+          lineMatches.push(
+            {
+              name: keyword,
+              column: lineMatchIndex + 1,
+              comment: this.extractCommentFromLine(keyword, lineMatchIndex, line)
+            }
+          );
+        
+        }
+        
+        lineMatchIndex = line.indexOf(keyword, (lineMatchIndex + 1));
       }
     });
     
     return lineMatches;
+  }
+  
+  /*
+    Returns true if keyword at the currently evaluated index is followed by a : or ],
+    in which case it is recognized as a tag.
+  */
+  isTag(keyword, lineMatchIndex, line) {
+    let nextChar = line.charAt(lineMatchIndex + keyword.length);
+    
+    if (nextChar == ":" || nextChar == "]") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  /*
+    Returns the line after the keyword and the : or ] character, trimming any whitespace.
+  */
+  extractCommentFromLine(keyword, lineMatchIndex, line) {
+    let comment = line.substring(lineMatchIndex + (keyword.length + 1));
+    
+    return comment.trim();
   }
   
   /*
