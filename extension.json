@@ -277,9 +277,15 @@
           "placeholderImage": "sidebar-placeholder",
           "headerCommands": [
             {
+              "title": "Sort",
+              "image": "sort",
+              "tooltip": "Sort By",
+              "command": "todo.sort"
+            },
+            {
               "title": "Refresh",
               "image": "__builtin.refresh",
-              "tooltip": "Force Refresh",
+              "tooltip": "Refresh",
               "command": "todo.refresh"
             }
           ],
