@@ -5,6 +5,7 @@ const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 var treeView = null;
 var dataProvider = null;
 var refreshTimer = null;
+var sortBy = null;
 
 var activate = exports.activate = function() {
   // Do work when the extension is activated
@@ -73,6 +74,11 @@ nova.commands.register("todo.refresh", () => {
   reloadData();
 });
 
+nova.commands.register("todo.sort", () => {
+  toggleSortBy();
+  reloadData(sortBy);
+});
+
 if (nova.workspace.path !== undefined && nova.workspace.path !== null) {
   nova.config.observe("todo.global-ignore-names", reloadData);
   nova.config.observe("todo.global-ignore-extensions", reloadData);
@@ -85,7 +91,15 @@ if (nova.workspace.path !== undefined && nova.workspace.path !== null) {
 
 function reloadData() {
   if (treeView !== null) {
-    dataProvider.loadData();
+    dataProvider.loadData(sortBy);
     treeView.reload();
+  }
+}
+
+function toggleSortBy() {
+  if (sortBy == null || sortBy == 'file') {
+    sortBy = 'tag';
+  } else {
+    sortBy = 'file';
   }
 }

@@ -4,8 +4,8 @@ const { Configuration } = require("./Configuration.js");
 const FUNCTIONS = require("./functions.js");
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
-  constructor() { 
-    this.loadData();
+  constructor(sortBy = 'file') { 
+    this.loadData(sortBy);
   }
   
   /*
@@ -13,8 +13,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     It serves to load tree items on initial extension
     activation and on reload.
   */
-  loadData() {
+  loadData(sortBy) {
     this.rootItems = [];
+    this.sortBy = sortBy;
     
     this.configuration = new Configuration;
     this.KEYWORDS = this.configuration.getKeywords();
@@ -53,7 +54,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       openDocuments = openDocuments.filter(filePath => this.isAllowedExtension(filePath, excludedExtensions));
       
       let toDoListItems = this.findToDoItemsInFilePathArray(openDocuments);
-      let groupedToDoListItems = this.groupListItemsByFile(toDoListItems);
+      let groupedToDoListItems = this.groupListItems(toDoListItems);
       
       groupedToDoListItems.forEach((toDoListItem) => {
         rootItems = [...rootItems, toDoListItem];
@@ -74,7 +75,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       
       fileSearchResponse.then((response, reject) => {
         let toDoListItems = this.findToDoItemsInFilePathArray(response);
-        let groupedToDoListItems = this.groupListItemsByFile(toDoListItems);
+        let groupedToDoListItems = this.groupListItems(toDoListItems);
         
         groupedToDoListItems.forEach((toDoListItem) => {
           rootItems = [...rootItems, toDoListItem];
@@ -112,6 +113,18 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     });
   }
   
+  groupListItems(toDoListItems) {
+    let groupedToDoListItems;
+    
+    if (this.sortBy == null || this.sortBy == 'file') {
+      groupedToDoListItems = this.groupListItemsByFile(toDoListItems);
+    } else {
+      groupedToDoListItems = this.groupListItemsByTag(toDoListItems);
+    }
+    
+    return groupedToDoListItems;
+  }
+  
   /*
     Accepts an ungrouped array of ToDoListItem objects and
     returns an array of ToDoListItem objects grouped by file.
@@ -144,6 +157,30 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     // 2) Then use the Set object to store a collection of unique values,
     // 3) Which then uses the spread operator to construct a new array.
     return [...new Set(toDoListItems.map(item => item.filePath))];
+  }
+  
+  groupListItemsByTag(toDoListItems) {
+  
+    let groupedtoDoListItems = [];
+    let distinctTags = this.getUniqueTags(toDoListItems);
+    
+    distinctTags.forEach((distinctTag) => {
+      groupedtoDoListItems.push(new ToDoListItem(distinctTag));
+      
+      let tagToDoItems = toDoListItems.filter(
+        toDoListItem => toDoListItem.name == distinctTag
+      );
+      
+      tagToDoItems.forEach(tagToDoItem => {
+        groupedtoDoListItems[groupedtoDoListItems.length - 1].addChild(tagToDoItem);
+      });
+    });
+    
+    return groupedtoDoListItems;
+  }
+  
+  getUniqueTags(toDoListItems) {
+    return [...new Set(toDoListItems.map(item => item.name))];
   }
   
   /*
@@ -342,19 +379,35 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     Returns a specific tree item.
   */
   getTreeItem(toDoListItem) {
-    let item = new TreeItem(toDoListItem.name);
-    // If children.length > 0, then the item is a file name. Else, it's a tag item.
-    if (toDoListItem.children.length > 0) {
+    if (this.sortBy == 'file') {
+      var item = new TreeItem(toDoListItem.name);
       item.collapsibleState = TreeItemCollapsibleState.Expanded;
-      item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
-      item.contextValue     = "file";
-      item.tooltip          = toDoListItem.filePath;
-      item.descriptiveText  = "(" + toDoListItem.children.length + ")";
-    } else {
-      item.image            = this.getIconImage(toDoListItem);
-      item.command          = "todo.doubleClick";
-      item.contextValue     = "info";
-      item.descriptiveText  = `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`;
+      
+      if (toDoListItem.children.length > 0) {
+        item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
+        item.contextValue     = "file";
+        item.tooltip          = toDoListItem.filePath;
+        item.descriptiveText  = "(" + toDoListItem.children.length + ")";
+      } else {
+        item.image            = this.getIconImage(toDoListItem);
+        item.command          = "todo.doubleClick";
+        item.contextValue     = "tag";
+        item.descriptiveText  = `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`;
+      }
+    } else if (this.sortBy == 'tag') {
+      if (toDoListItem.children.length > 0) {
+        var item = new TreeItem(toDoListItem.name);
+        item.collapsibleState = TreeItemCollapsibleState.Expanded;
+        item.image            = this.getIconImage(toDoListItem);
+        item.contextValue     = "tag";
+        item.descriptiveText  = "(" + toDoListItem.children.length + ")";
+      } else {
+        var item = new TreeItem(toDoListItem.filePath);
+        item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
+        item.command          = "todo.doubleClick";
+        item.contextValue     = "file";
+        item.tooltip          = `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`;
+      }    
     }
     
     return item;
