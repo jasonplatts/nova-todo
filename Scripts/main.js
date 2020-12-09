@@ -1,15 +1,15 @@
 const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 
-// console.clear();
+console.clear();
 
 var treeView = null;
 var dataProvider = null;
 var refreshTimer = null;
-var sortBy = null;
+var sortBy = 'file';
 
 var activate = exports.activate = function() {
   // Do work when the extension is activated
-  dataProvider = new ToDoDataProvider();
+  dataProvider = new ToDoDataProvider(sortBy);
   
   // Create the TreeView
   treeView = new TreeView("todo", {
@@ -97,7 +97,7 @@ function reloadData() {
 }
 
 function toggleSortBy() {
-  if (sortBy == null || sortBy == 'file') {
+  if (sortBy == 'file') {
     sortBy = 'tag';
   } else {
     sortBy = 'file';

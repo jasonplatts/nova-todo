@@ -4,7 +4,7 @@ const { Configuration } = require("./Configuration.js");
 const FUNCTIONS = require("./functions.js");
 
 module.exports.ToDoDataProvider = class ToDoDataProvider {
-  constructor(sortBy = 'file') { 
+  constructor(sortBy) { 
     this.loadData(sortBy);
   }
   
@@ -160,7 +160,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   }
   
   groupListItemsByTag(toDoListItems) {
-  
     let groupedtoDoListItems = [];
     let distinctTags = this.getUniqueTags(toDoListItems);
     
