@@ -19,13 +19,11 @@ For global ignore settings, go to the extension within the extension library and
 ## Known Issues
 
 * Updates to preferences are not always saved. **As a temporary workaround, click into another text box in the preferences window to trigger the save event, prior to clicking "Done". This forces the input to lose focus and save.** This issue should be fixed in a future Nova update.
-* The sidebar currently displays tags that occur anywhere within a file. Future releases will search only within comments.
 
 ## Planned Future Features
 
 * Tag highlighting within the code.
 * Tag notification in the sidebar icon.
-* Filtering and sorting of tag items.
 
 ## Report a Bug or Feature Request
 

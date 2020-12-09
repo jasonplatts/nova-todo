@@ -1,3 +1,7 @@
+## Version 1.2
+
+* Added the ability to sort by file or tag.
+
 ## Version 1.1
 
 * Added markdown files to the default exclusions.
