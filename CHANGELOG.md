@@ -1,3 +1,7 @@
+## Version 1.3
+
+* Updated extension to set the cursor position when opening a tag item.  
+
 ## Version 1.2
 
 * Added the ability to sort by file or tag.
