@@ -64,7 +64,14 @@ nova.commands.register("todo.doubleClick", () => {
   let fileStatus = nova.workspace.openFile(selection.map((e) => e.filePath));
   
   fileStatus.then (
-    function() { nova.workspace.activeTextEditor.scrollToPosition(selection.map((e) => e.position)); }
+    function() {
+      let editor = nova.workspace.activeTextEditor;
+      let position = parseInt(selection.map((e) => e.position));
+      let range = new Range(position, position);
+      
+      editor.selectedRange = range;
+      editor.scrollToPosition(position);
+    }
   );
 });
 
