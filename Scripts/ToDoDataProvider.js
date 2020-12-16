@@ -83,6 +83,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
         
         resolve(rootItems);
       });
+      fileSearchResponse.catch((alert) => {
+        reject(alert);
+      });
     })
   }
   
@@ -109,6 +112,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
         filteredFiles = filteredFiles.filter(filePath => this.isAllowedPath(filePath, excludedPaths));
         
         resolve(filteredFiles);
+      });
+      files.catch((alert) => {
+        reject(alert);
       });
     });
   }
