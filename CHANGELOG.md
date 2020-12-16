@@ -1,3 +1,7 @@
+## Version 1.4
+
+* Fixed issue causing the sidebar to be blank, instead of a "monitoring workspace" message when no tag results were found.
+
 ## Version 1.3
 
 * Updated extension to set the cursor position when opening a tag item.  
