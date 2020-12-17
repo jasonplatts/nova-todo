@@ -386,9 +386,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   getTreeItem(toDoListItem) {
     if (this.sortBy == 'file') {
       var item = new TreeItem(toDoListItem.name);
-      item.collapsibleState = TreeItemCollapsibleState.Expanded;
       
       if (toDoListItem.children.length > 0) {
+        item.collapsibleState = TreeItemCollapsibleState.Expanded;
         item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`;
         item.contextValue     = "file";
         item.tooltip          = toDoListItem.filePath;
