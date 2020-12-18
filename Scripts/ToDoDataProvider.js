@@ -328,7 +328,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   */
   isAllowedExtension(path, excludedExtensions) {
     if (nova.fs.stat(path).isFile() == true) {
-      if (!excludedExtensions.includes(nova.path.extname(path))) {
+      if (!excludedExtensions.includes(nova.path.extname(path)) &&
+        nova.path.extname(path) !== "") {
         return true;
       } else {
         return false;
