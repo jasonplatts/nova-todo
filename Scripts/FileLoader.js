@@ -32,8 +32,14 @@ module.exports.FileLoader = class FileLoader {
         "--exclude-dir=log"
       ];
       
+      // Option descriptions
+      // -l --files-with-matches - Suppresses normal output, instead printing name of each input file,
+      // therefore, scanning stops on the first match.
+      // -I - Process binary files as if they do not contain matching data.
+      // -R -recursive - Read all files under each directory.
+      // -i --ignore-case - Ignore case when matching the pattern.
       let options = {
-        args: [keywordQuery, "-lIR", ...exclusions, this.rootPath]
+        args: [keywordQuery, "-lIRi", ...exclusions, this.rootPath]
       };
       
       let process = new Process("/usr/bin/egrep", options);
