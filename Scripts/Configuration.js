@@ -4,6 +4,21 @@ const FUNCTIONS = require("./functions.js");
   Module handles the retrieval of default and user preference configurations
 */
 module.exports.Configuration = class Configuration {
+  constructor() {
+    console.log("CONSTRUCTOR");
+    
+    this.loadConfig();
+  }
+  
+  loadConfig() {
+    console.log("LOAD CONFIG");
+    this.keywords = this.getKeywords();
+    this.caseSensitiveMatching = this.caseSensitiveMatching();
+    this.excludedNames = this.getExcludedNames();
+    // this.excludedExtensions = this.getExcludedExtensions();
+    // this.excludedPaths = this.getExcludedPaths();
+  }
+  
   /*
     Returns array of tag keywords used for search. Includes default tags
     and the tags selected by the user in the workspace preferences.
@@ -33,8 +48,8 @@ module.exports.Configuration = class Configuration {
   
   
   caseSensitiveMatching() {
-    console.log("WKS CSE MTCH:", nova.workspace.config.get("todo.workspace-case-sensitive-tag-matching"));
-    console.log("GLB CSE MTCH:", nova.config.get("todo.global-case-sensitive-tag-matching"));
+    // console.log("WKS CSE MTCH:", nova.workspace.config.get("todo.workspace-case-sensitive-tag-matching"));
+    // console.log("GLB CSE MTCH:", nova.config.get("todo.global-case-sensitive-tag-matching"));
     
     // Set a default setting
     let caseSensitive = true;

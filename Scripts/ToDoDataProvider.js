@@ -18,7 +18,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     this.sortBy = sortBy;
     
     this.configuration = new Configuration;
-    this.KEYWORDS = this.configuration.getKeywords();
+    this.KEYWORDS = this.configuration.keywords;
     
     if (FUNCTIONS.isWorkspace()) {
       this.rootItems = this.getWorkspaceRootItems();
@@ -256,7 +256,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     this.KEYWORDS.forEach((keyword) => {
       let lineMatchIndex;
       
-      if (this.configuration.caseSensitiveMatching() == true) {
+      if (this.configuration.caseSensitiveMatching == true) {
         lineMatchIndex = line.indexOf(keyword);
       } else {
         lineMatchIndex = line.toLowerCase().indexOf(keyword.toLowerCase());
