@@ -38,7 +38,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   getOpenDocumentsRootItems() {
     return new Promise((resolve, reject) => {
       let excludedExtensions = this.configuration.getExcludedExtensions();
-      let excludedNames = this.configuration.getExcludedNames();
       let rootItems = [];
       
       let openDocuments = nova.workspace.textDocuments.filter(doc => {
@@ -50,8 +49,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       openDocuments = openDocuments.map(doc => {
         return (doc.path).toString();
       });
-      openDocuments = openDocuments.filter(filePath => this.isAllowedName(filePath, excludedNames)); 
       openDocuments = openDocuments.filter(filePath => this.isAllowedExtension(filePath, excludedExtensions));
+      openDocuments = openDocuments.filter(filePath => this.isAllowedName(filePath)); 
       
       let toDoListItems = this.findToDoItemsInFilePathArray(openDocuments);
       let groupedToDoListItems = this.groupListItems(toDoListItems);
@@ -99,7 +98,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     return new Promise((resolve, reject) => {
       let excludedPaths      = this.configuration.getExcludedPaths();
       let excludedExtensions = this.configuration.getExcludedExtensions();
-      let excludedNames      = this.configuration.getExcludedNames();
       
       let fileHandler = new FileLoader(nova.workspace.path, this.KEYWORDS);
       
@@ -107,9 +105,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       
       files.then((response, reject) => {
         let filteredFiles = response.stdout;
-        filteredFiles = filteredFiles.filter(filePath => this.isAllowedName(filePath, excludedNames)); 
         filteredFiles = filteredFiles.filter(filePath => this.isAllowedExtension(filePath, excludedExtensions));
         filteredFiles = filteredFiles.filter(filePath => this.isAllowedPath(filePath, excludedPaths));
+        filteredFiles = filteredFiles.filter(filePath => this.isAllowedName(filePath));
         
         resolve(filteredFiles);
       });
@@ -309,13 +307,13 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   /*
     Used to exclude specific file and directory names.
   */
-  isAllowedName(path, excludedNames) {
+  isAllowedName(path) {
     let pathElementArray = path.split("/");
     let exclusionFound = false;
     let count = 0;
     
     while (count < pathElementArray.length && exclusionFound !== true) {
-      if (excludedNames.includes(pathElementArray[count])) {
+      if (this.configuration.excludedNames.includes(pathElementArray[count])) {
         exclusionFound = true;
       }
       
