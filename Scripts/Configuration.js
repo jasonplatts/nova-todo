@@ -15,7 +15,7 @@ module.exports.Configuration = class Configuration {
     this.keywords = this.getKeywords();
     this.caseSensitiveMatching = this.caseSensitiveMatching();
     this.excludedNames = this.getExcludedNames();
-    // this.excludedExtensions = this.getExcludedExtensions();
+    this.excludedExtensions = this.getExcludedExtensions();
     // this.excludedPaths = this.getExcludedPaths();
   }
   

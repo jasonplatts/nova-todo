@@ -37,7 +37,6 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   */
   getOpenDocumentsRootItems() {
     return new Promise((resolve, reject) => {
-      let excludedExtensions = this.configuration.getExcludedExtensions();
       let rootItems = [];
       
       let openDocuments = nova.workspace.textDocuments.filter(doc => {
@@ -49,8 +48,8 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
       openDocuments = openDocuments.map(doc => {
         return (doc.path).toString();
       });
-      openDocuments = openDocuments.filter(filePath => this.isAllowedExtension(filePath, excludedExtensions));
       openDocuments = openDocuments.filter(filePath => this.isAllowedName(filePath)); 
+      openDocuments = openDocuments.filter(filePath => this.isAllowedExtension(filePath));
       
       let toDoListItems = this.findToDoItemsInFilePathArray(openDocuments);
       let groupedToDoListItems = this.groupListItems(toDoListItems);
@@ -97,17 +96,15 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   getMatchedWorkspaceFiles() {
     return new Promise((resolve, reject) => {
       let excludedPaths      = this.configuration.getExcludedPaths();
-      let excludedExtensions = this.configuration.getExcludedExtensions();
-      
       let fileHandler = new FileLoader(nova.workspace.path, this.KEYWORDS);
       
       let files = fileHandler.egrepExec();
       
       files.then((response, reject) => {
         let filteredFiles = response.stdout;
-        filteredFiles = filteredFiles.filter(filePath => this.isAllowedExtension(filePath, excludedExtensions));
         filteredFiles = filteredFiles.filter(filePath => this.isAllowedPath(filePath, excludedPaths));
         filteredFiles = filteredFiles.filter(filePath => this.isAllowedName(filePath));
+        filteredFiles = filteredFiles.filter(filePath => this.isAllowedExtension(filePath));
         
         resolve(filteredFiles);
       });
@@ -330,9 +327,9 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   /*
     Used to exclude specific extensions.
   */
-  isAllowedExtension(path, excludedExtensions) {
+  isAllowedExtension(path) {
     if (nova.fs.stat(path).isFile() == true) {
-      if (!excludedExtensions.includes(nova.path.extname(path)) &&
+      if (!this.configuration.excludedExtensions.includes(nova.path.extname(path)) &&
         nova.path.extname(path) !== "") {
         return true;
       } else {
