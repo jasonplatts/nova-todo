@@ -1,5 +1,6 @@
 const { ToDoDataProvider } = require("./ToDoDataProvider.js");
-
+console.clear();
+// ADD preferences screenshots to README
 var treeView = null;
 var dataProvider = null;
 var refreshTimer = null;
@@ -32,6 +33,11 @@ nova.commands.register("todo.addPath", () => {
 
   nova.workspace.config.set("todo.selected-ignore-path", "");
 });
+
+// nova.commands.register("todo.removeWSCaseSensitiveTagMatching", () => {
+//   
+//   nova.workspace.config.remove("todo.workspace-case-sensitive-tag-matching");
+// });
 
 nova.commands.register("todo.openFile", () => {
   let selection = treeView.selection;
@@ -93,6 +99,10 @@ if (nova.workspace.path !== undefined && nova.workspace.path !== null) {
   // Must use polling because nova.fs.watch requires a current workspace.
   refreshTimer = setInterval(reloadData, 15000);
 }
+
+nova.config.onDidChange("todo.global-case-sensitive-tag-matching", () => {
+  reloadData()
+});
 
 function reloadData() {
   if (treeView !== null) {

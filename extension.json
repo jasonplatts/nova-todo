@@ -4,7 +4,7 @@
   "organization": "Jason Platts",
   "description": "Displays tags, such as TODO and FIXME, within a sidebar tree view.",
   "license":"MIT",
-  "version": "1.4",
+  "version": "1.5",
   "repository":"https://github.com/jasonplatts/nova-todo",
   "bugs":"https://github.com/jasonplatts/nova-todo/issues",
   "funding":"https://github.com/sponsors/jasonplatts",
@@ -22,6 +22,148 @@
   },
   
   "config": [
+    {
+      "key": "todo.include-global-tag-matching-options.section",
+      "title": "Global Tag Matching Options",
+      "type": "section",
+      "children": [
+        {
+          "key": "todo.global-case-sensitive-tag-matching",
+          "title": "Match Only Upper Case Tags",
+          "description": "De-select to match upper case and lower case tags (Eg: TODO: and todo:).",
+          "type": "boolean",
+          "default": true
+        }
+      ]
+    },
+    {
+      "key": "todo.include-global-keywords.section",
+      "title": "Global Included Tags",
+      "description": "TODO and FIXME tags are always searched. However, additional tags can be added below. Keep in mind that too many tags can cause slow performance in larger workspaces.",
+      "type": "section",
+      "children": [
+        {
+          "key": "todo.global-keyword-broken",
+          "title": "BROKEN",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-bug",
+          "title": "BUG",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-debug",
+          "title": "DEBUG",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-deprecated",
+          "title": "DEPRECATED",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-example",
+          "title": "EXAMPLE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-error",
+          "title": "ERROR",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-err",
+          "title": "ERR",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-fail",
+          "title": "FAIL",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-fatal",
+          "title": "FATAL",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-fix",
+          "title": "FIX",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-hack",
+          "title": "HACK",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-idea",
+          "title": "IDEA",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-info",
+          "title": "INFO",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-note",
+          "title": "NOTE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-optimize",
+          "title": "OPTIMIZE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-question",
+          "title": "QUESTION",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-refactor",
+          "title": "REFACTOR",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-remove",
+          "title": "REMOVE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-review",
+          "title": "REVIEW",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-task",
+          "title": "TASK",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-trace",
+          "title": "TRACE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-update",
+          "title": "UPDATE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-warn",
+          "title": "WARN",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.global-keyword-warning",
+          "title": "WARNING",
+          "type": "boolean",
+        }
+      ]
+    },
     {
       "key": "todo.exclude-global-names.section",
       "title": "Global Ignored File & Directory Names",
@@ -55,6 +197,157 @@
   ],
   
   "config-workspace": [
+    {
+      "key": "todo.include-workspace-tag-matching-options.section",
+      "title": "Workspace Tag Case Matching",
+      "type": "section",
+      "children": [
+        {
+          "key": "todo.workspace-case-sensitive-tag-matching",
+          "title": "Tag Case Matching",
+          "description": "Change to find different tag cases, such as 'TODO:' and 'todo:'.",
+          "type": "enum",
+          "values": ["Use Global Preference", "Upper Case Only", "Upper and Lower Case"],
+          "default": "Use Global Preference"
+        }
+      ]
+    },
+    {
+      "key": "todo.include-workspace-keywords.section",
+      "title": "Workspace Included Tags",
+      "description": "TODO and FIXME tags are always searched. However, additional tags can be added below. Keep in mind that too many tags can cause slow performance in larger workspaces.",
+      "type": "section",
+      "children": [
+        {
+          "key": "todo.workspace-custom-tags",
+          "title": "Included Tags",
+          "description": "Change to include tags based on global or workspace preferences.",
+          "type": "enum",
+          "values": ["Use Global Preferences", "Use Workspace Preferences"],
+          "default": "Use Global Preferences"
+        },
+        {
+          "key": "todo.workspace-keyword-broken",
+          "title": "BROKEN",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-bug",
+          "title": "BUG",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-debug",
+          "title": "DEBUG",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-deprecated",
+          "title": "DEPRECATED",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-example",
+          "title": "EXAMPLE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-error",
+          "title": "ERROR",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-err",
+          "title": "ERR",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-fail",
+          "title": "FAIL",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-fatal",
+          "title": "FATAL",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-fix",
+          "title": "FIX",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-hack",
+          "title": "HACK",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-idea",
+          "title": "IDEA",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-info",
+          "title": "INFO",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-note",
+          "title": "NOTE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-optimize",
+          "title": "OPTIMIZE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-question",
+          "title": "QUESTION",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-refactor",
+          "title": "REFACTOR",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-remove",
+          "title": "REMOVE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-review",
+          "title": "REVIEW",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-task",
+          "title": "TASK",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-trace",
+          "title": "TRACE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-update",
+          "title": "UPDATE",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-warn",
+          "title": "WARN",
+          "type": "boolean",
+        },
+        {
+          "key": "todo.workspace-keyword-warning",
+          "title": "WARNING",
+          "type": "boolean",
+        }
+      ]
+    },
     {
       "key": "todo.exclude-workspace-paths.section",
       "title": "Ignored File & Directory Paths",
@@ -115,148 +408,15 @@
       ]
     },
     {
-      "key": "todo.include-workspace-keywords.section",
-      "title": "Included Tags",
-      "description": "TODO and FIXME tags are always searched. However, additional tags can be added below. Keep in mind that too many tags can cause slow performance in larger workspaces.",
+      "key": "todo.reset-workspace-preferences.section",
+      "title": "Reset TODO Extension Workspace Preferences",
+      "description": "Click 'Reset' to return to the default extension proferences for this workspace.",
       "type": "section",
       "children": [
         {
-          "key": "todo.workspace-keyword-broken",
-          "title": "BROKEN",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-bug",
-          "title": "BUG",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-debug",
-          "title": "DEBUG",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-deprecated",
-          "title": "DEPRECATED",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-example",
-          "title": "EXAMPLE",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-error",
-          "title": "ERROR",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-err",
-          "title": "ERR",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-fail",
-          "title": "FAIL",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-fatal",
-          "title": "FATAL",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-hack",
-          "title": "HACK",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-idea",
-          "title": "IDEA",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-info",
-          "title": "INFO",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-note",
-          "title": "NOTE",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-optimize",
-          "title": "OPTIMIZE",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-question",
-          "title": "QUESTION",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-refactor",
-          "title": "REFACTOR",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-remove",
-          "title": "REMOVE",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-review",
-          "title": "REVIEW",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-task",
-          "title": "TASK",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-trace",
-          "title": "TRACE",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-update",
-          "title": "UPDATE",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-warn",
-          "title": "WARN",
-          "type": "boolean",
-          "default": false
-        },
-        {
-          "key": "todo.workspace-keyword-warning",
-          "title": "WARNING",
-          "type": "boolean",
-          "default": false
+          "title": "Reset",
+          "type": "command",
+          "command": "todo.removeWorkspacePreferences"
         }
       ]
     }
@@ -293,12 +453,10 @@
             {
               "title": "Open",
               "command": "todo.openFile"
-              
             },
             {
               "title": "Ignore File",
               "command": "todo.ignoreFile"
-              
             },
             {
               "title": "Ignore Parent Directory",

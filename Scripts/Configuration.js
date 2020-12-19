@@ -16,7 +16,7 @@ module.exports.Configuration = class Configuration {
     if (FUNCTIONS.isWorkspace()) {
       preferenceKeywords = [
         "broken", "bug", "debug", "deprecated", "example", "error",
-        "err", "fail", "fatal", "hack", "idea", "info", "note", "optimize", "question",
+        "err", "fail", "fatal", "fix", "hack", "idea", "info", "note", "optimize", "question",
         "refactor", "remove", "review", "task", "trace", "update", "warn", "warning"
       ];
       
@@ -29,6 +29,32 @@ module.exports.Configuration = class Configuration {
     keywords = keywords.map(elem => { return elem.toUpperCase() });
     
     return keywords;
+  }
+  
+  
+  caseSensitiveMatching() {
+    console.log("WKS CSE MTCH:", nova.workspace.config.get("todo.workspace-case-sensitive-tag-matching"));
+    console.log("GLB CSE MTCH:", nova.config.get("todo.global-case-sensitive-tag-matching"));
+    
+    // Set a default setting
+    let caseSensitive = true;
+    let global = nova.config.get("todo.global-case-sensitive-tag-matching");
+    let workspace = nova.workspace.config.get("todo.workspace-case-sensitive-tag-matching")
+    
+    // Override with a global preference if exists
+    if (global == true || global == false) {
+      caseSensitive = global;
+    }
+      
+    // If workspace
+    if (FUNCTIONS.isWorkspace()) {
+      // Override again with a workspace preference if exists
+      if (workspace == true || workspace == false) {
+        caseSensitive = workspace;
+      }
+    }
+    
+    return caseSensitive;
   }
  
   /*
@@ -114,6 +140,10 @@ module.exports.Configuration = class Configuration {
     }
     
     return workspaceIgnorePaths;
+  }
+  
+  removeWorkspacePreferences() {
+    // Remove keywords, ignore paths,
   }
   
   /*

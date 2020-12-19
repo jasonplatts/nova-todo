@@ -254,7 +254,13 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
     let lineMatches = [];
      
     this.KEYWORDS.forEach((keyword) => {
-      let lineMatchIndex = line.indexOf(keyword);
+      let lineMatchIndex;
+      
+      if (this.configuration.caseSensitiveMatching() == true) {
+        lineMatchIndex = line.indexOf(keyword);
+      } else {
+        lineMatchIndex = line.toLowerCase().indexOf(keyword.toLowerCase());
+      }
       
       while(lineMatchIndex >= 0) {
         this.extractCommentFromLine(keyword, lineMatchIndex, line);
