@@ -46,121 +46,145 @@
           "key": "todo.global-keyword-broken",
           "title": "BROKEN",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-bug",
           "title": "BUG",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-debug",
           "title": "DEBUG",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-deprecated",
           "title": "DEPRECATED",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-example",
           "title": "EXAMPLE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-error",
           "title": "ERROR",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-err",
           "title": "ERR",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-fail",
           "title": "FAIL",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-fatal",
           "title": "FATAL",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-fix",
           "title": "FIX",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-hack",
           "title": "HACK",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-idea",
           "title": "IDEA",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-info",
           "title": "INFO",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-note",
           "title": "NOTE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-optimize",
           "title": "OPTIMIZE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-question",
           "title": "QUESTION",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-refactor",
           "title": "REFACTOR",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-remove",
           "title": "REMOVE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-review",
           "title": "REVIEW",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-task",
           "title": "TASK",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-trace",
           "title": "TRACE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-update",
           "title": "UPDATE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-warn",
           "title": "WARN",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.global-keyword-warning",
           "title": "WARNING",
           "type": "boolean",
+          "default": false
         }
       ]
     },
