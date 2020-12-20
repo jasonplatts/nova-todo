@@ -95,16 +95,15 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   */
   getMatchedWorkspaceFiles() {
     return new Promise((resolve, reject) => {
-      let excludedPaths      = this.configuration.getExcludedPaths();
       let fileHandler = new FileLoader(nova.workspace.path, this.KEYWORDS);
       
       let files = fileHandler.egrepExec();
       
       files.then((response, reject) => {
         let filteredFiles = response.stdout;
-        filteredFiles = filteredFiles.filter(filePath => this.isAllowedPath(filePath, excludedPaths));
         filteredFiles = filteredFiles.filter(filePath => this.isAllowedName(filePath));
         filteredFiles = filteredFiles.filter(filePath => this.isAllowedExtension(filePath));
+        filteredFiles = filteredFiles.filter(filePath => this.isAllowedPath(filePath));
         
         resolve(filteredFiles);
       });
@@ -343,13 +342,12 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
   /*
     Used to exclude specific file and directory paths.
   */
-  isAllowedPath(path, excludedPaths) {
-    excludedPaths = excludedPaths;
+  isAllowedPath(path) {
     let pathFound = false;
     let excludedPathsIndex = 0;
     
-    while ((excludedPathsIndex < excludedPaths.length) && pathFound !== true) {
-      if (nova.path.normalize(path).includes(excludedPaths[excludedPathsIndex])) {
+    while ((excludedPathsIndex < this.configuration.excludedPaths.length) && pathFound !== true) {
+      if (nova.path.normalize(path).includes(this.configuration.excludedPaths[excludedPathsIndex])) {
         pathFound = true;
       }
       
