@@ -46,26 +46,29 @@ module.exports.Configuration = class Configuration {
     return keywords;
   }
   
-  
+  /*
+    Determines from the global and workspace configuration if tags should be case sensitive.
+    Returns a boolean value of true if only to match upper case (TODO:) or false if matching
+    both upper and lower case (TODO: and todo:).
+  */
   caseSensitiveMatching() {
-    // console.log("WKS CSE MTCH:", nova.workspace.config.get("todo.workspace-case-sensitive-tag-matching"));
-    // console.log("GLB CSE MTCH:", nova.config.get("todo.global-case-sensitive-tag-matching"));
-    
     // Set a default setting
     let caseSensitive = true;
+    
     let global = nova.config.get("todo.global-case-sensitive-tag-matching");
     let workspace = nova.workspace.config.get("todo.workspace-case-sensitive-tag-matching")
     
-    // Override with a global preference if exists
+    // Override default with a global preference if it exists
     if (global == true || global == false) {
       caseSensitive = global;
     }
-      
-    // If workspace
-    if (FUNCTIONS.isWorkspace()) {
-      // Override again with a workspace preference if exists
-      if (workspace == true || workspace == false) {
-        caseSensitive = workspace;
+    
+    // Override global setting with a workspace preference if in a workspace and non-global setting is selected.
+    if (FUNCTIONS.isWorkspace() && (workspace !== 'Use Global Preference')) {
+      if (workspace == 'Upper Case Only') {
+        caseSensitive = true;
+      } else if (workspace == 'Upper and Lower Case') {
+        caseSensitive = false;
       }
     }
     
