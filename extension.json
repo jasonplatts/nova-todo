@@ -24,7 +24,7 @@
   "config": [
     {
       "key": "todo.include-global-tag-matching-options.section",
-      "title": "Global Tag Matching Options",
+      "title": "Global Tag Case Matching",
       "type": "section",
       "children": [
         {
