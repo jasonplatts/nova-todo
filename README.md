@@ -6,6 +6,9 @@ Displays tags, such as TODO and FIXME, within a sidebar tree view in Panic's mac
 individual workspaces. For example, the extension can be configured to find additional tags, such as BUG, NOTE and INFO.
 See the "Configuration" section below for more information.**
 
+<img src="https://user-images.githubusercontent.com/48892071/103044013-ecf14d00-454c-11eb-9321-b1b433dc333a.png" width="800"
+alt="Screenshot">
+
 ## Installing
 
 Enable the extension in the extension library within Nova.
@@ -21,8 +24,8 @@ Enable the extension in the extension library within Nova.
 * **Global Ignored File and Directory Names** - Exclude file and directory names. This setting accepts a comma separated list of names that **should not** be surrounded by any form of quotation marks. File names must include the file extension. Several names are ignored by default, including node_modules, tmp, .git, vendor, .nova, and .gitignore.
 * **Global Ignored File Extensions** - Exclude specific file extensions from being searched. This setting accepts a comma separated list of extension names that **should not** be surrounded by any form of quotation marks. While the extension can be preceded by a period, it is not necessary.
 
-<img src="https://user-images.githubusercontent.com/48892071/102829877-0744f280-43b6-11eb-940a-f1292bf32547.png" width="600"
-alt="Extension Preferences">
+<img src="https://user-images.githubusercontent.com/48892071/102829877-0744f280-43b6-11eb-940a-f1292bf32547.png" width="800"
+alt="Global Extension Preferences">
 
 ### Workspace Configuration
 
@@ -34,8 +37,8 @@ alt="Extension Preferences">
 * **Workspace Ignored File and Directory Names** - This setting does not override the global preferences, but adds additional file and directory names to be excluded.
 * **Workspace Ignored File Extensions** - This setting does not override the global preferences, but adds additional file extensions to be excluded.
 
-<img src="https://user-images.githubusercontent.com/48892071/102829607-7b32cb00-43b5-11eb-915f-3125687f1244.png" width="600"
-alt="Extension Preferences">
+<img src="https://user-images.githubusercontent.com/48892071/102829607-7b32cb00-43b5-11eb-915f-3125687f1244.png" width="800"
+alt="workspace Extension Preferences">
 
 ## Known Issues
 
