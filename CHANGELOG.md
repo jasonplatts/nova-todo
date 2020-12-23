@@ -1,3 +1,12 @@
+## Version 2.0
+
+* Overhauled the extension's preferences to provide global and workspace specific configurations.
+* Added the "FIX" tag.
+* Added a preference to match on upper case (default) or upper and lower case tags.
+* Updated the README to better explain the configuration options available.
+* Added exclusion for files without file extensions.
+* Fixed issue causing the expansion icon to appear next to tag items in the sidebar.
+
 ## Version 1.4
 
 * Fixed issue causing the sidebar to be blank, instead of a "monitoring workspace" message when no tag results were found.
