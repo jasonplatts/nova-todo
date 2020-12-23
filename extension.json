@@ -217,19 +217,6 @@
           "default": ""
         }
       ]
-    },
-    {
-      "key": "todo.reset-global-preferences.section",
-      "title": "Reset Global Extension Preferences",
-      "description": "Click 'Reset' to return to the default global extension preferences.",
-      "type": "section",
-      "children": [
-        {
-          "title": "Reset",
-          "type": "command",
-          "command": "todo.removeGlobalPreferences"
-        }
-      ]
     }
   ],
   
@@ -441,19 +428,6 @@
           "description": "Provide a list of comma separated file extensions that should be ignored. Extensions can include the \".\" before the extension, but it is not required. For example: txt, js, php.",
           "type": "text",
           "default": ""
-        }
-      ]
-    },
-    {
-      "key": "todo.reset-workspace-preferences.section",
-      "title": "Reset Workspace Extension Preferences",
-      "description": "Click 'Reset' to return to the default extension preferences for this workspace.",
-      "type": "section",
-      "children": [
-        {
-          "title": "Reset",
-          "type": "command",
-          "command": "todo.removeWorkspacePreferences"
         }
       ]
     }

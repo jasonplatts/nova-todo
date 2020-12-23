@@ -20,7 +20,6 @@ Enable the extension in the extension library within Nova.
 * **Global Included Tags** - TODO and FIXME tags are always matched by the extension. However, additional tags can also be detected, including BROKEN, BUG, DEBUG, DEPRECATED, EXAMPLE, ERROR, ERR, FAIL, FATAL, FIX, HACK, IDEA, INFO, NOTE, OPTIMIZE, QUESTION, REFACTOR, REMOVE, REVIEW, TASK, TRACE, UPDATE, WARN, and WARNING. Keep in mind that detecting a larger number of tags might cause slower performance in larger workspaces.
 * **Global Ignored File and Directory Names** - Exclude file and directory names. This setting accepts a comma separated list of names that **should not** be surrounded by any form of quotation marks. File names must include the file extension. Several names are ignored by default, including node_modules, tmp, .git, vendor, .nova, and .gitignore.
 * **Global Ignored File Extensions** - Exclude specific file extensions from being searched. This setting accepts a comma separated list of extension names that **should not** be surrounded by any form of quotation marks. While the extension can be preceded by a period, it is not necessary.
-* **Reset Global Extension Preferences** - Reset all of the extension's global preferences to the default.
 
 <img src="https://user-images.githubusercontent.com/48892071/102829877-0744f280-43b6-11eb-940a-f1292bf32547.png" width="600"
 alt="Extension Preferences">
@@ -34,7 +33,6 @@ alt="Extension Preferences">
 * **Workspace Ignored File and Directory Paths** - Exclude file and directory paths in the workspace. This accepts a comma separated list of paths that **should not** be surrounded by any form of quotation marks. It is easiest to "Choose..." the path from the input above, then click on "Ignore Above Path". This will append the chosen file or directory to the list of ignored paths.
 * **Workspace Ignored File and Directory Names** - This setting does not override the global preferences, but adds additional file and directory names to be excluded.
 * **Workspace Ignored File Extensions** - This setting does not override the global preferences, but adds additional file extensions to be excluded.
-* **Reset Workspace Extension Preferences** - Reset all of the extension's workspace preferences to the default.
 
 <img src="https://user-images.githubusercontent.com/48892071/102829607-7b32cb00-43b5-11eb-915f-3125687f1244.png" width="600"
 alt="Extension Preferences">
