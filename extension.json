@@ -217,6 +217,19 @@
           "default": ""
         }
       ]
+    },
+    {
+      "key": "todo.reset-global-preferences.section",
+      "title": "Reset Global Extension Preferences",
+      "description": "Click 'Reset' to return to the default global extension preferences.",
+      "type": "section",
+      "children": [
+        {
+          "title": "Reset",
+          "type": "command",
+          "command": "todo.removeGlobalPreferences"
+        }
+      ]
     }
   ],
   
