@@ -1,3 +1,7 @@
+## Version 2.1
+
+* Added additional screenshots.
+
 ## Version 2.0
 
 * Overhauled the extension's preferences to provide global and workspace specific configurations.
