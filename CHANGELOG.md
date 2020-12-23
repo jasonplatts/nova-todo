@@ -1,3 +1,7 @@
+## Version 2.2
+
+* Fixed configuration issue preventing extension submission.
+
 ## Version 2.1
 
 * Added additional screenshots.
