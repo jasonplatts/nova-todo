@@ -254,121 +254,145 @@
           "key": "todo.workspace-keyword-broken",
           "title": "BROKEN",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-bug",
           "title": "BUG",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-debug",
           "title": "DEBUG",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-deprecated",
           "title": "DEPRECATED",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-example",
           "title": "EXAMPLE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-error",
           "title": "ERROR",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-err",
           "title": "ERR",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-fail",
           "title": "FAIL",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-fatal",
           "title": "FATAL",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-fix",
           "title": "FIX",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-hack",
           "title": "HACK",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-idea",
           "title": "IDEA",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-info",
           "title": "INFO",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-note",
           "title": "NOTE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-optimize",
           "title": "OPTIMIZE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-question",
           "title": "QUESTION",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-refactor",
           "title": "REFACTOR",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-remove",
           "title": "REMOVE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-review",
           "title": "REVIEW",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-task",
           "title": "TASK",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-trace",
           "title": "TRACE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-update",
           "title": "UPDATE",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-warn",
           "title": "WARN",
           "type": "boolean",
+          "default": false
         },
         {
           "key": "todo.workspace-keyword-warning",
           "title": "WARNING",
           "type": "boolean",
+          "default": false
         }
       ]
     },
