@@ -1,5 +1,5 @@
 const { ToDoDataProvider } = require("./ToDoDataProvider.js");
-console.clear();
+// console.clear();
 // TODO: ADD screenshots to README
 // TODO: Add reset preferences for global
 // TODO: Add reset preferences for workspace
@@ -33,7 +33,7 @@ exports.deactivate = function() {
 
 nova.commands.register("todo.addPath", () => {
   addWorkspaceIgnorePath(nova.workspace.config.get("todo.selected-ignore-path"));
-
+  
   nova.workspace.config.set("todo.selected-ignore-path", "");
 });
 
@@ -55,7 +55,6 @@ nova.commands.register("todo.ignoreParentDirectory", () => {
   addWorkspaceIgnorePath(nova.path.dirname(selection.map((e) => e.filePath)));
 });
 
-// TODO: Move to configuration class.
 function addWorkspaceIgnorePath(path) {
   path = nova.path.normalize(path);
   let workspaceIgnorePaths = nova.workspace.config.get("todo.workspace-ignore-paths") + "," + path;
@@ -91,7 +90,7 @@ nova.commands.register("todo.sort", () => {
 
 nova.config.observe("todo.global-case-sensitive-tag-matching", reloadData);
 
-// TODO: Remove this and retrieve from extension.json or a Nova API if provided.
+// TODO: Remove this and retrieve from extension.json or a Nova API if provided - Duplicated in Configuration.js too.
 const PREFERENCE_KEYWORDS = [
   "broken", "bug", "debug", "deprecated", "example", "error",
   "err", "fail", "fatal", "fix", "hack", "idea", "info", "note", "optimize", "question",

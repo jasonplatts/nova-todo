@@ -5,11 +5,12 @@ const FUNCTIONS = require("./functions.js");
 */
 module.exports.Configuration = class Configuration {
   constructor() {
+    // this.readNovaConfigurationFile()
     this.loadConfig();
   }
   
   loadConfig() {
-    console.log("LOADING CONFIGURATION...");
+    // console.log("LOADING CONFIGURATION...");
     this.keywords = this.getKeywords();
     this.caseSensitiveMatching = this.caseSensitiveMatching();
     this.excludedNames = this.getExcludedNames();
@@ -182,5 +183,10 @@ module.exports.Configuration = class Configuration {
     array = array.map(element => element.trim());
     
     return array;
+  }
+  
+  readNovaConfigurationFile() {
+    // console.log("GOING TO DO SOME LOADING HERE");
+    // nova.fs.open()
   }
 }
