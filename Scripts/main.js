@@ -1,6 +1,9 @@
 const { ToDoDataProvider } = require("./ToDoDataProvider.js");
 console.clear();
-// ADD preferences screenshots to README
+// TODO: ADD screenshots to README
+// TODO: Add reset preferences for global
+// TODO: Add reset preferences for workspace
+// FIXME: Remove , in paths setting
 var treeView = null;
 var dataProvider = null;
 var refreshTimer = null;
@@ -34,11 +37,6 @@ nova.commands.register("todo.addPath", () => {
   nova.workspace.config.set("todo.selected-ignore-path", "");
 });
 
-// nova.commands.register("todo.removeWSCaseSensitiveTagMatching", () => {
-//   
-//   nova.workspace.config.remove("todo.workspace-case-sensitive-tag-matching");
-// });
-
 nova.commands.register("todo.openFile", () => {
   let selection = treeView.selection;
   
@@ -57,6 +55,7 @@ nova.commands.register("todo.ignoreParentDirectory", () => {
   addWorkspaceIgnorePath(nova.path.dirname(selection.map((e) => e.filePath)));
 });
 
+// TODO: Move to configuration class.
 function addWorkspaceIgnorePath(path) {
   path = nova.path.normalize(path);
   let workspaceIgnorePaths = nova.workspace.config.get("todo.workspace-ignore-paths") + "," + path;
@@ -90,19 +89,29 @@ nova.commands.register("todo.sort", () => {
   reloadData(sortBy);
 });
 
+nova.config.observe("todo.global-case-sensitive-tag-matching", reloadData);
+
+// TODO: Remove this and retrieve from extension.json or a Nova API if provided.
+const PREFERENCE_KEYWORDS = [
+  "broken", "bug", "debug", "deprecated", "example", "error",
+  "err", "fail", "fatal", "fix", "hack", "idea", "info", "note", "optimize", "question",
+  "refactor", "remove", "review", "task", "trace", "update", "warn", "warning"
+];
+
+PREFERENCE_KEYWORDS.forEach(keyword => {
+  nova.config.observe(`todo.global-keyword-${keyword}`, reloadData);  
+});
+
+nova.config.observe("todo.global-ignore-names", reloadData);
+nova.config.observe("todo.global-ignore-extensions", reloadData);
+
 if (nova.workspace.path !== undefined && nova.workspace.path !== null) {
-  nova.config.observe("todo.global-ignore-names", reloadData);
-  nova.config.observe("todo.global-ignore-extensions", reloadData);
   // It is not necessary to observe the workspace config because the file system watch detects these changes.
   nova.fs.watch(null, reloadData);
 } else {
   // Must use polling because nova.fs.watch requires a current workspace.
   refreshTimer = setInterval(reloadData, 15000);
 }
-
-nova.config.onDidChange("todo.global-case-sensitive-tag-matching", () => {
-  reloadData()
-});
 
 function reloadData() {
   if (treeView !== null) {
