@@ -374,7 +374,7 @@
     },
     {
       "key": "todo.exclude-workspace-paths.section",
-      "title": "Ignored File & Directory Paths",
+      "title": "Workspace Ignored File & Directory Paths",
       "description": "Add specific file and directory paths that should be excluded in the current workspace.",
       "type": "section",
       "children": [
@@ -403,7 +403,7 @@
     },
     {
       "key": "todo.exclude-workspace-names.section",
-      "title": "Ignored File & Directory Names",
+      "title": "Workspace Ignored File & Directory Names",
       "description": "Add file and directory names that should be excluded in the current workspace, regardless of path.",
       "type": "section",
       "children": [
@@ -418,7 +418,7 @@
     },
     {
       "key": "todo.exclude-workspace-extensions.section",
-      "title": "Ignored File Extensions",
+      "title": "Workspace Ignored File Extensions",
       "description": "Add file extensions that should be excluded in the current workspace.",
       "type": "section",
       "children": [
@@ -433,8 +433,8 @@
     },
     {
       "key": "todo.reset-workspace-preferences.section",
-      "title": "Reset TODO Extension Workspace Preferences",
-      "description": "Click 'Reset' to return to the default extension proferences for this workspace.",
+      "title": "Reset Workspace Extension Preferences",
+      "description": "Click 'Reset' to return to the default extension preferences for this workspace.",
       "type": "section",
       "children": [
         {

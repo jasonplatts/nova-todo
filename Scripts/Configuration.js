@@ -5,13 +5,11 @@ const FUNCTIONS = require("./functions.js");
 */
 module.exports.Configuration = class Configuration {
   constructor() {
-    console.log("CONSTRUCTOR");
-    
     this.loadConfig();
   }
   
   loadConfig() {
-    console.log("LOAD CONFIG");
+    console.log("LOADING CONFIGURATION...");
     this.keywords = this.getKeywords();
     this.caseSensitiveMatching = this.caseSensitiveMatching();
     this.excludedNames = this.getExcludedNames();
@@ -25,22 +23,27 @@ module.exports.Configuration = class Configuration {
   */
   getKeywords() {
     const DEFAULT_KEYWORDS = ["todo", "fixme"];
-    let preferenceKeywords = [];
+    const PREFERENCE_KEYWORDS = [
+      "broken", "bug", "debug", "deprecated", "example", "error",
+      "err", "fail", "fatal", "fix", "hack", "idea", "info", "note", "optimize", "question",
+      "refactor", "remove", "review", "task", "trace", "update", "warn", "warning"
+    ];
     
-    //  A workspace must exist in order to retrieve saved preferences.
-    if (FUNCTIONS.isWorkspace()) {
-      preferenceKeywords = [
-        "broken", "bug", "debug", "deprecated", "example", "error",
-        "err", "fail", "fatal", "fix", "hack", "idea", "info", "note", "optimize", "question",
-        "refactor", "remove", "review", "task", "trace", "update", "warn", "warning"
-      ];
-      
-      preferenceKeywords = preferenceKeywords.filter(elem => {
+    let additionalKeywords = [];
+    
+    //  If a workspace exists and user has chosen to use the workspace preferences for tags, else use global settings.
+    if (FUNCTIONS.isWorkspace() &&
+    (nova.workspace.config.get("todo.workspace-custom-tags") == "Use Workspace Preferences")) {
+      additionalKeywords = PREFERENCE_KEYWORDS.filter(elem => {
           return nova.workspace.config.get(`todo.workspace-keyword-${elem}`)
+      });
+    } else {
+      additionalKeywords = PREFERENCE_KEYWORDS.filter(elem => {
+        return nova.config.get(`todo.global-keyword-${elem}`)
       });
     }
     
-    let keywords = [...DEFAULT_KEYWORDS, ...preferenceKeywords];
+    let keywords = [...DEFAULT_KEYWORDS, ...additionalKeywords];
     keywords = keywords.map(elem => { return elem.toUpperCase() });
     
     return keywords;
