@@ -225,7 +225,7 @@ module.exports.ToDoDataProvider = class ToDoDataProvider {
         toDoListItem.filePath = file.path;
         toDoListItem.line     = i + 1;
         toDoListItem.column   = match.column;
-        toDoListItem.position = fileLineStartPosition + match.column;
+        toDoListItem.position = fileLineStartPosition + (match.column - 1);
         toDoListItem.comment  = match.comment;
         
         fileMatches = fileMatches.concat(toDoListItem);

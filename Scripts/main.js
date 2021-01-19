@@ -65,7 +65,12 @@ function addWorkspaceIgnorePath(path) {
 
 nova.commands.register("todo.doubleClick", () => {
   let selection = treeView.selection;
-  let fileStatus = nova.workspace.openFile(selection.map((e) => e.filePath));
+  
+  let path = selection.map((e) => e.filePath);
+  let line = selection.map((e) => e.line);
+  let column = selection.map((e) => e.column);
+  
+  let fileStatus = nova.workspace.openFile(path, [line, column]);
   
   fileStatus.then (
     function() {
