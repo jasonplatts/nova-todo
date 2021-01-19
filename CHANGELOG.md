@@ -1,3 +1,7 @@
+## Version 2.3
+
+* Fixed issue opening files occurring when double clicking a TODO item in Nova 1.4.
+
 ## Version 2.2
 
 * Fixed configuration issue preventing extension submission.
