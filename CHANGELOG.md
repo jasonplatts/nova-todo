@@ -1,3 +1,8 @@
+## Version 2.3.1
+
+* Updated extension documentation to clarify updating ignored file and folder name preferences.
+* Added a minimum Nova 4.1 runtime requirement.
+
 ## Version 2.3
 
 * Fixed issue opening files occurring when double clicking a TODO item in Nova 1.4.

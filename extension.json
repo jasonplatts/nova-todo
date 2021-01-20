@@ -4,10 +4,11 @@
   "organization": "Jason Platts",
   "description": "Displays tags, such as TODO and FIXME, within a sidebar tree view.",
   "license":"MIT",
-  "version": "2.3",
+  "version": "2.3.1",
   "repository":"https://github.com/jasonplatts/nova-todo",
   "bugs":"https://github.com/jasonplatts/nova-todo/issues",
   "funding":"https://github.com/sponsors/jasonplatts",
+  "min_runtime": "4.1",
   "categories": ["sidebars"],
   
   "main": "main.js",
