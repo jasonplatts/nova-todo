@@ -197,7 +197,7 @@
         {
           "key": "todo.global-ignore-names",
           "title": "Ignored Names",
-          "description": "Provide a list of comma separated directory and file names that should be ignored in all workspaces. File names must include the file extension. For example: test.txt, example.js, sample.php.",
+          "description": "Provide a list of comma separated directory and file names that should be ignored in all workspaces. File names must include the file extension. For example: test.txt, example.js, sample.php. Several names are ignored by default, including node_modules, tmp, .git, vendor, .nova, and .gitignore.",
           "type": "text",
           "default": ""
         }
