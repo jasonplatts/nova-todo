@@ -1,3 +1,7 @@
+## Version 3.0
+
+* Added env and venv as default ignored directories (Issue #21).
+
 ## Version 2.3.1
 
 * Updated extension documentation to clarify updating ignored file and folder name preferences.
@@ -30,7 +34,7 @@
 
 ## Version 1.3
 
-* Updated extension to set the cursor position when opening a tag item.  
+* Updated extension to set the cursor position when opening a tag item.
 
 ## Version 1.2
 
