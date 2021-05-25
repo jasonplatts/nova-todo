@@ -70,47 +70,4 @@ module.exports.FileLoader = class FileLoader {
       }
     })
   }
-
-  mdFindExec() {
-    return new Promise((resolve, reject) => {
-      let returnValue = {
-        status: 0,
-        stdout: [],
-        stderr: [],
-      }
-
-      let keywordQuery = 'kMDItemTextContent == ' + this.keywords.join(' || kMDItemTextContent == ')
-
-      let options = {
-        args: [keywordQuery, '-onlyin', this.rootPath]
-      }
-
-      let process = new Process('/usr/bin/mdfind', options)
-
-      process.onStdout((l) => {
-        returnValue.stdout.push(l.trim())
-      })
-
-      process.onStderr((l) => {
-        returnValue.stderr.push(l.trim())
-      })
-
-      process.onDidExit((status) => {
-        returnValue.status = status
-        if (status === 0) {
-          resolve(returnValue)
-        } else {
-          reject(returnValue)
-        }
-      })
-
-      try {
-        process.start()
-      } catch (e) {
-        returnValue.status = 128
-        returnValue.stderr = [e.message]
-        reject(returnValue)
-      }
-    })
-  }
 }
