@@ -1,14 +1,28 @@
+const FUNCTIONS = require('./functions.js')
+
 /*
- Module provides an interface to macOS command line functionality.
+ Class provides interface to macOS egrep command line functionality.
 */
-module.exports.FileLoader = class FileLoader {
-  constructor(rootPath, keywords) {
-    this.setRootPath(rootPath)
-    this.keywords = keywords
+exports.WorkspaceSearch = class WorkspaceSearch {
+  constructor(path, config) {
+    this.path   = path
+    this.config = config
   }
 
-  setRootPath(path) {
-    this.rootPath = '/' + path.split('/').slice(3).join('/')
+  /*
+    Returns files containing matching keywords.
+  */
+  search() {
+    return new Promise((resolve, reject) => {
+      let files = this.egrepExec()
+
+      files.then((response, reject) => {
+        resolve(response.stdout)
+      })
+      files.catch((alert) => {
+        reject(alert)
+      })
+    })
   }
 
   egrepExec() {
@@ -19,7 +33,7 @@ module.exports.FileLoader = class FileLoader {
         stderr: [],
       }
 
-      let keywordQuery = this.keywords.join('|')
+      let keywordQuery = this.config.keywords.join('|')
 
       // Helpful information on egrep options
       // https://unix.stackexchange.com/questions/282648/using-grep-with-the-exclude-dir-flag-to-exclude-multiple-directories
@@ -39,7 +53,7 @@ module.exports.FileLoader = class FileLoader {
       // -R -recursive - Read all files under each directory.
       // -i --ignore-case - Ignore case when matching the pattern.
       let options = {
-        args: [keywordQuery, '-lIRi', ...exclusions, this.rootPath]
+        args: [keywordQuery, '-lIRi', ...exclusions, FUNCTIONS.normalizePath(this.path)]
       }
 
       let process = new Process('/usr/bin/egrep', options)

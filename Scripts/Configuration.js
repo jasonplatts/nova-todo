@@ -3,9 +3,8 @@ const FUNCTIONS = require('./functions.js')
 /*
   Module handles the retrieval of default and user preference configurations
 */
-module.exports.Configuration = class Configuration {
+exports.Configuration = class Configuration {
   constructor() {
-    // this.readNovaConfigurationFile()
     this.loadConfig()
   }
 
@@ -167,10 +166,6 @@ module.exports.Configuration = class Configuration {
     return workspaceIgnorePaths
   }
 
-  removeWorkspacePreferences() {
-    // Remove keywords, ignore paths,
-  }
-
   /*
     Returns an array that has been stripped of null, blank, and undefined elements.
   */
@@ -186,10 +181,5 @@ module.exports.Configuration = class Configuration {
     array = array.map(element => element.trim())
 
     return array
-  }
-
-  readNovaConfigurationFile() {
-    // console.log("GOING TO DO SOME LOADING HERE");
-    // nova.fs.open()
   }
 }
