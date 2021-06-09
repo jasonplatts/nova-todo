@@ -43,22 +43,21 @@ exports.Group = class Group {
     returns an array of ToDoListItem objects grouped by tag name.
   */
   groupListItemsByTagName(toDoListItems) {
-    let groupedtoDoListItems = []
+    let groupedToDoListItems = []
     let distinctTags = this.getUniqueTags(toDoListItems)
 
     distinctTags.forEach((distinctTag) => {
-      groupedtoDoListItems.push(new ToDoListItem(distinctTag))
+      groupedToDoListItems.push(new ToDoListItem(distinctTag))
 
       let tagToDoItems = toDoListItems.filter(
         toDoListItem => toDoListItem.name == distinctTag
       )
 
       tagToDoItems.forEach(tagToDoItem => {
-        groupedtoDoListItems[groupedtoDoListItems.length - 1].addChild(tagToDoItem)
+        groupedToDoListItems[groupedToDoListItems.length - 1].addChild(tagToDoItem)
       })
     })
-
-    return groupedtoDoListItems
+    return groupedToDoListItems
   }
 
   /*

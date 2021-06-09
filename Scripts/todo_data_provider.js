@@ -1,6 +1,6 @@
 /*
-  Module contains the dataProvider functionality used to populate the Nova sidebar
-  Treeview object, including the ToDoItem and ToDoDataProvider classes.
+  Module contains the DataProvider functionality. Due to limitations in the Nova API
+  at time of writing, the TreeView is not editable once part of the DataProvider.
 */
 const { Configuration } = require('./Configuration.js')
 const FUNCTIONS         = require('./functions.js')
@@ -14,54 +14,54 @@ exports.ToDoDataProvider = class ToDoDataProvider {
   /*
     Returns the children tree item(s).
   */
-  getChildren(toDoItem) {
-    if (!toDoItem) {
+  getChildren(toDoListItem) {
+    if (!toDoListItem) {
       return this.rootItems
     }
     else {
-      return toDoItem.children
+      return toDoListItem.children
     }
   }
 
   /*
     Returns the parent tree item.
   */
-  getParent(toDoItem) {
-    return toDoItem.parent
+  getParent(toDoListItem) {
+    return toDoListItem.parent
   }
 
   /*
     Returns a specific tree item.
   */
-  getTreeItem(toDoItem) {
+  getTreeItem(toDoListItem) {
     if (this.groupBy == 'file') {
-      var item = new TreeItem(toDoItem.name)
+      var item = new TreeItem(toDoListItem.name)
 
-      if (toDoItem.children.length > 0) {
+      if (toDoListItem.children.length > 0) {
         item.collapsibleState = TreeItemCollapsibleState.Expanded
-        item.image            = `__filetype${nova.path.extname(toDoItem.filePath)}`
+        item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`
         item.contextValue     = 'file'
-        item.tooltip          = toDoItem.filePath
-        item.descriptiveText  = '(' + toDoItem.children.length + ')'
+        item.tooltip          = toDoListItem.filePath
+        item.descriptiveText  = '(' + toDoListItem.children.length + ')'
       } else {
-        item.image            = this.getIconImage(toDoItem)
+        item.image            = this.getIconImage(toDoListItem)
         item.command          = 'todo.doubleClick'
         item.contextValue     = 'tag'
-        item.descriptiveText  = `${toDoItem.comment} (Ln: ${toDoItem.line}, Col: ${toDoItem.column})`
+        item.descriptiveText  = `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`
       }
-    } else if (this.sortBy == 'tag') {
-      if (toDoItem.children.length > 0) {
-        let childItem = new TreeItem(toDoItem.name)
-        childItem.collapsibleState = TreeItemCollapsibleState.Expanded
-        childItem.image            = this.getIconImage(toDoItem)
-        childItem.contextValue     = 'tag'
-        childItem.descriptiveText  = '(' + toDoItem.children.length + ')'
+    } else if (this.groupBy == 'tag') {
+      if (toDoListItem.children.length > 0) {
+        item = new TreeItem(toDoListItem.name)
+        item.collapsibleState = TreeItemCollapsibleState.Expanded
+        item.image            = this.getIconImage(toDoListItem)
+        item.contextValue     = 'tag'
+        item.descriptiveText  = '(' + toDoListItem.children.length + ')'
       } else {
-        let childItem = new TreeItem(toDoItem.filePath)
-        childItem.image            = `__filetype${nova.path.extname(toDoItem.filePath)}`
-        childItem.command          = 'todo.doubleClick'
-        childItem.contextValue     = 'file'
-        childItem.tooltip          = `${toDoItem.comment} (Ln: ${toDoItem.line}, Col: ${toDoItem.column})`
+        item = new TreeItem(toDoListItem.filePath)
+        item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`
+        item.command          = 'todo.doubleClick'
+        item.contextValue     = 'file'
+        item.tooltip          = `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`
       }
     }
 
@@ -71,13 +71,13 @@ exports.ToDoDataProvider = class ToDoDataProvider {
   /*
     Returns an appropriate icon name for a non-file tree item.
   */
-  getIconImage(toDoItem) {
-    let itemType = toDoItem.name.toLowerCase()
+  getIconImage(toDoListItem) {
+    let itemType = toDoListItem.name.toLowerCase()
 
     if (itemType == 'todo' || itemType == 'fixme') {
-      return toDoItem.name.toLowerCase()
+      return toDoListItem.name.toLowerCase()
     } else {
-      return 'user';
+      return 'user'
     }
   }
 }
