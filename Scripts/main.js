@@ -2,10 +2,11 @@ const FUNCTIONS            = require('./functions.js')
 const { Configuration }    = require('./configuration.js')
 const { WorkspaceSearch }  = require('./workspace_search.js')
 const { FileSearch }       = require('./file_search.js')
+const { Group }            = require('./group.js')
 const { ToDoDataProvider } = require('./todo_data_provider.js')
 
 var config    = new Configuration()
-var groupBy   = 'file'
+var groupBy   = 'tag'
 var tagsArray = []
 var treeView  = null
 // var refreshTimer = null
@@ -39,17 +40,23 @@ exports.activate = function() {
     let workspaceSearch = new WorkspaceSearch(nova.workspace.path, config)
     let files           = workspaceSearch.search()
 
-    files.then((response, reject) => {
-      let filteredFiles = FUNCTIONS.filePathArray(response, config)
+    files
+      .then((response, reject) => {
+        response = FUNCTIONS.filterFilePathArray(response, config)
 
-      filteredFiles.forEach((filePath) => {
-        let fileSearch = new FileSearch(filePath, config)
-        tagsArray      = [...tagsArray, ...fileSearch.search()]
+        response.forEach((filePath) => {
+          let fileSearch = new FileSearch(filePath, config)
+          tagsArray      = [...tagsArray, ...fileSearch.search()]
+        })
+
+        let group = new Group()
+        tagsArray = group.groupListItems(tagsArray, groupBy)
+
+        loadTreeView()
       })
-
-      // console.log(JSON.stringify(tagsArray))
-      loadTreeView()
-    })
+      .catch((err) => {
+        console.log(err)
+      })
   } else {
     // remote or single file.
     // find open files.
@@ -67,6 +74,8 @@ exports.activate = function() {
 }
 
 function loadTreeView() {
+
+
   // Convert array of tags to editable extension version of the treeview.
   treeView = new TreeView('todo', {
     dataProvider: new ToDoDataProvider(tagsArray, groupBy)

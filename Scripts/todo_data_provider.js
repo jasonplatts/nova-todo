@@ -9,7 +9,6 @@ exports.ToDoDataProvider = class ToDoDataProvider {
   constructor(tagsArray, groupBy) {
     this.rootItems = tagsArray
     this.groupBy   = groupBy
-    // console.log(JSON.stringify(tagsArray))
   }
 
   /*
@@ -35,7 +34,6 @@ exports.ToDoDataProvider = class ToDoDataProvider {
     Returns a specific tree item.
   */
   getTreeItem(toDoItem) {
-    console.log(JSON.stringify(toDoItem))
     if (this.groupBy == 'file') {
       var item = new TreeItem(toDoItem.name)
 
