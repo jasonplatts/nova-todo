@@ -92,6 +92,18 @@ exports.isAllowedPath = function isAllowedPath(path, excludedPaths) {
 }
 
 /*
+Evaluates an array of file paths, returning an array of only the allowed files.
+*/
+exports.filePathArray = function filePathArray(filePathArray, config) {
+
+  filePathArray = filePathArray.filter(filePath => this.isAllowedName(filePath, config.excludedNames))
+  filePathArray = filePathArray.filter(filePath => this.isAllowedExtension(filePath, config.excludedExtensions))
+  filePathArray = filePathArray.filter(filePath => this.isAllowedPath(filePath, config.excludedPaths))
+
+  return filePathArray
+}
+
+/*
   Removes the preceding Volumes and HDD portion of a standard returned path.
 */
 exports.normalizePath = function normalizePath(path) {

@@ -3,7 +3,6 @@ const FUNCTIONS            = require('./functions.js')
 const { Configuration }    = require('./configuration.js')
 const { WorkspaceSearch }  = require('./workspace_search.js')
 const { FileSearch }       = require('./file_search.js')
-const { Filter }           = require('./filter.js')
 
 const { TagTree }          = require('./tag_tree.js')
 const { ToDoDataProvider } = require('./todo_data_provider.js')
@@ -47,8 +46,7 @@ exports.activate = function() {
     let files           = workspaceSearch.search()
 
     files.then((response, reject) => {
-      let filter        = new Filter(config)
-      let filteredFiles = filter.filePathArray(response)
+      let filteredFiles = FUNCTIONS.filePathArray(response, config)
 
       let tags = []
 
