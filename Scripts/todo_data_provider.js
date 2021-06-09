@@ -2,30 +2,16 @@
   Module contains the dataProvider functionality used to populate the Nova sidebar
   Treeview object, including the ToDoItem and ToDoDataProvider classes.
 */
-// const { Egrep }         = require('./Egrep.js')
 const { Configuration } = require('./Configuration.js')
 const FUNCTIONS         = require('./functions.js')
 
-exports.ToDoItem = class ToDoItem {
-  constructor(name) {
-    this.name = name
-    this.filePath = null
-    this.line = null
-    this.column = null
-    this.position = null
-    this.comment = null
-
-    this.children = []
-    this.parent = null
-  }
-
-  addChild(element) {
-    element.parent = this
-    this.children.push(element)
-  }
-}
-
 exports.ToDoDataProvider = class ToDoDataProvider {
+  constructor(tagsArray, groupBy) {
+    this.rootItems = tagsArray
+    this.groupBy   = groupBy
+    // console.log(JSON.stringify(tagsArray))
+  }
+
   /*
     Returns the children tree item(s).
   */
@@ -49,34 +35,35 @@ exports.ToDoDataProvider = class ToDoDataProvider {
     Returns a specific tree item.
   */
   getTreeItem(toDoItem) {
-    if (this.sortBy == 'file') {
+    console.log(JSON.stringify(toDoItem))
+    if (this.groupBy == 'file') {
       var item = new TreeItem(toDoItem.name)
 
       if (toDoItem.children.length > 0) {
         item.collapsibleState = TreeItemCollapsibleState.Expanded
         item.image            = `__filetype${nova.path.extname(toDoItem.filePath)}`
-        item.contextValue     = 'file';
+        item.contextValue     = 'file'
         item.tooltip          = toDoItem.filePath
-        item.descriptiveText  = '(' + toDoItem.children.length + ')';
+        item.descriptiveText  = '(' + toDoItem.children.length + ')'
       } else {
         item.image            = this.getIconImage(toDoItem)
-        item.command          = 'todo.doubleClick';
-        item.contextValue     = 'tag';
+        item.command          = 'todo.doubleClick'
+        item.contextValue     = 'tag'
         item.descriptiveText  = `${toDoItem.comment} (Ln: ${toDoItem.line}, Col: ${toDoItem.column})`
       }
     } else if (this.sortBy == 'tag') {
       if (toDoItem.children.length > 0) {
-        var item = new TreeItem(toDoItem.name)
-        item.collapsibleState = TreeItemCollapsibleState.Expanded
-        item.image            = this.getIconImage(toDoItem)
-        item.contextValue     = 'tag';
-        item.descriptiveText  = '(' + toDoItem.children.length + ')';
+        let childItem = new TreeItem(toDoItem.name)
+        childItem.collapsibleState = TreeItemCollapsibleState.Expanded
+        childItem.image            = this.getIconImage(toDoItem)
+        childItem.contextValue     = 'tag'
+        childItem.descriptiveText  = '(' + toDoItem.children.length + ')'
       } else {
-        var item = new TreeItem(toDoItem.filePath)
-        item.image            = `__filetype${nova.path.extname(toDoItem.filePath)}`
-        item.command          = 'todo.doubleClick';
-        item.contextValue     = 'file';
-        item.tooltip          = `${toDoItem.comment} (Ln: ${toDoItem.line}, Col: ${toDoItem.column})`
+        let childItem = new TreeItem(toDoItem.filePath)
+        childItem.image            = `__filetype${nova.path.extname(toDoItem.filePath)}`
+        childItem.command          = 'todo.doubleClick'
+        childItem.contextValue     = 'file'
+        childItem.tooltip          = `${toDoItem.comment} (Ln: ${toDoItem.line}, Col: ${toDoItem.column})`
       }
     }
 

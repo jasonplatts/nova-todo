@@ -1,4 +1,4 @@
-const { Tag } = require('./tag.js')
+const { ToDoListItem } = require('./todo_list_item.js')
 
 exports.FileSearch = class FileSearch {
   constructor(filePath, config) {
@@ -22,7 +22,7 @@ exports.FileSearch = class FileSearch {
       let lineMatches = this.searchLine(contents[i])
 
       lineMatches.forEach((match) => {
-        let tag      = new Tag(match.name)
+        let tag      = new ToDoListItem(match.name)
         tag.filePath = file.path
         tag.line     = i + 1
         tag.column   = match.column

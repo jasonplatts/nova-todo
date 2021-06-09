@@ -1,19 +1,15 @@
 const FUNCTIONS            = require('./functions.js')
-
 const { Configuration }    = require('./configuration.js')
 const { WorkspaceSearch }  = require('./workspace_search.js')
 const { FileSearch }       = require('./file_search.js')
-
-const { TagTree }          = require('./tag_tree.js')
 const { ToDoDataProvider } = require('./todo_data_provider.js')
 
-var tagTree = null
-
+var config    = new Configuration()
+var groupBy   = 'file'
+var tagsArray = []
+var treeView  = null
 // var refreshTimer = null
-var sortBy = 'file'
-var config = new Configuration()
 
-// var treeView = null
 // var dataProvider = null
 /*
 ON ACTIVATE
@@ -39,8 +35,6 @@ exports.activate = function() {
   console.clear()
   console.log('TODO EXTENSION ACTIVATED')
 
-  let tags = []
-
   if (FUNCTIONS.isWorkspace()) {
     let workspaceSearch = new WorkspaceSearch(nova.workspace.path, config)
     let files           = workspaceSearch.search()
@@ -48,15 +42,13 @@ exports.activate = function() {
     files.then((response, reject) => {
       let filteredFiles = FUNCTIONS.filePathArray(response, config)
 
-      let tags = []
-
       filteredFiles.forEach((filePath) => {
         let fileSearch = new FileSearch(filePath, config)
-        tags           = [...tags, ...fileSearch.search()]
+        tagsArray      = [...tagsArray, ...fileSearch.search()]
       })
 
-      console.log(JSON.stringify(tags))
-      setTagTree(tags)
+      // console.log(JSON.stringify(tagsArray))
+      loadTreeView()
     })
   } else {
     // remote or single file.
@@ -74,9 +66,13 @@ exports.activate = function() {
   // nova.subscriptions.add(treeView)
 }
 
-function setTagTree(tags) {
-  // Convert array of tags to editable extension version of the treeview
-  tagTree = new TagTree(tags)
+function loadTreeView() {
+  // Convert array of tags to editable extension version of the treeview.
+  treeView = new TreeView('todo', {
+    dataProvider: new ToDoDataProvider(tagsArray, groupBy)
+  })
+
+  nova.subscriptions.add(treeView)
 }
 
 exports.deactivate = function() {
