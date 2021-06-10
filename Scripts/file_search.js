@@ -22,14 +22,14 @@ exports.FileSearch = class FileSearch {
       let lineMatches = this.searchLine(contents[i])
 
       lineMatches.forEach((match) => {
-        let tag      = new ToDoListItem(match.name)
-        tag.filePath = file.path
-        tag.line     = i + 1
-        tag.column   = match.column
-        tag.position = fileLineStartPosition + (match.column - 1)
-        tag.comment  = match.comment
+        let listItem      = new ToDoListItem(match.name)
+        listItem.path     = file.path
+        listItem.line     = i + 1
+        listItem.column   = match.column
+        listItem.position = fileLineStartPosition + (match.column - 1)
+        listItem.comment  = match.comment
 
-        fileMatches  = fileMatches.concat(tag)
+        fileMatches  = fileMatches.concat(listItem)
       })
 
       fileLineStartPosition += contents[i].length

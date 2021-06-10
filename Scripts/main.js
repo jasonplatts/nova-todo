@@ -6,9 +6,10 @@ const { Group }            = require('./group.js')
 const { ToDoDataProvider } = require('./todo_data_provider.js')
 
 var config    = new Configuration()
-var groupBy   = 'tag'
+var groupBy   = 'file'
 var tagsArray = []
 var treeView  = null
+
 // var refreshTimer = null
 
 // var dataProvider = null
@@ -74,8 +75,6 @@ exports.activate = function() {
 }
 
 function loadTreeView() {
-
-
   // Convert array of tags to editable extension version of the treeview.
   treeView = new TreeView('todo', {
     dataProvider: new ToDoDataProvider(tagsArray, groupBy)

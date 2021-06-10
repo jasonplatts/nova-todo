@@ -31,53 +31,21 @@ exports.ToDoDataProvider = class ToDoDataProvider {
   }
 
   /*
-    Returns a specific tree item.
+    Converts a listItem object into a TreeItem object.
   */
-  getTreeItem(toDoListItem) {
-    if (this.groupBy == 'file') {
-      var item = new TreeItem(toDoListItem.name)
+  getTreeItem(listItem) {
+    var item = new TreeItem(listItem.name)
 
-      if (toDoListItem.children.length > 0) {
-        item.collapsibleState = TreeItemCollapsibleState.Expanded
-        item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`
-        item.contextValue     = 'file'
-        item.tooltip          = toDoListItem.filePath
-        item.descriptiveText  = '(' + toDoListItem.children.length + ')'
-      } else {
-        item.image            = this.getIconImage(toDoListItem)
-        item.command          = 'todo.doubleClick'
-        item.contextValue     = 'tag'
-        item.descriptiveText  = `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`
-      }
-    } else if (this.groupBy == 'tag') {
-      if (toDoListItem.children.length > 0) {
-        item = new TreeItem(toDoListItem.name)
-        item.collapsibleState = TreeItemCollapsibleState.Expanded
-        item.image            = this.getIconImage(toDoListItem)
-        item.contextValue     = 'tag'
-        item.descriptiveText  = '(' + toDoListItem.children.length + ')'
-      } else {
-        item = new TreeItem(toDoListItem.filePath)
-        item.image            = `__filetype${nova.path.extname(toDoListItem.filePath)}`
-        item.command          = 'todo.doubleClick'
-        item.contextValue     = 'file'
-        item.tooltip          = `${toDoListItem.comment} (Ln: ${toDoListItem.line}, Col: ${toDoListItem.column})`
-      }
-    }
+    item.collapsibleState = listItem.collapsibleState
+    item.command          = listItem.command
+    item.color            = listItem.color
+    item.contextValue     = listItem.contextValue
+    item.descriptiveText  = listItem.descriptiveText
+    item.identifier       = listItem.identifier
+    item.image            = listItem.image
+    item.path             = listItem.path
+    item.tooltip          = listItem.tooltip
 
     return item
-  }
-
-  /*
-    Returns an appropriate icon name for a non-file tree item.
-  */
-  getIconImage(toDoListItem) {
-    let itemType = toDoListItem.name.toLowerCase()
-
-    if (itemType == 'todo' || itemType == 'fixme') {
-      return toDoListItem.name.toLowerCase()
-    } else {
-      return 'user'
-    }
   }
 }
