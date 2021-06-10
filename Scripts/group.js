@@ -1,3 +1,8 @@
+/*
+  Module provides the final list item grouping and attribute completion of an ungrouped ListItem object array.
+  It should be used prior to sending the ungrouped ListItem object array to the DataProvider for display in
+  a Nova sidebar TreeView object.
+*/
 const { ToDoListItem } = require('./todo_list_item.js')
 
 exports.Group = class Group {

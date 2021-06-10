@@ -75,7 +75,13 @@ exports.activate = function() {
 }
 
 function loadTreeView() {
-  // Convert array of tags to editable extension version of the treeview.
+  /*
+    NOTE: At time of writing, the TreeView is not editable once it is part of
+    the DataProvider object. Therefore, the original ListItem array must be edited, then the Nova TreeView
+    disposed and replaced by a completely new TreeView object.
+  */
+
+  // Convert array of editable ListItem objects to a Nova TreeView object.
   treeView = new TreeView('todo', {
     dataProvider: new ToDoDataProvider(tagsArray, groupBy)
   })
