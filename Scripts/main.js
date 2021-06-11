@@ -6,7 +6,7 @@ const { Group }            = require('./group.js')
 const { ToDoDataProvider } = require('./todo_data_provider.js')
 
 var config    = new Configuration()
-var groupBy   = 'file'
+var groupBy   = 'tag'
 var tagsArray = []
 var treeView  = null
 

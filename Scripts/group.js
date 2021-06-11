@@ -6,17 +6,16 @@
 const { ToDoListItem } = require('./todo_list_item.js')
 
 exports.Group = class Group {
-  groupListItems(listItemsArray, groupBy='file') {
-    let groupedListItems = []
+  groupListItems(ungroupedListItems, groupBy='file') {
+    let listItems = []
 
-    // Unless specified, group tags by file name.
-    if (groupBy == null || groupBy == 'file') {
-      groupedListItems = this.groupListItemsByFileName(listItemsArray)
+    if (groupBy !== 'tag') {
+      listItems = this.groupListItemsByFileName(ungroupedListItems)
     } else {
-      groupedListItems = this.groupListItemsByTagName(listItemsArray)
+      listItems = this.groupListItemsByTagName(ungroupedListItems)
     }
 
-    return groupedListItems
+    return listItems
   }
 
   /*
@@ -25,9 +24,9 @@ exports.Group = class Group {
   */
   groupListItemsByFileName(ungroupedListItems) {
     let listItems = []
-    let uniquePathsArray = this.getUniqueFiles(ungroupedListItems)
+    let uniquePaths = this.getUniqueFiles(ungroupedListItems)
 
-    uniquePathsArray.forEach((uniquePath) => {
+    uniquePaths.forEach((uniquePath) => {
       listItems.push(this.createFileParentItem(uniquePath))
 
       // Collects into an array all of the items to be a child of the current unique path parent item.
@@ -35,7 +34,7 @@ exports.Group = class Group {
         listItem => listItem.path == uniquePath
       )
 
-      // For each child item, set its attributes and add to parent item.
+      // For each child item, set its attributes and add to parent list item.
       childListItems.forEach(childListItem => {
         childListItem = this.setFileChildAttributes(childListItem)
         listItems[listItems.length - 1].addChild(childListItem)
@@ -54,7 +53,8 @@ exports.Group = class Group {
     let parentListItem              = new ToDoListItem(nova.path.basename(filePath))
     parentListItem.collapsibleState = TreeItemCollapsibleState.Expanded
     parentListItem.tooltip          = filePath
-    parentListItem.path             = filePath // By default, the file type of this path is used as the list item image.
+    // By default, the file type of this path is used as the list item image.
+    parentListItem.path             = filePath
 
     return parentListItem
   }
@@ -89,8 +89,6 @@ exports.Group = class Group {
         childListItem = this.setTagChildAttributes(childListItem)
         listItems[listItems.length - 1].addChild(childListItem)
       })
-
-      listItems[listItems.length - 1].descriptiveText = '(' + listItems[listItems.length - 1].children.length + ')'
     })
 
     return listItems
@@ -111,8 +109,9 @@ exports.Group = class Group {
     Sets the attributes of a child list item when grouping by file name.
   */
   setTagChildAttributes(childListItem) {
-    childListItem.command         = 'todo.doubleClick'
-    childListItem.descriptiveText = `${childListItem.comment} (Ln: ${childListItem.line}, Col: ${childListItem.column})`
+    childListItem.name    = nova.path.basename(childListItem.path)
+    childListItem.tooltip = childListItem.path
+    childListItem.command = 'todo.doubleClick'
 
     return childListItem
   }
