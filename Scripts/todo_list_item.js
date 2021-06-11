@@ -35,17 +35,16 @@ exports.ToDoListItem = class ToDoListItem {
         - A tooltip to display when hovering over the item, as a string.
     */
     this.name             = name
-    this.collapsibleState = null
+    this.collapsibleState = TreeItemCollapsibleState.None
     this.command          = null
     this.color            = null
     this.contextValue     = null
-    this.descriptiveText  = null
+    this.descriptiveText  = ''
     this.identifier       = null
     this.image            = null
     this.path             = null
-    this.tooltip          = null
+    this.tooltip          = ''
 
-    // this.filePath         = null
     this.line             = null
     this.column           = null
     this.position         = null
