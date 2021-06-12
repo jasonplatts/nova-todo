@@ -1,43 +1,57 @@
 const { ToDoListItem } = require('./todo_list_item.js')
 
-exports.FileSearch = class FileSearch {
-  constructor(filePath, config) {
-    this.filePath              = filePath
+exports.DocumentSearch = class DocumentSearch {
+  constructor(config) {
     this.keywords              = config.keywords
     this.caseSensitiveMatching = config.caseSensitiveMatching
   }
 
   /*
-  Searches a file line by line for keywords
-  and returns an array of ToDoListItem objects
-  for a specific file. Accepts a Nova file object.
+    Opens a file into an array of lines for keyword searching.
+    Accepts a file path and returns an array of keyword
+    matches as ToDoListItem objects.
   */
-  search() {
-    let file                  = nova.fs.open(this.filePath)
-    let contents              = file.readlines()
-    let fileMatches           = []
-    let fileLineStartPosition = 0
+  searchFile(filePath) {
+    let file        = nova.fs.open(filePath)
+    let lines       = file.readlines()
+    let fileMatches = this.searchLines(lines)
 
-    for(let i = 0; i < contents.length; i++) {
-      let lineMatches = this.searchLine(contents[i])
-
-      lineMatches.forEach((match) => {
-        let listItem      = new ToDoListItem(match.name)
-        listItem.path     = file.path
-        listItem.line     = i + 1
-        listItem.column   = match.column
-        listItem.position = fileLineStartPosition + (match.column - 1)
-        listItem.comment  = match.comment
-
-        fileMatches  = fileMatches.concat(listItem)
-      })
-
-      fileLineStartPosition += contents[i].length
-    }
+    fileMatches.forEach((listItem) => {
+      listItem.path = file.path
+    })
 
     file.close()
 
     return fileMatches
+  }
+
+  /*
+    Searches a document line by line for keywords and returns an
+    array of ToDoListItem objects for a specific document. Accepts the
+    entire contents of a document.
+  */
+  searchLines(documentLines) {
+    let documentMatches           = []
+    let docmentLineStartPosition = 0
+
+    for(let i = 0; i < documentLines.length; i++) {
+      let lineMatches = this.searchLine(documentLines[i])
+
+      lineMatches.forEach((match) => {
+        let listItem      = new ToDoListItem(match.name)
+
+        listItem.line     = i + 1
+        listItem.column   = match.column
+        listItem.position = docmentLineStartPosition + (match.column - 1)
+        listItem.comment  = match.comment
+
+        documentMatches  = documentMatches.concat(listItem)
+      })
+
+      docmentLineStartPosition += documentLines[i].length
+    }
+
+    return documentMatches
   }
 
   /*

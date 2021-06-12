@@ -1,12 +1,12 @@
 const FUNCTIONS            = require('./functions.js')
 const { Configuration }    = require('./configuration.js')
 const { WorkspaceSearch }  = require('./workspace_search.js')
-const { FileSearch }       = require('./file_search.js')
+const { DocumentSearch }   = require('./document_search.js')
 const { Group }            = require('./group.js')
 const { ToDoDataProvider } = require('./todo_data_provider.js')
 
 var config    = new Configuration()
-var groupBy   = 'tag'
+var groupBy   = 'file'
 var tagsArray = []
 var treeView  = null
 
@@ -46,8 +46,8 @@ exports.activate = function() {
         response = FUNCTIONS.filterFilePathArray(response, config)
 
         response.forEach((filePath) => {
-          let fileSearch = new FileSearch(filePath, config)
-          tagsArray      = [...tagsArray, ...fileSearch.search()]
+          let fileSearch = new DocumentSearch(config)
+          tagsArray      = [...tagsArray, ...fileSearch.searchFile(filePath)]
         })
 
         let group = new Group()
@@ -56,7 +56,7 @@ exports.activate = function() {
         loadTreeView()
       })
       .catch((err) => {
-        console.log(err)
+        console.log('TODO Extension', err)
       })
   } else {
     // remote or single file.
