@@ -11,18 +11,9 @@ var tagsArray = []
 var treeView  = null
 
 // var refreshTimer = null
-
 // var dataProvider = null
+
 /*
-ON ACTIVATE
-
-If workspace
-   get positive tags using egrep
-   get tags using extension function
-else
-  get tags of open files using extension function
-end
-
 ON CHANGE DETECTED
 
 if file !ignored
@@ -59,19 +50,20 @@ exports.activate = function() {
         console.log('TODO Extension', err)
       })
   } else {
-    // remote or single file.
-    // find open files.
+    let openDocuments = nova.workspace.textDocuments
+
+    openDocuments = FUNCTIONS.filterOpenDocumentArray(openDocuments, config)
+
+    openDocuments.forEach((textDocument) => {
+      let documentSearch = new DocumentSearch(config)
+      tagsArray = [...tagsArray, ...documentSearch.searchOpenDocument(textDocument)]
+    })
+
+    let group = new Group()
+    tagsArray = group.groupListItems(tagsArray, groupBy)
+
+    loadTreeView()
   }
-
-
-
-  // Create the TreeView
-  // treeView = new TreeView('todo', {
-  //   dataProvider: new ToDoDataProvider(sortBy)
-  // })
-
-  // TreeView implements the Disposable interface
-  // nova.subscriptions.add(treeView)
 }
 
 function loadTreeView() {
@@ -180,10 +172,11 @@ nova.commands.register('todo.sort', () => {
 
 // nova.config.observe('todo.global-ignore-names', reloadData)
 // nova.config.observe('todo.global-ignore-extensions', reloadData)
-
+// nova.fs.watch()
 if (nova.workspace.path !== undefined && nova.workspace.path !== null) {
   // It is not necessary to observe the workspace config because the file system watch detects these changes.
   // nova.fs.watch(null, reloadData)
+  console.log("CHANGE DETECTED")
 } else {
   // Must use polling because nova.fs.watch requires a current workspace.
   // refreshTimer = setInterval(reloadData, 15000)

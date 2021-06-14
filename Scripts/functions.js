@@ -56,15 +56,26 @@ exports.isAllowedName = function isAllowedName(path, excludedNames) {
   Evaluates if a specific file should be excluded based on array
   of file extensions.
 */
-exports.isAllowedExtension = function isAllowedExtension(path, excludedExtensions) {
-  if (nova.fs.stat(path).isFile() == true) {
+exports.isAllowedExtension = function isAllowedExtension(path, excludedExtensions, remote=false) {
+  // The nova.fs.stat method does not work with remote projects.
+  if (remote == false) {
+    if (nova.fs.stat(path).isFile() == true) {
+      if (excludedExtensions.includes(nova.path.extname(path)) || nova.path.extname(path) == '') {
+        return false
+      } else {
+        return true
+      }
+    } else {
+      return true
+    }
+  } else {
+    let extension = path.split('.').pop()
+
     if (excludedExtensions.includes(nova.path.extname(path)) || nova.path.extname(path) == '') {
       return false
     } else {
       return true
     }
-  } else {
-    return true
   }
 }
 
@@ -92,15 +103,25 @@ exports.isAllowedPath = function isAllowedPath(path, excludedPaths) {
 }
 
 /*
-Evaluates an array of file paths, returning an array of only the allowed files.
+  Evaluates an array of file paths, returning an array of only the allowed files.
 */
 exports.filterFilePathArray = function filterFilePathArray(filePathArray, config) {
-
   filePathArray = filePathArray.filter(filePath => this.isAllowedName(filePath, config.excludedNames))
   filePathArray = filePathArray.filter(filePath => this.isAllowedExtension(filePath, config.excludedExtensions))
   filePathArray = filePathArray.filter(filePath => this.isAllowedPath(filePath, config.excludedPaths))
 
   return filePathArray
+}
+
+/*
+  Evaluates an array of Nova TextDocument objects, returning an array of only the allowed documents.
+*/
+exports.filterOpenDocumentArray = function filterOpenDocumentArray(textDocuments, config) {
+  textDocuments = textDocuments.filter(textDocument => this.isAllowedName(textDocument.path, config.excludedNames))
+  textDocuments = textDocuments.filter(textDocument => this.isAllowedExtension(textDocument.path, config.excludedExtensions, true))
+  textDocuments = textDocuments.filter(textDocument => this.isAllowedPath(textDocument.path, config.excludedPaths))
+
+  return textDocuments
 }
 
 /*

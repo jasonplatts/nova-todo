@@ -26,6 +26,25 @@ exports.DocumentSearch = class DocumentSearch {
   }
 
   /*
+    Reads a Nova TextDocument object and splits its content
+    into an array of lines for keyword searching.
+    Accepts a Nova TextDocument object and returns an array of keyword
+    matches as ToDoListItem objects.
+  */
+  searchOpenDocument(textDocument) {
+    let range = new Range(0, textDocument.length)
+    let documentContent = textDocument.getTextInRange(range)
+    let lines = documentContent.split(textDocument.eol)
+    let documentMatches = this.searchLines(lines)
+
+    documentMatches.forEach((listItem) => {
+      listItem.path = textDocument.path
+    })
+
+    return documentMatches
+  }
+
+  /*
     Searches a document line by line for keywords and returns an
     array of ToDoListItem objects for a specific document. Accepts the
     entire contents of a document.
