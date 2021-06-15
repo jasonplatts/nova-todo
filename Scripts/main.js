@@ -10,6 +10,7 @@ var compositeDisposable = new CompositeDisposable()
 var config              = new Configuration()
 var groupBy             = 'file'
 var listItems           = []
+var dataProvider        = null
 var treeView            = null
 
 // var refreshTimer = null
@@ -30,6 +31,36 @@ exports.activate = function() {
   console.clear()
   console.log('TODO EXTENSION ACTIVATED')
 
+  load()
+}
+
+function loadTreeView() {
+  /*
+    NOTE: At time of writing, the TreeView is not editable once it is part of
+    the DataProvider object. Therefore, the original ListItem array must be edited, then the Nova TreeView
+    disposed and replaced by a completely new TreeView object.
+  */
+  let group            = new Group()
+  let groupedListItems = group.groupListItems(listItems, groupBy)
+  dataProvider         = new ToDoDataProvider(groupedListItems)
+
+  // Convert array of editable ListItem objects to a Nova TreeView object.
+  treeView = new TreeView('todo', {
+    dataProvider: dataProvider
+  })
+
+  compositeDisposable.add(treeView)
+  nova.subscriptions.add(treeView)
+}
+
+function reset() {
+  compositeDisposable.dispose()
+  listItems    = []
+  dataProvider = null
+  treeView     = null
+}
+
+async function load() {
   if (FUNCTIONS.isWorkspace()) {
     let workspaceSearch = new WorkspaceSearch(nova.workspace.path, config)
     let files           = workspaceSearch.search()
@@ -37,7 +68,6 @@ exports.activate = function() {
     files
       .then((response, reject) => {
         response = FUNCTIONS.filterFilePathArray(response, config)
-
         response.sort(FUNCTIONS.sortByFileName)
 
         response.forEach((filePath) => {
@@ -61,35 +91,70 @@ exports.activate = function() {
     })
 
     let group = new Group()
-    tagsArray = group.groupListItems(listItems, groupBy)
+    listItems = group.groupListItems(listItems, groupBy)
 
     loadTreeView()
   }
 }
 
-function loadTreeView() {
+async function onChange(filePath) {
+  if (treeView !== null) {
+    let fileExcluded     = FUNCTIONS.isExcluded(filePath, config)
+    let workspaceChange  = new WorkspaceChange(listItems)
+    let fileExists       = workspaceChange.fileExists(filePath)
+    let listItemsChanged = workspaceChange.hasListItemsChanged(filePath, config)
+
+    if (listItemsChanged == true) {
+      reset()
+      load()
+      await treeView.reload()
+    }
+  }
+
+  //console.log(filePath)
+  //console.log('File Excluded?', fileExcluded)
+  //console.log('File Exists?', fileExists)
+
+  // if ((!fileExcluded) && (fileExists)) {
+
+  // console.log('Not excluded')
+  // workspaceChange = new WorkspaceChange(tagsArray)
+  // console.log('File exists',workspaceChange.fileExists(file))
+
   /*
-    NOTE: At time of writing, the TreeView is not editable once it is part of
-    the DataProvider object. Therefore, the original ListItem array must be edited, then the Nova TreeView
-    disposed and replaced by a completely new TreeView object.
-  */
-  let group = new Group()
-  let groupedListItems = group.groupListItems(listItems, groupBy)
 
-  // Convert array of editable ListItem objects to a Nova TreeView object.
-  treeView = new TreeView('todo', {
-    dataProvider: new ToDoDataProvider(groupedListItems)
-  })
+      does file exist in tagsArray?
+      is file excluded
 
-  compositeDisposable.add(treeView)
-  nova.subscriptions.add(treeView)
+
+
+      if is excluded && doesnt exists tagsarray
+        do nothing
+      end
+
+      if not excluded
+        get current tags in tags array
+        search tags
+
+        if tags found == current tags in array
+          do nothing
+        else
+          remove all listItems with that filepath
+          reload tree
+        end
+    */
+  // } else {
+    /*
+    if is excluded && exists in tagsArray
+    remove all listItems with that filepath
+    reload tree
+    end*/
+  // }
+  // openDocuments = FUNCTIONS.isAllowedPath(openDocuments, config)
+  // console.log("CHANGE DETECTED")
+  //
 }
 
-function reset() {
-  compositeDisposable.dispose()
-  tagsArray = []
-  treeView  = null
-}
 
 exports.deactivate = function() {
   reset()
@@ -199,56 +264,6 @@ function updateData() {
 //   }
 }
 
-function onChange(file) {
-  // console.log(file)
-  // console.log('excluded?', FUNCTIONS.isExcluded(file, config))
-  let fileExcluded = FUNCTIONS.isExcluded(file, config)
-  let workspaceChange = new WorkspaceChange(listItems)
-  let fileExists = workspaceChange.fileExists(file)
-
-  console.log(file)
-  console.log('File Excluded?', fileExcluded)
-  console.log('File Exists?', fileExists)
-
-  if ((!fileExcluded) && (fileExists)) {
-
-    // console.log('Not excluded')
-    // workspaceChange = new WorkspaceChange(tagsArray)
-    // console.log('File exists',workspaceChange.fileExists(file))
-
-    /*
-
-      does file exist in tagsArray?
-      is file excluded
-
-
-
-      if is excluded && doesnt exists tagsarray
-        do nothing
-      end
-
-      if not excluded
-        get current tags in tags array
-        search tags
-
-        if tags found == current tags in array
-          do nothing
-        else
-          remove all listItems with that filepath
-          reload tree
-        end
-    */
-  // } else {
-    /*
-    if is excluded && exists in tagsArray
-    remove all listItems with that filepath
-    reload tree
-    end*/
-  }
-  // openDocuments = FUNCTIONS.isAllowedPath(openDocuments, config)
-  // console.log("CHANGE DETECTED")
-  //
-}
 
 function reloadData() {
   // if (treeView !== null) {

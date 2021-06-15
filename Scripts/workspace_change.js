@@ -27,4 +27,69 @@ exports.WorkspaceChange = class WorkspaceChange {
 
     return fileFound
   }
+
+  /*
+    Determines if the listItem objects found in a document
+    match the tags in the existing listItems array.
+  */
+  hasListItemsChanged(filePath, config) {
+    let newFileSearch = new DocumentSearch(config)
+    let newListItems = newFileSearch.searchFile(filePath)
+    let existingListItems = this.getListItemsForFile(filePath)
+
+    if (newListItems.length !== existingListItems.length) {
+      return true
+    } else {
+      let itemCount = 0
+      let itemMatch = true
+
+      while ((itemCount < newListItems.length) && (itemMatch == true)) {
+        if (this.listItemMatch(newListItems[itemCount], existingListItems[itemCount]) == false) {
+          itemMatch = false
+        }
+
+        itemCount++
+      }
+
+      if (itemMatch == true) {
+        return false
+      } else {
+        return true
+      }
+    }
+
+  }
+
+  listItemMatch(itemA, itemB) {
+    // console.log('ItemA', itemA.name + ', ' + itemA.line + ', ' + itemA.column + ', ' + itemA.position + ', ' + itemA.comment)
+    // console.log('ItemB', itemB.name + ', ' + itemB.line + ', ' + itemB.column + ', ' + itemB.position + ', ' + itemB.comment)
+    if ((itemA.name     == itemB.name) &&
+        (itemA.line     == itemB.line) &&
+        (itemA.column   == itemB.column) &&
+        (itemA.position == itemB.position) &&
+        (itemA.comment  == itemB.comment)) {
+      // console.log('true')
+      return true
+    } else {
+      // console.log('false')
+      return false
+    }
+  }
+
+  /*
+    Returns an array of listItem objects with a specified file path.
+  */
+  getListItemsForFile(filePath) {
+    let existingListItems = []
+
+    filePath = FUNCTIONS.normalizePath(filePath)
+
+    this.listItems.forEach((listItem) => {
+      if (listItem.path == filePath) {
+        existingListItems.push(listItem)
+      }
+    })
+
+    return existingListItems
+  }
 }
