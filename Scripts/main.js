@@ -47,8 +47,8 @@ exports.activate = function() {
 
         loadTreeView()
       })
-      .catch((err) => {
-        console.log('TODO Extension', err)
+      .catch((error) => {
+        FUNCTIONS.showConsoleError(error)
       })
   } else {
     let openDocuments = nova.workspace.textDocuments

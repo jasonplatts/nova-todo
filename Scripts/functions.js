@@ -57,7 +57,6 @@ exports.isAllowedName = function isAllowedName(path, excludedNames) {
   of file extensions.
 */
 exports.isAllowedExtension = function isAllowedExtension(path, excludedExtensions, remote=false) {
-  // The nova.fs.stat method does not work with remote projects.
   if (remote == false) {
     if (nova.fs.stat(path).isFile() == true) {
       if (excludedExtensions.includes(nova.path.extname(path)) || nova.path.extname(path) == '') {
@@ -69,6 +68,7 @@ exports.isAllowedExtension = function isAllowedExtension(path, excludedExtension
       return true
     }
   } else {
+    // nova.fs.stat does not work with remote project paths
     let extension = path.split('.').pop()
 
     if (excludedExtensions.includes(nova.path.extname(path)) || nova.path.extname(path) == '') {
@@ -142,3 +142,10 @@ exports.normalizePath = function normalizePath(path) {
   return '/' + path.split('/').slice(3).join('/')
 }
 
+/*
+  Format extension errors in the console.
+*/
+exports.showConsoleError = function showConsoleError(error) {
+  let prefix = 'TODO Extension Error:'
+  console.log(prefix, error)
+}
