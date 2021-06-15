@@ -6,9 +6,8 @@ const { Configuration } = require('./Configuration.js')
 const FUNCTIONS         = require('./functions.js')
 
 exports.ToDoDataProvider = class ToDoDataProvider {
-  constructor(tagsArray, groupBy) {
+  constructor(tagsArray) {
     this.rootItems = tagsArray
-    this.groupBy   = groupBy
   }
 
   /*

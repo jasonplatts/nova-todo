@@ -9,7 +9,7 @@ const { ToDoDataProvider } = require('./todo_data_provider.js')
 var compositeDisposable = new CompositeDisposable()
 var config              = new Configuration()
 var groupBy             = 'file'
-var tagsArray           = []
+var listItems           = []
 var treeView            = null
 
 // var refreshTimer = null
@@ -40,11 +40,8 @@ exports.activate = function() {
 
         response.forEach((filePath) => {
           let fileSearch = new DocumentSearch(config)
-          tagsArray      = [...tagsArray, ...fileSearch.searchFile(filePath)]
+          listItems      = [...listItems, ...fileSearch.searchFile(filePath)]
         })
-
-        let group = new Group()
-        tagsArray = group.groupListItems(tagsArray, groupBy)
 
         loadTreeView()
       })
@@ -58,11 +55,11 @@ exports.activate = function() {
 
     openDocuments.forEach((textDocument) => {
       let documentSearch = new DocumentSearch(config)
-      tagsArray = [...tagsArray, ...documentSearch.searchOpenDocument(textDocument)]
+      listItems = [...listItems, ...documentSearch.searchOpenDocument(textDocument)]
     })
 
     let group = new Group()
-    tagsArray = group.groupListItems(tagsArray, groupBy)
+    tagsArray = group.groupListItems(listItems, groupBy)
 
     loadTreeView()
   }
@@ -75,9 +72,12 @@ function loadTreeView() {
     disposed and replaced by a completely new TreeView object.
   */
 
+  let group = new Group()
+  let groupedListItems = group.groupListItems(listItems, groupBy)
+
   // Convert array of editable ListItem objects to a Nova TreeView object.
   treeView = new TreeView('todo', {
-    dataProvider: new ToDoDataProvider(tagsArray, groupBy)
+    dataProvider: new ToDoDataProvider(groupedListItems)
   })
 
   compositeDisposable.add(treeView)
@@ -202,7 +202,7 @@ function onChange(file) {
   // console.log(file)
   // console.log('excluded?', FUNCTIONS.isExcluded(file, config))
   let fileExcluded = FUNCTIONS.isExcluded(file, config)
-  let workspaceChange = new WorkspaceChange(tagsArray)
+  let workspaceChange = new WorkspaceChange(listItems)
   let fileExists = workspaceChange.fileExists(file)
 
   console.log(file)
