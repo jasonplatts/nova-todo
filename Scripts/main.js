@@ -38,6 +38,8 @@ exports.activate = function() {
       .then((response, reject) => {
         response = FUNCTIONS.filterFilePathArray(response, config)
 
+        response.sort(FUNCTIONS.sortByFileName)
+
         response.forEach((filePath) => {
           let fileSearch = new DocumentSearch(config)
           listItems      = [...listItems, ...fileSearch.searchFile(filePath)]
@@ -71,7 +73,6 @@ function loadTreeView() {
     the DataProvider object. Therefore, the original ListItem array must be edited, then the Nova TreeView
     disposed and replaced by a completely new TreeView object.
   */
-
   let group = new Group()
   let groupedListItems = group.groupListItems(listItems, groupBy)
 
