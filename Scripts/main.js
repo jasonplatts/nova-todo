@@ -3,12 +3,14 @@ const { Configuration }    = require('./configuration.js')
 const { WorkspaceSearch }  = require('./workspace_search.js')
 const { DocumentSearch }   = require('./document_search.js')
 const { Group }            = require('./group.js')
+const { WorkspaceChange }  = require('./workspace_change.js')
 const { ToDoDataProvider } = require('./todo_data_provider.js')
 
-var config    = new Configuration()
-var groupBy   = 'file'
-var tagsArray = []
-var treeView  = null
+var compositeDisposable = new CompositeDisposable()
+var config              = new Configuration()
+var groupBy             = 'file'
+var tagsArray           = []
+var treeView            = null
 
 // var refreshTimer = null
 // var dataProvider = null
@@ -78,10 +80,18 @@ function loadTreeView() {
     dataProvider: new ToDoDataProvider(tagsArray, groupBy)
   })
 
+  compositeDisposable.add(treeView)
   nova.subscriptions.add(treeView)
 }
 
+function reset() {
+  compositeDisposable.dispose()
+  tagsArray = []
+  treeView  = null
+}
+
 exports.deactivate = function() {
+  reset()
   // Clean up state before the extension is deactivated
   // treeView = null
   // dataProvider = null
@@ -174,9 +184,9 @@ nova.commands.register('todo.sort', () => {
 // nova.config.observe('todo.global-ignore-extensions', reloadData)
 // nova.fs.watch()
 if (nova.workspace.path !== undefined && nova.workspace.path !== null) {
+  nova.fs.watch(null, onChange)
   // It is not necessary to observe the workspace config because the file system watch detects these changes.
-  // nova.fs.watch(null, reloadData)
-  console.log("CHANGE DETECTED")
+
 } else {
   // Must use polling because nova.fs.watch requires a current workspace.
   // refreshTimer = setInterval(reloadData, 15000)
@@ -186,6 +196,57 @@ function updateData() {
 //   if (treeView !== null) {
 //
 //   }
+}
+
+function onChange(file) {
+  // console.log(file)
+  // console.log('excluded?', FUNCTIONS.isExcluded(file, config))
+  let fileExcluded = FUNCTIONS.isExcluded(file, config)
+  let workspaceChange = new WorkspaceChange(tagsArray)
+  let fileExists = workspaceChange.fileExists(file)
+
+  console.log(file)
+  console.log('File Excluded?', fileExcluded)
+  console.log('File Exists?', fileExists)
+
+  if ((!fileExcluded) && (fileExists)) {
+
+    // console.log('Not excluded')
+    // workspaceChange = new WorkspaceChange(tagsArray)
+    // console.log('File exists',workspaceChange.fileExists(file))
+
+    /*
+
+      does file exist in tagsArray?
+      is file excluded
+
+
+
+      if is excluded && doesnt exists tagsarray
+        do nothing
+      end
+
+      if not excluded
+        get current tags in tags array
+        search tags
+
+        if tags found == current tags in array
+          do nothing
+        else
+          remove all listItems with that filepath
+          reload tree
+        end
+    */
+  // } else {
+    /*
+    if is excluded && exists in tagsArray
+    remove all listItems with that filepath
+    reload tree
+    end*/
+  }
+  // openDocuments = FUNCTIONS.isAllowedPath(openDocuments, config)
+  // console.log("CHANGE DETECTED")
+  //
 }
 
 function reloadData() {

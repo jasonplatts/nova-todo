@@ -124,6 +124,17 @@ exports.filterOpenDocumentArray = function filterOpenDocumentArray(textDocuments
   return textDocuments
 }
 
+exports.isExcluded = function isExcluded(filePath, config) {
+  if ((this.isAllowedExtension(filePath, config.excludedExtensions) == false) ||
+      (this.isAllowedPath(filePath, config.excludedPaths) == false) ||
+      (this.isAllowedName(filePath, config.excludedNames) == false)) {
+    return true
+  } else {
+    return false
+  }
+}
+
+
 /*
   Removes the preceding Volumes and HDD portion of a standard returned path.
 */
