@@ -1,5 +1,5 @@
-const FUNCTIONS            = require('./functions.js')
-const { DocumentSearch }   = require('./document_search.js')
+const FUNCTIONS          = require('./functions.js')
+const { DocumentSearch } = require('./document_search.js')
 
 exports.WorkspaceChange = class WorkspaceChange {
   constructor(listItems) {
@@ -91,5 +91,21 @@ exports.WorkspaceChange = class WorkspaceChange {
     })
 
     return existingListItems
+  }
+
+  /*
+    Removes listItems with a specified path and returns a new listItem array
+  */
+  removeFileListItems(filePath) {
+    let removeIndexes = []
+    let itemCount     = 0
+
+    for(0; itemCount < this.listItems.length; itemCount++) {
+      if (this.listItems[itemCount].path == filePath ) {
+        removeIndexes.push(itemCount)
+      }
+    }
+
+    console.log('removeIndexes', removeIndexes)
   }
 }

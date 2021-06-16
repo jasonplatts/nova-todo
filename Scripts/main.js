@@ -53,6 +53,10 @@ function loadTreeView() {
   nova.subscriptions.add(treeView)
 }
 
+function reloadTreeView() {
+  load()
+}
+
 function reset() {
   compositeDisposable.dispose()
   listItems    = []
@@ -60,7 +64,7 @@ function reset() {
   treeView     = null
 }
 
-async function load() {
+function load() {
   if (FUNCTIONS.isWorkspace()) {
     let workspaceSearch = new WorkspaceSearch(nova.workspace.path, config)
     let files           = workspaceSearch.search()
@@ -103,13 +107,58 @@ async function onChange(filePath) {
     let workspaceChange  = new WorkspaceChange(listItems)
     let fileExists       = workspaceChange.fileExists(filePath)
     let listItemsChanged = workspaceChange.hasListItemsChanged(filePath, config)
+    let newSaveFileListItems = new DocumentSearch
+
+    if (fileExcluded && fileExists) {
+      console.log('HERE')
+      workspaceChange.removeFileListItems(filePath)
+    }
 
     if (listItemsChanged == true) {
       reset()
-      load()
+      reloadTreeView()
       await treeView.reload()
     }
+
+    if (fileExcluded == false) {
+      if (fileExists) {
+
+
+      }
+    }
+
+
+    /*
+
+    get if file is excluded
+    get if is in listitems
+
+    if file exlucded && inlistitems
+      remove file tags from listitems
+
+    if file excluded && not in list items
+      ignore it
+
+    if file not excluded
+      if file in listItems && listItemsChanged
+        remove file tags from listItems
+        add file tags to list items (getTagsForFile)
+        reset
+        refresh tree
+
+      if file not in listItems && (getTagsForFile > 0)
+        add file tags to listItems (getTagsForFile)
+
+      if file in listItems && notChanged
+        ignore it
+
+      if file not in listItems && getTagsForFile < 1)
+        ignore it
+
+    */
   }
+
+
 
   //console.log(filePath)
   //console.log('File Excluded?', fileExcluded)
