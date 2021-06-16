@@ -1,4 +1,4 @@
-exports.ToDoListItem = class ToDoListItem {
+exports.ListItem = class ListItem {
   constructor(name) {
     /*
       * name

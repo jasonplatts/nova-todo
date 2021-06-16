@@ -3,7 +3,7 @@
   It should be used prior to sending the ungrouped ListItem object array to the DataProvider for display in
   a Nova sidebar TreeView object.
 */
-const { ToDoListItem } = require('./todo_list_item.js')
+const { ListItem } = require('./list_item.js')
 
 exports.Group = class Group {
   groupListItems(ungroupedListItems, groupBy='file') {
@@ -19,8 +19,8 @@ exports.Group = class Group {
   }
 
   /*
-    Accepts an ungrouped array of ToDoListItem objects and
-    returns an array of ToDoListItem objects grouped by file.
+    Accepts an ungrouped array of ListItem objects and
+    returns an array of ListItem objects grouped by file.
   */
   groupListItemsByFileName(ungroupedListItems) {
     let listItems = []
@@ -50,7 +50,7 @@ exports.Group = class Group {
     Sets the attributes of a parent list item when grouping by file name.
   */
   createFileParentItem(filePath) {
-    let parentListItem              = new ToDoListItem(nova.path.basename(filePath))
+    let parentListItem              = new ListItem(nova.path.basename(filePath))
     parentListItem.collapsibleState = TreeItemCollapsibleState.Expanded
     parentListItem.tooltip          = filePath
     // By default, the file type of this path is used as the list item image.
@@ -71,8 +71,8 @@ exports.Group = class Group {
   }
 
   /*
-    Accepts an ungrouped array of ToDoListItem objects and
-    returns an array of ToDoListItem objects grouped by tag name.
+    Accepts an ungrouped array of ListItem objects and
+    returns an array of ListItem objects grouped by tag name.
   */
   groupListItemsByTagName(ungroupedListItems) {
     let listItems = []
@@ -98,7 +98,7 @@ exports.Group = class Group {
     Sets the attributes of a parent list item when grouping by file name.
   */
   createTagParentItem(tagName) {
-    let parentListItem              = new ToDoListItem(tagName)
+    let parentListItem              = new ListItem(tagName)
     parentListItem.collapsibleState = TreeItemCollapsibleState.Expanded
     parentListItem.image            = this.getTagIconImage(tagName)
 
@@ -130,22 +130,22 @@ exports.Group = class Group {
   }
 
   /*
-    Accepts an array of ToDoListItem objects and returns an array
+    Accepts an array of ListItem objects and returns an array
     of primitive file name values.
   */
-  getUniqueFiles(toDoListItems) {
+  getUniqueFiles(listItems) {
     // 1) Map array to a new array containing only primitive values (don't want objects, just file names.
     // 2) Then use the Set object to store a collection of unique values,
     // 3) Which then uses the spread operator to construct a new array.
-    return [...new Set(toDoListItems.map(item => item.path))]
+    return [...new Set(listItems.map(item => item.path))]
   }
 
   /*
     Accepts an array of ToDoListItem objects and returns an array
     of primitive file name values.
   */
-  getUniqueTags(toDoListItems) {
-    return [...new Set(toDoListItems.map(item => item.name))]
+  getUniqueTags(listItems) {
+    return [...new Set(listItems.map(item => item.name))]
   }
 
 

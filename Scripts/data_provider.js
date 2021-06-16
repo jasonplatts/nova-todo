@@ -5,7 +5,7 @@
 const { Configuration } = require('./Configuration.js')
 const FUNCTIONS         = require('./functions.js')
 
-exports.ToDoDataProvider = class ToDoDataProvider {
+exports.DataProvider = class DataProvider {
   constructor(listItems) {
     this.rootItems = listItems
   }

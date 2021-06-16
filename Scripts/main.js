@@ -4,7 +4,7 @@ const { WorkspaceSearch }  = require('./workspace_search.js')
 const { DocumentSearch }   = require('./document_search.js')
 const { Group }            = require('./group.js')
 const { WorkspaceChange }  = require('./workspace_change.js')
-const { ToDoDataProvider } = require('./todo_data_provider.js')
+const { DataProvider } = require('./data_provider.js')
 
 var compositeDisposable = new CompositeDisposable()
 var config              = new Configuration()
@@ -42,7 +42,7 @@ function loadTreeView() {
   */
   let group            = new Group()
   let groupedListItems = group.groupListItems(listItems, groupBy)
-  dataProvider         = new ToDoDataProvider(groupedListItems)
+  dataProvider         = new DataProvider(groupedListItems)
 
   // Convert array of editable ListItem objects to a Nova TreeView object.
   treeView = new TreeView('todo', {

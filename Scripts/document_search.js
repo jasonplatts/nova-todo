@@ -1,4 +1,4 @@
-const { ToDoListItem } = require('./todo_list_item.js')
+const { ListItem } = require('./list_item.js')
 
 exports.DocumentSearch = class DocumentSearch {
   constructor(config) {
@@ -9,7 +9,7 @@ exports.DocumentSearch = class DocumentSearch {
   /*
     Opens a file into an array of lines for keyword searching.
     Accepts a file path and returns an array of keyword
-    matches as ToDoListItem objects.
+    matches as ListItem objects.
   */
   searchFile(filePath) {
     let file        = nova.fs.open(filePath)
@@ -29,7 +29,7 @@ exports.DocumentSearch = class DocumentSearch {
     Reads a Nova TextDocument object and splits its content
     into an array of lines for keyword searching.
     Accepts a Nova TextDocument object and returns an array of keyword
-    matches as ToDoListItem objects.
+    matches as ListItem objects.
   */
   searchOpenDocument(textDocument) {
     let range = new Range(0, textDocument.length)
@@ -57,7 +57,7 @@ exports.DocumentSearch = class DocumentSearch {
       let lineMatches = this.searchLine(documentLines[i])
 
       lineMatches.forEach((match) => {
-        let listItem      = new ToDoListItem(match.name)
+        let listItem      = new ListItem(match.name)
 
         listItem.line     = i + 1
         listItem.column   = match.column
