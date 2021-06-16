@@ -9,12 +9,12 @@ exports.Configuration = class Configuration {
   }
 
   loadConfig() {
-    // console.log("LOADING CONFIGURATION...");
-    this.keywords = this.getKeywords()
+    this.keywords              = this.getKeywords()
     this.caseSensitiveMatching = this.caseSensitiveMatching()
-    this.excludedNames = this.getExcludedNames()
-    this.excludedExtensions = this.getExcludedExtensions()
-    this.excludedPaths = this.getExcludedPaths()
+    this.excludedNames         = this.getExcludedNames()
+    this.excludedExtensions    = this.getExcludedExtensions()
+    this.excludedPaths         = this.getExcludedPaths()
+    this.groupBy               = 'file'
   }
 
   /*
@@ -22,7 +22,7 @@ exports.Configuration = class Configuration {
     and the tags selected by the user in the workspace preferences.
   */
   getKeywords() {
-    const DEFAULT_KEYWORDS = ['todo', 'fixme']
+    const DEFAULT_KEYWORDS    = ['todo', 'fixme']
     const PREFERENCE_KEYWORDS = [
       'broken', 'bug', 'debug', 'deprecated', 'example', 'error',
       'err', 'fail', 'fatal', 'fix', 'hack', 'idea', 'info', 'note', 'optimize', 'question',
@@ -91,7 +91,7 @@ exports.Configuration = class Configuration {
     ]
 
     let workspaceIgnoreNames = []
-    let globalIgnoreNames = []
+    let globalIgnoreNames    = []
 
     if (FUNCTIONS.isWorkspace()) {
       workspaceIgnoreNames = nova.workspace.config.get('todo.workspace-ignore-names')
@@ -119,7 +119,7 @@ exports.Configuration = class Configuration {
     const DEFAULT_EXCLUDED_EXTENSIONS = ['.json', '.map', '.md']
 
     let workspaceIgnoreExtensions = []
-    let globalIgnoreExtensions = []
+    let globalIgnoreExtensions    = []
 
     if (FUNCTIONS.isWorkspace()) {
       workspaceIgnoreExtensions = nova.workspace.config.get('todo.workspace-ignore-extensions')

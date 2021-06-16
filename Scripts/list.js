@@ -1,9 +1,72 @@
-const FUNCTIONS          = require('./functions.js')
-const { DocumentSearch } = require('./document_search.js')
+const FUNCTIONS           = require('./functions.js')
+const { WorkspaceSearch } = require('./workspace_search.js')
+const { DocumentSearch }  = require('./document_search.js')
+const { Group }           = require('./group.js')
 
-exports.WorkspaceChange = class WorkspaceChange {
-  constructor(listItems) {
-    this.listItems = listItems
+exports.List = class List {
+  constructor(config) {
+    this.config = config
+    this.items  = null
+  }
+
+  async loadItems() {
+    if (FUNCTIONS.isWorkspace()) {
+      this.items = await this.loadWorkspaceEnvironment()
+    } else {
+      this.items = await this.loadNonWorkspaceEnvironment()
+    }
+
+    return this.items
+  }
+
+  loadWorkspaceEnvironment() {
+    return new Promise((resolve, reject) => {
+      let workspaceSearch = new WorkspaceSearch(nova.workspace.path, this.config)
+      let files           = workspaceSearch.search()
+
+      files
+        .then((response, reject) => {
+          response = FUNCTIONS.filterFilePathArray(response, this.config)
+          response.sort(FUNCTIONS.sortByFileName)
+
+          let listItems = []
+
+          response.forEach((filePath) => {
+            let documentSearch = new DocumentSearch(this.config)
+            listItems.push(...documentSearch.searchFile(filePath))
+          })
+
+          resolve(listItems)
+        })
+        .catch((error) => {
+          FUNCTIONS.showConsoleError(error)
+          reject(error)
+        })
+    })
+  }
+
+  loadNonWorkspaceEnvironment() {
+    return new Promise((resolve) => {
+      let openDocuments = nova.workspace.textDocuments
+
+      openDocuments = FUNCTIONS.filterOpenDocumentArray(openDocuments, this.config)
+
+      let listItems = []
+
+      openDocuments.forEach((textDocument) => {
+        let documentSearch = new DocumentSearch(this.config)
+        listItems.push(...documentSearch.searchOpenDocument(textDocument))
+      })
+
+      resolve(listItems)
+    })
+  }
+
+  getListItems() {
+    let group            = new Group()
+    let groupedListItems = group.groupListItems(this.items, this.config.groupBy)
+
+    return groupedListItems
   }
 
   /*
@@ -80,7 +143,7 @@ exports.WorkspaceChange = class WorkspaceChange {
     Returns an array of listItem objects with a specified file path.
   */
   getListItemsForFile(filePath) {
-    let existingListItems = []
+    let existingListItems
 
     filePath = FUNCTIONS.normalizePath(filePath)
 
@@ -97,7 +160,7 @@ exports.WorkspaceChange = class WorkspaceChange {
     Removes listItems with a specified path and returns a new listItem array
   */
   removeFileListItems(filePath) {
-    let removeIndexes = []
+    let removeIndexes
     let itemCount     = 0
 
     for(0; itemCount < this.listItems.length; itemCount++) {

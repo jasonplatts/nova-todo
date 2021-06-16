@@ -1,56 +1,55 @@
-const FUNCTIONS            = require('./functions.js')
-const { Configuration }    = require('./configuration.js')
-const { WorkspaceSearch }  = require('./workspace_search.js')
-const { DocumentSearch }   = require('./document_search.js')
-const { Group }            = require('./group.js')
-const { WorkspaceChange }  = require('./workspace_change.js')
-const { DataProvider } = require('./data_provider.js')
+const FUNCTIONS           = require('./functions.js')
+const { Configuration }   = require('./configuration.js')
 
-var compositeDisposable = new CompositeDisposable()
-var config              = new Configuration()
-var groupBy             = 'file'
-var listItems           = []
-var dataProvider        = null
-var treeView            = null
+// const { DocumentSearch }  = require('./document_search.js')
+
+const { List }       = require('./list.js')
+const { DataProvider }    = require('./data_provider.js')
+
+// var config              = new Configuration()
+// var groupBy             = 'file'
+var config = null
+var list   = null
+// var dataProvider        = null
+// var treeView            = null
 
 // var refreshTimer = null
 // var dataProvider = null
+var compositeDisposable = new CompositeDisposable()
 
-/*
-ON CHANGE DETECTED
+var novaTreeViewObjects = {
+  dataProvider: null,
+  treeView:     null
+}
 
-if file !ignored
-  get tags of changed file using extension function
-
-  if tags different (compare arrays for file)
-    reload tree
-  end
-end
-*/
-exports.activate = function() {
+exports.activate = async function() {
   console.clear()
   console.log('TODO EXTENSION ACTIVATED')
 
-  load()
+  config = new Configuration()
+  list   = new List(config)
+
+  await list.loadItems()
+
+  loadTreeView()
 }
 
+/*
+  NOTE: At time of writing, the TreeView is not editable once it is part of
+  the DataProvider object. Therefore, editable ListItem objects are handled
+  using an instance of the custom ListItems class. The TreeView is then
+  replaced each time a change is needed using the data stored in that ListItems
+  instance.
+*/
 function loadTreeView() {
-  /*
-    NOTE: At time of writing, the TreeView is not editable once it is part of
-    the DataProvider object. Therefore, the original ListItem array must be edited, then the Nova TreeView
-    disposed and replaced by a completely new TreeView object.
-  */
-  let group            = new Group()
-  let groupedListItems = group.groupListItems(listItems, groupBy)
-  dataProvider         = new DataProvider(groupedListItems)
+  dataProvider = new DataProvider(list.getListItems())
 
-  // Convert array of editable ListItem objects to a Nova TreeView object.
-  treeView = new TreeView('todo', {
+  novaTreeViewObjects.treeView = new TreeView('todo', {
     dataProvider: dataProvider
   })
 
-  compositeDisposable.add(treeView)
-  nova.subscriptions.add(treeView)
+  compositeDisposable.add(novaTreeViewObjects.treeView)
+  nova.subscriptions.add(novaTreeViewObjects.treeView)
 }
 
 function reloadTreeView() {
@@ -59,52 +58,16 @@ function reloadTreeView() {
 
 function reset() {
   compositeDisposable.dispose()
-  listItems    = []
-  dataProvider = null
-  treeView     = null
-}
-
-function load() {
-  if (FUNCTIONS.isWorkspace()) {
-    let workspaceSearch = new WorkspaceSearch(nova.workspace.path, config)
-    let files           = workspaceSearch.search()
-
-    files
-      .then((response, reject) => {
-        response = FUNCTIONS.filterFilePathArray(response, config)
-        response.sort(FUNCTIONS.sortByFileName)
-
-        response.forEach((filePath) => {
-          let fileSearch = new DocumentSearch(config)
-          listItems      = [...listItems, ...fileSearch.searchFile(filePath)]
-        })
-
-        loadTreeView()
-      })
-      .catch((error) => {
-        FUNCTIONS.showConsoleError(error)
-      })
-  } else {
-    let openDocuments = nova.workspace.textDocuments
-
-    openDocuments = FUNCTIONS.filterOpenDocumentArray(openDocuments, config)
-
-    openDocuments.forEach((textDocument) => {
-      let documentSearch = new DocumentSearch(config)
-      listItems = [...listItems, ...documentSearch.searchOpenDocument(textDocument)]
-    })
-
-    let group = new Group()
-    listItems = group.groupListItems(listItems, groupBy)
-
-    loadTreeView()
-  }
+  listItems    = null
+  novaTreeViewObjects.dataProvider = null
+  novaTreeViewObjects.treeView     = null
 }
 
 async function onChange(filePath) {
-  if (treeView !== null) {
+  if (novaTreeViewObjects.treeView !== null) {
     let fileExcluded     = FUNCTIONS.isExcluded(filePath, config)
-    let workspaceChange  = new WorkspaceChange(listItems)
+    let workspaceChange  = new listItems(listItems)
+    console.log('dsdsd')
     let fileExists       = workspaceChange.fileExists(filePath)
     let listItemsChanged = workspaceChange.hasListItemsChanged(filePath, config)
     let newSaveFileListItems = new DocumentSearch
@@ -117,7 +80,7 @@ async function onChange(filePath) {
     if (listItemsChanged == true) {
       reset()
       reloadTreeView()
-      await treeView.reload()
+      await novaTreeViewObjects.treeView.reload()
     }
 
     if (fileExcluded == false) {

@@ -6,7 +6,7 @@
 const { ListItem } = require('./list_item.js')
 
 exports.Group = class Group {
-  groupListItems(ungroupedListItems, groupBy='file') {
+  groupListItems(ungroupedListItems, groupBy) {
     let listItems = []
 
     if (groupBy !== 'tag') {
