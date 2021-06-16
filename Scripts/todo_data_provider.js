@@ -6,27 +6,27 @@ const { Configuration } = require('./Configuration.js')
 const FUNCTIONS         = require('./functions.js')
 
 exports.ToDoDataProvider = class ToDoDataProvider {
-  constructor(tagsArray) {
-    this.rootItems = tagsArray
+  constructor(listItems) {
+    this.rootItems = listItems
   }
 
   /*
     Returns the children tree item(s).
   */
-  getChildren(toDoListItem) {
-    if (!toDoListItem) {
+  getChildren(listItem) {
+    if (!listItem) {
       return this.rootItems
     }
     else {
-      return toDoListItem.children
+      return listItem.children
     }
   }
 
   /*
     Returns the parent tree item.
   */
-  getParent(toDoListItem) {
-    return toDoListItem.parent
+  getParent(listItem) {
+    return listItem.parent
   }
 
   /*
