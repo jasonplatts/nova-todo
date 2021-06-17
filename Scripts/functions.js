@@ -149,3 +149,20 @@ exports.showConsoleError = function showConsoleError(error) {
   let prefix = 'TODO Extension Error:'
   console.log(prefix, error)
 }
+
+/*
+  Returns an array that has been stripped of null, blank, and undefined elements.
+*/
+exports.cleanArray = function cleanArray(array) {
+  array = array.filter(function(element) {
+    element = element.trim()
+
+    if (element !== null && element !== '' && element!== undefined) {
+      return element
+    }
+  })
+
+  array = array.map(element => element.trim())
+
+  return array
+}

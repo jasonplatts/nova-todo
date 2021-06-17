@@ -32,9 +32,9 @@ exports.DocumentSearch = class DocumentSearch {
     matches as ListItem objects.
   */
   searchOpenDocument(textDocument) {
-    let range = new Range(0, textDocument.length)
+    let range           = new Range(0, textDocument.length)
     let documentContent = textDocument.getTextInRange(range)
-    let lines = documentContent.split(textDocument.eol)
+    let lines           = documentContent.split(textDocument.eol)
     let documentMatches = this.searchLines(lines)
 
     documentMatches.forEach((listItem) => {
@@ -50,7 +50,7 @@ exports.DocumentSearch = class DocumentSearch {
     entire contents of a document.
   */
   searchLines(documentLines) {
-    let documentMatches           = []
+    let documentMatches          = []
     let docmentLineStartPosition = 0
 
     for(let i = 0; i < documentLines.length; i++) {
@@ -80,7 +80,7 @@ exports.DocumentSearch = class DocumentSearch {
     (most likely a comment) following the tag.
   */
   searchLine(line) {
-    let matchRegex = new RegExp(`${this._config.tags.join('|')}`)
+    let matchRegex  = new RegExp(`${this._config.tags.join('|')}`)
     let lineMatches = []
 
     this._config.tags.forEach((tag) => {

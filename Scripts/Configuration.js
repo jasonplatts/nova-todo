@@ -1,34 +1,55 @@
 const FUNCTIONS = require('./functions.js')
 
 /*
-  Module handles the retrieval of default and user preference configurations
+  Class handles the retrieval of default and user preference configurations
 */
 exports.Configuration = class Configuration {
   constructor() {
-    this.loadConfig()
+    this._groupBy               = 'file'
+    this._tags                  = this.loadTags()
+    this._caseSensitiveMatching = this.loadCaseSensitiveMatching()
+    this._excludedNames         = this.loadExcludedNames()
+    this._excludedPaths         = this.loadExcludedPaths()
+    this._excludedExtensions    = this.loadExcludedExtensions()
   }
 
-  loadConfig() {
-    this.tags              = this.getTags()
-    this.caseSensitiveMatching = this.caseSensitiveMatching()
-    this.excludedNames         = this.getExcludedNames()
-    this.excludedExtensions    = this.getExcludedExtensions()
-    this.excludedPaths         = this.getExcludedPaths()
-    this.groupBy               = 'file'
+  static get DEFAULT_TAGS() {
+    return ['todo', 'fixme']
+  }
+
+  static get PREFERENCE_TAGS() {
+    return [
+      'broken', 'bug', 'debug', 'deprecated', 'example', 'error',
+      'err', 'fail', 'fatal', 'fix', 'hack', 'idea', 'info', 'note', 'optimize', 'question',
+      'refactor', 'remove', 'review', 'task', 'trace', 'update', 'warn', 'warning'
+    ]
+  }
+
+  static get DEFAULT_EXCLUDED_NAMES() {
+    return ['node_modules', 'tmp', '.git', 'vendor', '.nova', '.gitignore', 'env', 'venv']
+  }
+
+  static get DEFAULT_EXCLUDED_EXTENSIONS() {
+    return ['.json', '.map', '.md']
+  }
+
+  get groupBy() {
+    return this._groupBy
+  }
+
+  set groupBy(groupBy) {
+    if (groupBy == 'tag') {
+      this._groupBy = 'tag'
+    } else {
+      this._groupBy = 'file'
+    }
   }
 
   /*
     Returns array of tag tags used for search. Includes default tags
     and the tags selected by the user in the workspace preferences.
   */
-  getTags() {
-    const DEFAULT_TAGS    = ['todo', 'fixme']
-    const PREFERENCE_TAGS = [
-      'broken', 'bug', 'debug', 'deprecated', 'example', 'error',
-      'err', 'fail', 'fatal', 'fix', 'hack', 'idea', 'info', 'note', 'optimize', 'question',
-      'refactor', 'remove', 'review', 'task', 'trace', 'update', 'warn', 'warning'
-    ]
-
+  loadTags() {
     let additionalTags = []
 
     /*
@@ -37,19 +58,23 @@ exports.Configuration = class Configuration {
     */
     if (FUNCTIONS.isWorkspace() &&
     (nova.workspace.config.get('todo.workspace-custom-tags') == 'Use Workspace Preferences')) {
-      additionalTags = PREFERENCE_TAGS.filter(elem => {
-        return nova.workspace.config.get(`todo.workspace-tag-${elem}`)
+      additionalTags = Configuration.PREFERENCE_TAGS.filter((tag) => {
+        return nova.workspace.config.get(`todo.workspace-tag-${tag}`)
       })
     } else {
-      additionalTags = PREFERENCE_TAGS.filter(elem => {
-        return nova.config.get(`todo.global-tag-${elem}`)
+      additionalTags = Configuration.PREFERENCE_TAGS.filter((tag) => {
+        return nova.config.get(`todo.global-tag-${tag}`)
       })
     }
 
-    let tags = [...DEFAULT_TAGS, ...additionalTags]
-    tags = tags.map(elem => { return elem.toUpperCase() })
+    let tags = [...Configuration.DEFAULT_TAGS, ...additionalTags]
+    tags     = tags.map((tag) => { return tag.toUpperCase() })
 
     return tags
+  }
+
+  get tags() {
+    return this._tags
   }
 
   /*
@@ -57,12 +82,10 @@ exports.Configuration = class Configuration {
     Returns a boolean value of true if only to match upper case (TODO:) or false if matching
     both upper and lower case (TODO: and todo:).
   */
-  caseSensitiveMatching() {
-    // Set a default setting
+  loadCaseSensitiveMatching() {
     let caseSensitive = true
-
-    let global = nova.config.get('todo.global-case-sensitive-tag-matching')
-    let workspace = nova.workspace.config.get('todo.workspace-case-sensitive-tag-matching')
+    let global        = nova.config.get('todo.global-case-sensitive-tag-matching')
+    let workspace     = nova.workspace.config.get('todo.workspace-case-sensitive-tag-matching')
 
     // Override default with a global preference if it exists
     if (global == true || global == false) {
@@ -81,15 +104,15 @@ exports.Configuration = class Configuration {
     return caseSensitive
   }
 
+  get CaseSensitiveMatching() {
+    return this._caseSensitiveMatching
+  }
+
   /*
     Returns array of excluded file and directory names, including default exclusions
     and global and workspace user preference exclusions.
   */
-  getExcludedNames() {
-    const DEFAULT_EXCLUDED_NAMES = [
-      'node_modules', 'tmp', '.git', 'vendor', '.nova', '.gitignore', 'env', 'venv'
-    ]
-
+  loadExcludedNames() {
     let workspaceIgnoreNames = []
     let globalIgnoreNames    = []
 
@@ -102,22 +125,24 @@ exports.Configuration = class Configuration {
     globalIgnoreNames = globalIgnoreNames.split(',')
 
     let excludedNames = [
-      ...DEFAULT_EXCLUDED_NAMES,
+      ...Configuration.DEFAULT_EXCLUDED_NAMES,
       ...workspaceIgnoreNames,
       ...globalIgnoreNames
     ]
-    excludedNames = this.cleanArray(excludedNames)
+    excludedNames = FUNCTIONS.cleanArray(excludedNames)
 
     return excludedNames
+  }
+
+  get excludedNames() {
+    return this._excludedNames
   }
 
   /*
     Returns array of excluded file extensions, including default exclusions
     and global and workspace user preference exclusions.
   */
-  getExcludedExtensions() {
-    const DEFAULT_EXCLUDED_EXTENSIONS = ['.json', '.map', '.md']
-
+  loadExcludedExtensions() {
     let workspaceIgnoreExtensions = []
     let globalIgnoreExtensions    = []
 
@@ -130,12 +155,12 @@ exports.Configuration = class Configuration {
     globalIgnoreExtensions = globalIgnoreExtensions.split(',')
 
     let excludedExtensions = [
-      ...DEFAULT_EXCLUDED_EXTENSIONS,
+      ...Configuration.DEFAULT_EXCLUDED_EXTENSIONS,
       ...workspaceIgnoreExtensions,
       ...globalIgnoreExtensions
     ]
 
-    excludedExtensions = this.cleanArray(excludedExtensions)
+    excludedExtensions = FUNCTIONS.cleanArray(excludedExtensions)
 
     excludedExtensions = excludedExtensions.map(extension => {
       if (extension.charAt(0) !== '.') {
@@ -148,10 +173,14 @@ exports.Configuration = class Configuration {
     return excludedExtensions
   }
 
+  get excludedExtensions() {
+    return this._excludedExtensions
+  }
+
   /*
     Returns array of excluded paths specified by the user in the workspace preferences.
   */
-  getExcludedPaths() {
+  loadExcludedPaths() {
     let workspaceIgnorePaths = []
 
     if (FUNCTIONS.isWorkspace()) {
@@ -160,26 +189,13 @@ exports.Configuration = class Configuration {
       workspaceIgnorePaths = workspaceIgnorePaths.map(function (path) {
         return nova.path.normalize(path)
       })
-      workspaceIgnorePaths = this.cleanArray(workspaceIgnorePaths)
+      workspaceIgnorePaths = FUNCTIONS.cleanArray(workspaceIgnorePaths)
     }
 
     return workspaceIgnorePaths
   }
 
-  /*
-    Returns an array that has been stripped of null, blank, and undefined elements.
-  */
-  cleanArray(array) {
-    array = array.filter(function(element) {
-      element = element.trim()
-
-      if (element !== null && element !== '' && element!== undefined) {
-        return element
-      }
-    })
-
-    array = array.map(element => element.trim())
-
-    return array
+  get excludedPaths() {
+    return this._excludedPaths
   }
 }
