@@ -2,13 +2,13 @@ const { ListItem } = require('./list_item.js')
 
 exports.DocumentSearch = class DocumentSearch {
   constructor(config) {
-    this.keywords              = config.keywords
-    this.caseSensitiveMatching = config.caseSensitiveMatching
+    this._config = config
+    // this.caseSensitiveMatching = config.caseSensitiveMatching
   }
 
   /*
-    Opens a file into an array of lines for keyword searching.
-    Accepts a file path and returns an array of keyword
+    Opens a file into an array of lines for tag searching.
+    Accepts a file path and returns an array of tag
     matches as ListItem objects.
   */
   searchFile(filePath) {
@@ -27,8 +27,8 @@ exports.DocumentSearch = class DocumentSearch {
 
   /*
     Reads a Nova TextDocument object and splits its content
-    into an array of lines for keyword searching.
-    Accepts a Nova TextDocument object and returns an array of keyword
+    into an array of lines for tag searching.
+    Accepts a Nova TextDocument object and returns an array of tag
     matches as ListItem objects.
   */
   searchOpenDocument(textDocument) {
@@ -45,7 +45,7 @@ exports.DocumentSearch = class DocumentSearch {
   }
 
   /*
-    Searches a document line by line for keywords and returns an
+    Searches a document line by line for tags and returns an
     array of ToDoListItem objects for a specific document. Accepts the
     entire contents of a document.
   */
@@ -74,36 +74,36 @@ exports.DocumentSearch = class DocumentSearch {
   }
 
   /*
-    Searches a line of code for keywords
-    and returns an array of objects containing the keyword,
+    Searches a line of code for tags
+    and returns an array of objects containing the tag,
     column number of the match as well as the text
-    (most likely a comment) following the keyword.
+    (most likely a comment) following the tag.
   */
   searchLine(line) {
-    let matchRegex = new RegExp(`${this.keywords.join('|')}`)
+    let matchRegex = new RegExp(`${this._config.tags.join('|')}`)
     let lineMatches = []
 
-    this.keywords.forEach((keyword) => {
+    this._config.tags.forEach((tag) => {
       let lineMatchIndex
 
-      if (this.caseSensitiveMatching == true) {
-        lineMatchIndex = line.indexOf(keyword)
+      if (this._config.caseSensitiveMatching == true) {
+        lineMatchIndex = line.indexOf(tag)
       } else {
-        lineMatchIndex = line.toLowerCase().indexOf(keyword.toLowerCase())
+        lineMatchIndex = line.toLowerCase().indexOf(tag.toLowerCase())
       }
 
       while(lineMatchIndex >= 0) {
-        this.extractCommentFromLine(keyword, lineMatchIndex, line)
+        this.extractCommentFromLine(tag, lineMatchIndex, line)
 
-        if (this.isTag(keyword, lineMatchIndex, line)) {
+        if (this.isTag(tag, lineMatchIndex, line)) {
           lineMatches = [...lineMatches, {
-            name: keyword,
+            name: tag,
             column: lineMatchIndex + 1,
-            comment: this.extractCommentFromLine(keyword, lineMatchIndex, line)
+            comment: this.extractCommentFromLine(tag, lineMatchIndex, line)
           }]
         }
 
-        lineMatchIndex = line.indexOf(keyword, (lineMatchIndex + 1))
+        lineMatchIndex = line.indexOf(tag, (lineMatchIndex + 1))
       }
     })
 
@@ -111,20 +111,20 @@ exports.DocumentSearch = class DocumentSearch {
   }
 
   /*
-    Returns the line after the keyword and the : or ] character, trimming any whitespace.
+    Returns the line after the tag and the : or ] character, trimming any whitespace.
   */
-  extractCommentFromLine(keyword, lineMatchIndex, line) {
-    let comment = line.substring(lineMatchIndex + (keyword.length + 1))
+  extractCommentFromLine(tag, lineMatchIndex, line) {
+    let comment = line.substring(lineMatchIndex + (tag.length + 1))
 
     return comment.trim()
   }
 
   /*
-    Returns true if keyword at the currently evaluated index is followed by a : or ],
+    Returns true if tag at the currently evaluated index is followed by a : or ],
     in which case it is recognized as a tag.
   */
-  isTag(keyword, lineMatchIndex, line) {
-    let nextChar = line.charAt(lineMatchIndex + keyword.length)
+  isTag(tag, lineMatchIndex, line) {
+    let nextChar = line.charAt(lineMatchIndex + tag.length)
 
     if (nextChar == ':' || nextChar == ']') {
       return true

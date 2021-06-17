@@ -10,7 +10,7 @@ exports.WorkspaceSearch = class WorkspaceSearch {
   }
 
   /*
-    Returns files containing matching keywords.
+    Returns files containing matching tags.
   */
   search() {
     return new Promise((resolve, reject) => {
@@ -33,7 +33,7 @@ exports.WorkspaceSearch = class WorkspaceSearch {
         stderr: [],
       }
 
-      let keywordQuery = this.config.keywords.join('|')
+      let tagQuery = this.config.tags.join('|')
 
       // Helpful information on egrep options
       // https://unix.stackexchange.com/questions/282648/using-grep-with-the-exclude-dir-flag-to-exclude-multiple-directories
@@ -53,7 +53,7 @@ exports.WorkspaceSearch = class WorkspaceSearch {
       // -R -recursive - Read all files under each directory.
       // -i --ignore-case - Ignore case when matching the pattern.
       let options = {
-        args: [keywordQuery, '-lIRi', ...exclusions, FUNCTIONS.normalizePath(this.path)]
+        args: [tagQuery, '-lIRi', ...exclusions, FUNCTIONS.normalizePath(this.path)]
       }
 
       let process = new Process('/usr/bin/egrep', options)

@@ -10,18 +10,18 @@
   "funding":"https://github.com/sponsors/jasonplatts",
   "min_runtime": "4.1",
   "categories": ["sidebars"],
-  
+
   "main": "main.js",
-  
+
   "activationEvents": [
     "onLanguage:javascript"
   ],
-  
+
   "entitlements": {
     "filesystem": "readonly",
     "process": true
   },
-  
+
   "config": [
     {
       "key": "todo.include-global-tag-matching-options.section",
@@ -38,151 +38,151 @@
       ]
     },
     {
-      "key": "todo.include-global-keywords.section",
+      "key": "todo.include-global-tags.section",
       "title": "Global Included Tags",
       "description": "TODO and FIXME tags are always searched. However, additional tags can be added below. Keep in mind that too many tags can cause slow performance in larger workspaces.",
       "type": "section",
       "children": [
         {
-          "key": "todo.global-keyword-broken",
+          "key": "todo.global-tag-broken",
           "title": "BROKEN",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-bug",
+          "key": "todo.global-tag-bug",
           "title": "BUG",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-debug",
+          "key": "todo.global-tag-debug",
           "title": "DEBUG",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-deprecated",
+          "key": "todo.global-tag-deprecated",
           "title": "DEPRECATED",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-example",
+          "key": "todo.global-tag-example",
           "title": "EXAMPLE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-error",
+          "key": "todo.global-tag-error",
           "title": "ERROR",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-err",
+          "key": "todo.global-tag-err",
           "title": "ERR",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-fail",
+          "key": "todo.global-tag-fail",
           "title": "FAIL",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-fatal",
+          "key": "todo.global-tag-fatal",
           "title": "FATAL",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-fix",
+          "key": "todo.global-tag-fix",
           "title": "FIX",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-hack",
+          "key": "todo.global-tag-hack",
           "title": "HACK",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-idea",
+          "key": "todo.global-tag-idea",
           "title": "IDEA",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-info",
+          "key": "todo.global-tag-info",
           "title": "INFO",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-note",
+          "key": "todo.global-tag-note",
           "title": "NOTE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-optimize",
+          "key": "todo.global-tag-optimize",
           "title": "OPTIMIZE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-question",
+          "key": "todo.global-tag-question",
           "title": "QUESTION",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-refactor",
+          "key": "todo.global-tag-refactor",
           "title": "REFACTOR",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-remove",
+          "key": "todo.global-tag-remove",
           "title": "REMOVE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-review",
+          "key": "todo.global-tag-review",
           "title": "REVIEW",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-task",
+          "key": "todo.global-tag-task",
           "title": "TASK",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-trace",
+          "key": "todo.global-tag-trace",
           "title": "TRACE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-update",
+          "key": "todo.global-tag-update",
           "title": "UPDATE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-warn",
+          "key": "todo.global-tag-warn",
           "title": "WARN",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.global-keyword-warning",
+          "key": "todo.global-tag-warning",
           "title": "WARNING",
           "type": "boolean",
           "default": false
@@ -220,7 +220,7 @@
       ]
     }
   ],
-  
+
   "config-workspace": [
     {
       "key": "todo.include-workspace-tag-matching-options.section",
@@ -238,7 +238,7 @@
       ]
     },
     {
-      "key": "todo.include-workspace-keywords.section",
+      "key": "todo.include-workspace-tags.section",
       "title": "Workspace Included Tags",
       "description": "TODO and FIXME tags are always searched. However, additional tags can be added below. Keep in mind that too many tags can cause slow performance in larger workspaces.",
       "type": "section",
@@ -252,145 +252,145 @@
           "default": "Use Global Preferences"
         },
         {
-          "key": "todo.workspace-keyword-broken",
+          "key": "todo.workspace-tag-broken",
           "title": "BROKEN",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-bug",
+          "key": "todo.workspace-tag-bug",
           "title": "BUG",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-debug",
+          "key": "todo.workspace-tag-debug",
           "title": "DEBUG",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-deprecated",
+          "key": "todo.workspace-tag-deprecated",
           "title": "DEPRECATED",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-example",
+          "key": "todo.workspace-tag-example",
           "title": "EXAMPLE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-error",
+          "key": "todo.workspace-tag-error",
           "title": "ERROR",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-err",
+          "key": "todo.workspace-tag-err",
           "title": "ERR",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-fail",
+          "key": "todo.workspace-tag-fail",
           "title": "FAIL",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-fatal",
+          "key": "todo.workspace-tag-fatal",
           "title": "FATAL",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-fix",
+          "key": "todo.workspace-tag-fix",
           "title": "FIX",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-hack",
+          "key": "todo.workspace-tag-hack",
           "title": "HACK",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-idea",
+          "key": "todo.workspace-tag-idea",
           "title": "IDEA",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-info",
+          "key": "todo.workspace-tag-info",
           "title": "INFO",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-note",
+          "key": "todo.workspace-tag-note",
           "title": "NOTE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-optimize",
+          "key": "todo.workspace-tag-optimize",
           "title": "OPTIMIZE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-question",
+          "key": "todo.workspace-tag-question",
           "title": "QUESTION",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-refactor",
+          "key": "todo.workspace-tag-refactor",
           "title": "REFACTOR",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-remove",
+          "key": "todo.workspace-tag-remove",
           "title": "REMOVE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-review",
+          "key": "todo.workspace-tag-review",
           "title": "REVIEW",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-task",
+          "key": "todo.workspace-tag-task",
           "title": "TASK",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-trace",
+          "key": "todo.workspace-tag-trace",
           "title": "TRACE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-update",
+          "key": "todo.workspace-tag-update",
           "title": "UPDATE",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-warn",
+          "key": "todo.workspace-tag-warn",
           "title": "WARN",
           "type": "boolean",
           "default": false
         },
         {
-          "key": "todo.workspace-keyword-warning",
+          "key": "todo.workspace-tag-warning",
           "title": "WARNING",
           "type": "boolean",
           "default": false
@@ -457,7 +457,7 @@
       ]
     }
   ],
-  
+
   "sidebars": [
     {
       "id": "todo",

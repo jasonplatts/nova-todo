@@ -9,7 +9,7 @@ exports.Configuration = class Configuration {
   }
 
   loadConfig() {
-    this.keywords              = this.getKeywords()
+    this.tags              = this.getTags()
     this.caseSensitiveMatching = this.caseSensitiveMatching()
     this.excludedNames         = this.getExcludedNames()
     this.excludedExtensions    = this.getExcludedExtensions()
@@ -18,18 +18,18 @@ exports.Configuration = class Configuration {
   }
 
   /*
-    Returns array of tag keywords used for search. Includes default tags
+    Returns array of tag tags used for search. Includes default tags
     and the tags selected by the user in the workspace preferences.
   */
-  getKeywords() {
-    const DEFAULT_KEYWORDS    = ['todo', 'fixme']
-    const PREFERENCE_KEYWORDS = [
+  getTags() {
+    const DEFAULT_TAGS    = ['todo', 'fixme']
+    const PREFERENCE_TAGS = [
       'broken', 'bug', 'debug', 'deprecated', 'example', 'error',
       'err', 'fail', 'fatal', 'fix', 'hack', 'idea', 'info', 'note', 'optimize', 'question',
       'refactor', 'remove', 'review', 'task', 'trace', 'update', 'warn', 'warning'
     ]
 
-    let additionalKeywords = []
+    let additionalTags = []
 
     /*
       If a workspace exists and user has chosen to use the workspace preferences for tags,
@@ -37,19 +37,19 @@ exports.Configuration = class Configuration {
     */
     if (FUNCTIONS.isWorkspace() &&
     (nova.workspace.config.get('todo.workspace-custom-tags') == 'Use Workspace Preferences')) {
-      additionalKeywords = PREFERENCE_KEYWORDS.filter(elem => {
-        return nova.workspace.config.get(`todo.workspace-keyword-${elem}`)
+      additionalTags = PREFERENCE_TAGS.filter(elem => {
+        return nova.workspace.config.get(`todo.workspace-tag-${elem}`)
       })
     } else {
-      additionalKeywords = PREFERENCE_KEYWORDS.filter(elem => {
-        return nova.config.get(`todo.global-keyword-${elem}`)
+      additionalTags = PREFERENCE_TAGS.filter(elem => {
+        return nova.config.get(`todo.global-tag-${elem}`)
       })
     }
 
-    let keywords = [...DEFAULT_KEYWORDS, ...additionalKeywords]
-    keywords = keywords.map(elem => { return elem.toUpperCase() })
+    let tags = [...DEFAULT_TAGS, ...additionalTags]
+    tags = tags.map(elem => { return elem.toUpperCase() })
 
-    return keywords
+    return tags
   }
 
   /*
