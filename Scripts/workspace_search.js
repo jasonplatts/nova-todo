@@ -59,15 +59,17 @@ exports.WorkspaceSearch = class WorkspaceSearch {
 
       let process = new Process('/usr/bin/egrep', options)
 
-      process.onStdout((l) => {
+      let processDisposables = new CompositeDisposable
+
+      processDisposables.add(process.onStdout((l) => {
         processResponse.stdout = [...processResponse.stdout, l.trim()]
-      })
+      }))
 
-      process.onStderr((l) => {
+      processDisposables.add(process.onStderr((l) => {
         processResponse.stderr = [...processResponse.stderr, l.trim()]
-      })
+      }))
 
-      process.onDidExit((exitStatus) => {
+      processDisposables.add(process.onDidExit((exitStatus) => {
         /*
           As per Nova API documentation, onDidExit provides as a callback argument,
           the exit status of the subprocess.
@@ -75,16 +77,19 @@ exports.WorkspaceSearch = class WorkspaceSearch {
         processResponse.status = exitStatus
 
         if (exitStatus === 0) {
+          processDisposables.dispose()
           resolve(processResponse)
         } else {
+          processDisposables.dispose()
           FUNCTIONS.showConsoleError(processResponse)
           reject(processResponse)
         }
-      })
+      }))
 
       try {
         process.start()
       } catch (error) {
+        processDisposables.dispose()
         FUNCTIONS.showConsoleError(error.message)
         reject(processResponse)
       }
