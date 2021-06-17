@@ -5,66 +5,54 @@ const { Group }           = require('./group.js')
 
 exports.List = class List {
   constructor(config) {
-    this.config = config
-    this.items  = null
+    this._config = config
+    this._items  = null
   }
 
   async loadItems() {
     if (FUNCTIONS.isWorkspace()) {
-      this.items = await this.loadWorkspaceEnvironment()
+      this._items = await this.loadWorkspaceEnvironment()
     } else {
-      this.items = await this.loadNonWorkspaceEnvironment()
+      this._items = await this.loadNonWorkspaceEnvironment()
     }
 
-    return this.items
+    return true
   }
 
-  loadWorkspaceEnvironment() {
-    return new Promise((resolve, reject) => {
-      let workspaceSearch = new WorkspaceSearch(nova.workspace.path, this.config)
-      let files           = workspaceSearch.search()
+  async loadWorkspaceEnvironment() {
+    let listItems         = []
+    let workspaceSearch   = new WorkspaceSearch(nova.workspace.path, this._config)
+    let filePaths         = await workspaceSearch.search()
+    let filteredFilePaths = FUNCTIONS.filterFilePathArray(filePaths, this._config)
 
-      files
-        .then((response, reject) => {
-          response = FUNCTIONS.filterFilePathArray(response, this.config)
-          response.sort(FUNCTIONS.sortByFileName)
+    filteredFilePaths.sort(FUNCTIONS.sortByFileName)
 
-          let listItems = []
-
-          response.forEach((filePath) => {
-            let documentSearch = new DocumentSearch(this.config)
-            listItems = [...listItems, ...documentSearch.searchFile(filePath)]
-          })
-
-          resolve(listItems)
-        })
-        .catch((error) => {
-          FUNCTIONS.showConsoleError(error)
-          reject(error)
-        })
+    filteredFilePaths.forEach((filePath) => {
+      let documentSearch = new DocumentSearch(this._config)
+      listItems = [...listItems, ...documentSearch.searchFile(filePath)]
     })
+
+    return listItems
   }
 
-  loadNonWorkspaceEnvironment() {
-    return new Promise((resolve) => {
-      let openDocuments = nova.workspace.textDocuments
+  async loadNonWorkspaceEnvironment() {
+    let openDocuments = nova.workspace.textDocuments
 
-      openDocuments = FUNCTIONS.filterOpenDocumentArray(openDocuments, this.config)
+    openDocuments = FUNCTIONS.filterOpenDocumentArray(openDocuments, this._config)
 
-      let listItems = []
+    let listItems = []
 
-      openDocuments.forEach((textDocument) => {
-        let documentSearch = new DocumentSearch(this.config)
-        listItems = [...listItems, ...documentSearch.searchOpenDocument(textDocument)]
-      })
-
-      resolve(listItems)
+    openDocuments.forEach((textDocument) => {
+      let documentSearch = new DocumentSearch(this._config)
+      listItems = [...listItems, ...documentSearch.searchOpenDocument(textDocument)]
     })
+
+    return listItems
   }
 
   getListItems() {
     let group            = new Group()
-    let groupedListItems = group.groupListItems(this.items, this.config.groupBy)
+    let groupedListItems = group.groupListItems(this._items, this._config.groupBy)
 
     return groupedListItems
   }
@@ -95,8 +83,8 @@ exports.List = class List {
     Determines if the listItem objects found in a document
     match the tags in the existing listItems array.
   */
-  hasListItemsChanged(filePath, config) {
-    let newFileSearch = new DocumentSearch(config)
+  hasListItemsChanged(filePath) {
+    let newFileSearch = new DocumentSearch(this._config)
     let newListItems = newFileSearch.searchFile(filePath)
     let existingListItems = this.getListItemsForFile(filePath)
 

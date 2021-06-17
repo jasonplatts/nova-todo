@@ -55,11 +55,12 @@ function reset() {
 async function onChange(filePath) {
   console.log('HERE', filePath)
   if (novaTreeViewObjects.treeView !== null) {
+    // The config object shouldn't be passed here, but just the values??? Keep knowledge of config out of FUNCTIONS file.
     let fileExcluded     = FUNCTIONS.isExcluded(filePath, config)
     let workspaceChange  = new listItems(listItems)
     console.log('dsdsd')
     let fileExists       = workspaceChange.fileExists(filePath)
-    let listItemsChanged = workspaceChange.hasListItemsChanged(filePath, config)
+    let listItemsChanged = workspaceChange.hasListItemsChanged(filePath)
     let newSaveFileListItems = new DocumentSearch
 
     if (fileExcluded && fileExists) {
