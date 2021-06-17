@@ -56,6 +56,6 @@ exports.ListItem = class ListItem {
 
   addChild(element) {
     element.parent = this
-    this.children.push(element)
+    this.children  = [...this.children, element]
   }
 }

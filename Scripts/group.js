@@ -27,7 +27,7 @@ exports.Group = class Group {
     let uniquePaths = this.getUniqueFiles(ungroupedListItems)
 
     uniquePaths.forEach((uniquePath) => {
-      listItems.push(this.createFileParentItem(uniquePath))
+      listItems = [...listItems, this.createFileParentItem(uniquePath)]
 
       // Collects into an array all of the items to be a child of the current unique path parent item.
       let childListItems = ungroupedListItems.filter(
@@ -79,7 +79,7 @@ exports.Group = class Group {
     let uniqueTagsArray = this.getUniqueTags(ungroupedListItems)
 
     uniqueTagsArray.forEach((uniqueTag) => {
-      listItems.push(this.createTagParentItem(uniqueTag))
+      listItems = [...listItems, this.createTagParentItem(uniqueTag)]
 
       let childListItems = ungroupedListItems.filter(
         listItem => listItem.name == uniqueTag

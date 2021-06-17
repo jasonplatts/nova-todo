@@ -96,14 +96,11 @@ exports.DocumentSearch = class DocumentSearch {
         this.extractCommentFromLine(keyword, lineMatchIndex, line)
 
         if (this.isTag(keyword, lineMatchIndex, line)) {
-          lineMatches.push(
-            {
-              name: keyword,
-              column: lineMatchIndex + 1,
-              comment: this.extractCommentFromLine(keyword, lineMatchIndex, line)
-            }
-          )
-
+          lineMatches = [...lineMatches, {
+            name: keyword,
+            column: lineMatchIndex + 1,
+            comment: this.extractCommentFromLine(keyword, lineMatchIndex, line)
+          }]
         }
 
         lineMatchIndex = line.indexOf(keyword, (lineMatchIndex + 1))

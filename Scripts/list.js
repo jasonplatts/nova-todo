@@ -33,7 +33,7 @@ exports.List = class List {
 
           response.forEach((filePath) => {
             let documentSearch = new DocumentSearch(this.config)
-            listItems.push(...documentSearch.searchFile(filePath))
+            listItems = [...listItems, ...documentSearch.searchFile(filePath)]
           })
 
           resolve(listItems)
@@ -55,7 +55,7 @@ exports.List = class List {
 
       openDocuments.forEach((textDocument) => {
         let documentSearch = new DocumentSearch(this.config)
-        listItems.push(...documentSearch.searchOpenDocument(textDocument))
+        listItems = [...listItems, ...documentSearch.searchOpenDocument(textDocument)]
       })
 
       resolve(listItems)
@@ -143,13 +143,13 @@ exports.List = class List {
     Returns an array of listItem objects with a specified file path.
   */
   getListItemsForFile(filePath) {
-    let existingListItems
+    let existingListItems = []
 
     filePath = FUNCTIONS.normalizePath(filePath)
 
     this.listItems.forEach((listItem) => {
       if (listItem.path == filePath) {
-        existingListItems.push(listItem)
+        existingListItems = [...existingListItems, listItem]
       }
     })
 
@@ -160,12 +160,12 @@ exports.List = class List {
     Removes listItems with a specified path and returns a new listItem array
   */
   removeFileListItems(filePath) {
-    let removeIndexes
+    let removeIndexes = []
     let itemCount     = 0
 
     for(0; itemCount < this.listItems.length; itemCount++) {
       if (this.listItems[itemCount].path == filePath ) {
-        removeIndexes.push(itemCount)
+        removeIndexes = [...removeIndexes, itemCount]
       }
     }
 

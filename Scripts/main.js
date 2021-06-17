@@ -1,22 +1,11 @@
-const FUNCTIONS           = require('./functions.js')
-const { Configuration }   = require('./configuration.js')
+const FUNCTIONS         = require('./functions.js')
+const { Configuration } = require('./configuration.js')
+const { List }          = require('./list.js')
+const { DataProvider }  = require('./data_provider.js')
 
-// const { DocumentSearch }  = require('./document_search.js')
-
-const { List }       = require('./list.js')
-const { DataProvider }    = require('./data_provider.js')
-
-// var config              = new Configuration()
-// var groupBy             = 'file'
-var config = null
-var list   = null
-// var dataProvider        = null
-// var treeView            = null
-
-// var refreshTimer = null
-// var dataProvider = null
+var config              = null
+var list                = null
 var compositeDisposable = new CompositeDisposable()
-
 var novaTreeViewObjects = {
   dataProvider: null,
   treeView:     null
@@ -64,6 +53,7 @@ function reset() {
 }
 
 async function onChange(filePath) {
+  console.log('HERE', filePath)
   if (novaTreeViewObjects.treeView !== null) {
     let fileExcluded     = FUNCTIONS.isExcluded(filePath, config)
     let workspaceChange  = new listItems(listItems)

@@ -59,11 +59,11 @@ exports.WorkspaceSearch = class WorkspaceSearch {
       let process = new Process('/usr/bin/egrep', options)
 
       process.onStdout((l) => {
-        returnValue.stdout.push(l.trim())
+        returnValue.stdout = [...returnValue.stdout, l.trim()]
       })
 
       process.onStderr((l) => {
-        returnValue.stderr.push(l.trim())
+        returnValue.stderr = [...returnValue.stderr, l.trim()]
       })
 
       process.onDidExit((status) => {
