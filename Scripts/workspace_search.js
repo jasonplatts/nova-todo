@@ -5,82 +5,88 @@ const FUNCTIONS = require('./functions.js')
 */
 exports.WorkspaceSearch = class WorkspaceSearch {
   constructor(path, config) {
-    this.path   = path
-    this.config = config
+    this._path   = path
+    this._config = config
+  }
+
+  // Helpful information on egrep options
+  // https://unix.stackexchange.com/questions/282648/using-grep-with-the-exclude-dir-flag-to-exclude-multiple-directories
+  static get EGREP_EXCLUSIONS() {
+    return [
+      '--exclude-dir=node_modules',
+      '--exclude-dir=packs',
+      '--exclude-dir=packs-test',
+      '--exclude-dir=tmp',
+      '--exclude-dir=logs',
+      '--exclude-dir=log'
+    ]
   }
 
   /*
     Returns files containing matching tags.
   */
-  search() {
-    return new Promise((resolve, reject) => {
-      let files = this.egrepExec()
+  async search() {
+    try {
+      let egrepResponse = await this.egrepExec()
 
-      files.then((response, reject) => {
-        resolve(response.stdout)
-      })
-      files.catch((alert) => {
-        reject(alert)
-      })
-    })
+      return egrepResponse.stdout
+    } catch (error) {
+      FUNCTIONS.showConsoleError(error)
+      return []
+    }
   }
 
   egrepExec() {
     return new Promise((resolve, reject) => {
-      let returnValue = {
+      let processResponse = {
         status: 0,
         stdout: [],
         stderr: [],
       }
+      let tagQuery = this._config.tags.join('|')
 
-      let tagQuery = this.config.tags.join('|')
-
-      // Helpful information on egrep options
-      // https://unix.stackexchange.com/questions/282648/using-grep-with-the-exclude-dir-flag-to-exclude-multiple-directories
-      let exclusions = [
-        '--exclude-dir=node_modules',
-        '--exclude-dir=packs',
-        '--exclude-dir=packs-test',
-        '--exclude-dir=tmp',
-        '--exclude-dir=logs',
-        '--exclude-dir=log'
-      ]
-
-      // Option descriptions
-      // -l --files-with-matches - Suppresses normal output, instead printing name of each input file,
-      // therefore, scanning stops on the first match.
-      // -I - Process binary files as if they do not contain matching data.
-      // -R -recursive - Read all files under each directory.
-      // -i --ignore-case - Ignore case when matching the pattern.
+      /*
+        Option descriptions
+        -l --files-with-matches - Suppresses normal output, instead printing name of each input file,
+        therefore, scanning stops on the first match.
+        -I - Process binary files as if they do not contain matching data.
+        -R -recursive - Read all files under each directory.
+        -i --ignore-case - Ignore case when matching the pattern.
+      */
       let options = {
-        args: [tagQuery, '-lIRi', ...exclusions, FUNCTIONS.normalizePath(this.path)]
+        args: [tagQuery, '-lIRi', ...WorkspaceSearch.EGREP_EXCLUSIONS, FUNCTIONS.normalizePath(this._path)]
       }
 
       let process = new Process('/usr/bin/egrep', options)
 
       process.onStdout((l) => {
-        returnValue.stdout = [...returnValue.stdout, l.trim()]
+        processResponse.stdout = [...processResponse.stdout, l.trim()]
       })
 
       process.onStderr((l) => {
-        returnValue.stderr = [...returnValue.stderr, l.trim()]
+        processResponse.stderr = [...processResponse.stderr, l.trim()]
       })
 
-      process.onDidExit((status) => {
-        returnValue.status = status
-        if (status === 0) {
-          resolve(returnValue)
+      process.onDidExit((exitStatus) => {
+        /*
+          As per Nova API documentation, onDidExit provides as a callback argument,
+          the exit status of the subprocess.
+        */
+        processResponse.status = exitStatus
+
+        if (exitStatus === 0) {
+          resolve(processResponse)
         } else {
-          reject(returnValue)
+          FUNCTIONS.showConsoleError(processResponse)
+          reject(processResponse)
         }
       })
 
       try {
         process.start()
-      } catch (e) {
-        returnValue.status = 128
-        returnValue.stderr = [e.message]
-        reject(returnValue)
+      } catch (error) {
+        FUNCTIONS.showConsoleError(error.message)
+        reject(processResponse)
       }
     })
   }
