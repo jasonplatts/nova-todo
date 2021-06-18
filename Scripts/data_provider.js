@@ -1,10 +1,9 @@
+'use strict'
+
 /*
-  Module contains the DataProvider functionality. Due to limitations in the Nova API
+  Class contains the DataProvider functionality. Due to limitations in the Nova API
   at time of writing, the TreeView is not editable once part of the DataProvider.
 */
-const { Configuration } = require('./Configuration.js')
-const FUNCTIONS         = require('./functions.js')
-
 exports.DataProvider = class DataProvider {
   constructor(listItems) {
     this.rootItems = listItems

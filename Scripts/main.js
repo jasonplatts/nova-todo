@@ -1,3 +1,5 @@
+'use strict'
+
 const FUNCTIONS         = require('./functions.js')
 const { Configuration } = require('./configuration.js')
 const { List }          = require('./list.js')
@@ -31,10 +33,10 @@ exports.activate = async function() {
   instance.
 */
 function loadTreeView() {
-  dataProvider = new DataProvider(list.items)
+  novaTreeViewObjects.dataProvider = new DataProvider(list.items)
 
-  novaTreeViewObjects.treeView = new TreeView('todo', {
-    dataProvider: dataProvider
+  novaTreeViewObjects.treeView     = new TreeView('todo', {
+    dataProvider: novaTreeViewObjects.dataProvider
   })
 
   compositeDisposable.add(novaTreeViewObjects.treeView)
@@ -47,7 +49,7 @@ function reloadTreeView() {
 
 function reset() {
   compositeDisposable.dispose()
-  listItems    = null
+  list                             = null
   novaTreeViewObjects.dataProvider = null
   novaTreeViewObjects.treeView     = null
 }
@@ -74,12 +76,12 @@ async function onChange(filePath) {
       await novaTreeViewObjects.treeView.reload()
     }
 
-    if (fileExcluded == false) {
-      if (fileExists) {
-
-
-      }
-    }
+//     if (fileExcluded == false) {
+//       if (fileExists) {
+//
+//
+//       }
+//     }
 
 
     /*

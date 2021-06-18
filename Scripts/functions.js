@@ -1,3 +1,5 @@
+'use strict'
+
 /*
   Generic functions used in the extension are kept in this file.
   Some functions rely on the Nova API.

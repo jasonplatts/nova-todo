@@ -1,3 +1,5 @@
+'use strict'
+
 exports.ListItem = class ListItem {
   constructor(name) {
     /*

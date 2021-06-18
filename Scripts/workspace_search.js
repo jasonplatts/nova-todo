@@ -1,3 +1,5 @@
+'use strict'
+
 const FUNCTIONS = require('./functions.js')
 
 /*

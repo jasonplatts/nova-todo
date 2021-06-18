@@ -1,10 +1,12 @@
+'use strict'
+
+const { ListItem } = require('./list_item.js')
+
 /*
-  Module provides the final list item grouping and attribute completion of an ungrouped ListItem object array.
+  Class provides the final list item grouping and attribute completion of an ungrouped ListItem object array.
   It should be used prior to sending the ungrouped ListItem object array to the DataProvider for display in
   a Nova sidebar TreeView object.
 */
-const { ListItem } = require('./list_item.js')
-
 exports.Group = class Group {
   groupListItems(ungroupedListItems, groupBy) {
     let listItems = []

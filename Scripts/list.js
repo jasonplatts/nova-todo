@@ -1,3 +1,5 @@
+'use strict'
+
 const FUNCTIONS           = require('./functions.js')
 const { WorkspaceSearch } = require('./workspace_search.js')
 const { DocumentSearch }  = require('./document_search.js')
