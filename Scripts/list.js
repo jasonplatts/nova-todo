@@ -50,7 +50,7 @@ exports.List = class List {
     return listItems
   }
 
-  getListItems() {
+  get items() {
     let group            = new Group()
     let groupedListItems = group.groupListItems(this._items, this._config.groupBy)
 

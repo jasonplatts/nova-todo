@@ -31,7 +31,7 @@ exports.activate = async function() {
   instance.
 */
 function loadTreeView() {
-  dataProvider = new DataProvider(list.getListItems())
+  dataProvider = new DataProvider(list.items)
 
   novaTreeViewObjects.treeView = new TreeView('todo', {
     dataProvider: dataProvider
