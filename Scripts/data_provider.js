@@ -15,8 +15,7 @@ exports.DataProvider = class DataProvider {
   getChildren(listItem) {
     if (!listItem) {
       return this.rootItems
-    }
-    else {
+    } else {
       return listItem.children
     }
   }

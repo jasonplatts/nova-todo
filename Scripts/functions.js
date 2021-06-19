@@ -12,6 +12,8 @@
 */
 exports.isWorkspace = function isWorkspace() {
   if (nova.workspace.path == undefined || nova.workspace.path == null) {
+    // Opening single file in a Nova editor does not define a workspace. A project must exist.
+    // Opening a remote server environment is also not considered a workspace.
     return false
   } else {
     return true
@@ -135,7 +137,6 @@ exports.isExcluded = function isExcluded(filePath, config) {
     return false
   }
 }
-
 
 /*
   Removes the preceding Volumes and HDD portion of a standard returned path.
