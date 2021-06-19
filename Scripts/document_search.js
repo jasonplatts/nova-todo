@@ -1,11 +1,10 @@
 'use strict'
-
+const FUNCTIONS    = require('./functions.js')
 const { ListItem } = require('./list_item.js')
 
 exports.DocumentSearch = class DocumentSearch {
   constructor(config) {
     this._config = config
-    // this.caseSensitiveMatching = config.caseSensitiveMatching
   }
 
   /*
@@ -14,17 +13,21 @@ exports.DocumentSearch = class DocumentSearch {
     matches as ListItem objects.
   */
   searchFile(filePath) {
-    let file        = nova.fs.open(filePath)
-    let lines       = file.readlines()
-    let fileMatches = this.searchLines(lines)
+    try {
+      let file        = nova.fs.open(filePath)
+      let lines       = file.readlines()
+      let fileMatches = this.searchLines(lines)
 
-    fileMatches.forEach((listItem) => {
-      listItem.path = file.path
-    })
+      fileMatches.forEach((listItem) => {
+        listItem.path = file.path
+      })
 
-    file.close()
+      file.close()
 
-    return fileMatches
+      return fileMatches
+    } catch (error) {
+      FUNCTIONS.showConsoleError(error)
+    }
   }
 
   /*
