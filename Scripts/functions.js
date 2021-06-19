@@ -16,6 +16,7 @@ exports.isWorkspace = function isWorkspace() {
     // Opening a remote server environment is also not considered a workspace.
     return false
   } else {
+    // A local project is the only environment considered a Nova workspace.
     return true
   }
 }
