@@ -14,9 +14,6 @@ exports.Change = class Change {
     match the tags in the existing listItems array.
   */
   hasListItemsChanged(listItems) {
-    // Might need to do some detection here of what type of workspace, like on load.
-    // Document from open editor might need to be passed instead of filepath.
-    // Some automation might be possible by checking if file exists, if not, normalize it.
     let documentSearch    = new DocumentSearch(this._config)
     let newListItems      = documentSearch.searchOpenDocument(this._textDocument)
 
