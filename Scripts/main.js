@@ -13,17 +13,43 @@ var novaTreeViewObjects = {
   treeView:     null
 }
 
+var compositeListeners = new CompositeDisposable()
+
 exports.activate = async function() {
-  console.clear()
-  console.log('TODO EXTENSION ACTIVATED')
+  try {
+    console.clear()
+    console.log('TODO EXTENSION ACTIVATED')
+    console.log('Workspace Environment?', FUNCTIONS.isWorkspace())
 
-  config = new Configuration()
-  list   = new List(config)
+    config = new Configuration()
+    list   = new List(config)
 
-  await list.loadItems()
+    await list.loadItems()
 
-  loadTreeView()
+    loadTreeView()
+    loadActiveEditors()
+    // nova.fs.watch(null, onChange)
+  } catch (error) {
+    FUNCTIONS.showConsoleError(error)
+  }
 }
+
+function loadActiveEditors() {
+  let openEditors = nova.workspace.textEditors
+
+  openEditors.forEach((textEditor) => {
+    // compositeListeners.add(textEditor.onDidSave(saveDetected))
+    compositeListeners.add(textEditor.onDidSave(onChange))
+  })
+}
+
+// function saveDetected(textEditor) {
+//   console.log('Save Detected', textEditor.document.path)
+// }
+
+// function onClose(textEditor) {
+//
+// }
 
 /*
   NOTE: At time of writing, the TreeView is not editable once it is part of
@@ -44,131 +70,73 @@ function loadTreeView() {
 }
 
 function reloadTreeView() {
-  load()
+  novaTreeViewObjects.dataProvider = new DataProvider(list.items)
+
+  novaTreeViewObjects.treeView     = new TreeView('todo', {
+    dataProvider: novaTreeViewObjects.dataProvider
+  })
+
+  compositeDisposable.add(novaTreeViewObjects.treeView)
+  // nova.subscriptions.add(novaTreeViewObjects.treeView)
 }
 
-function reset() {
+// function reloadTreeView() {
+//   load()
+// }
+
+function resetTreeView() {
   compositeDisposable.dispose()
-  list                             = null
   novaTreeViewObjects.dataProvider = null
   novaTreeViewObjects.treeView     = null
+
+  return true
 }
 
-async function onChange(filePath) {
-  console.log('HERE', filePath)
-  if (novaTreeViewObjects.treeView !== null) {
-    // The config object shouldn't be passed here, but just the values??? Keep knowledge of config out of FUNCTIONS file.
-    let fileExcluded     = FUNCTIONS.isExcluded(filePath, config)
-    let workspaceChange  = new listItems(listItems)
-    console.log('dsdsd')
-    let fileExists       = workspaceChange.fileExists(filePath)
-    let listItemsChanged = workspaceChange.hasListItemsChanged(filePath)
-    let newSaveFileListItems = new DocumentSearch
+async function onChange(textEditor) {
+  console.log('change',textEditor.document.path)
+  try {
+    // if (novaTreeViewObjects.treeView !== null) {
+    let updated = await list.updateOnChange(textEditor)
 
-    if (fileExcluded && fileExists) {
-      console.log('HERE')
-      workspaceChange.removeFileListItems(filePath)
-    }
-
-    if (listItemsChanged == true) {
-      reset()
+    console.log('Updated', updated)
+    if (updated == true) {
+      resetTreeView()
       reloadTreeView()
-      await novaTreeViewObjects.treeView.reload()
+      novaTreeViewObjects.treeView.reload()
     }
+    // }
+  } catch (error) {
+    FUNCTIONS.showConsoleError(error)
+  }
+}
 
-//     if (fileExcluded == false) {
-//       if (fileExists) {
+// function onChange(filePath) {
+//   console.log('change')
+//   try {
+//     if (novaTreeViewObjects.treeView !== null) {
+//       let updated = list.updateOnChange(filePath)
 //
-//
+//       if (updated == true) {
+//         resetTreeView()
+//         loadTreeView()
+//         novaTreeViewObjects.treeView.reload()
 //       }
 //     }
-
-
-    /*
-
-    get if file is excluded
-    get if is in listitems
-
-    if file exlucded && inlistitems
-      remove file tags from listitems
-
-    if file excluded && not in list items
-      ignore it
-
-    if file not excluded
-      if file in listItems && listItemsChanged
-        remove file tags from listItems
-        add file tags to list items (getTagsForFile)
-        reset
-        refresh tree
-
-      if file not in listItems && (getTagsForFile > 0)
-        add file tags to listItems (getTagsForFile)
-
-      if file in listItems && notChanged
-        ignore it
-
-      if file not in listItems && getTagsForFile < 1)
-        ignore it
-
-    */
-  }
-
-
-
-  //console.log(filePath)
-  //console.log('File Excluded?', fileExcluded)
-  //console.log('File Exists?', fileExists)
-
-  // if ((!fileExcluded) && (fileExists)) {
-
-  // console.log('Not excluded')
-  // workspaceChange = new WorkspaceChange(tagsArray)
-  // console.log('File exists',workspaceChange.fileExists(file))
-
-  /*
-
-      does file exist in tagsArray?
-      is file excluded
-
-
-
-      if is excluded && doesnt exists tagsarray
-        do nothing
-      end
-
-      if not excluded
-        get current tags in tags array
-        search tags
-
-        if tags found == current tags in array
-          do nothing
-        else
-          remove all listItems with that filepath
-          reload tree
-        end
-    */
-  // } else {
-    /*
-    if is excluded && exists in tagsArray
-    remove all listItems with that filepath
-    reload tree
-    end*/
-  // }
-  // openDocuments = FUNCTIONS.isAllowedPath(openDocuments, config)
-  // console.log("CHANGE DETECTED")
-  //
-}
-
+//   } catch (error) {
+//     FUNCTIONS.showConsoleError(error)
+//   }
+// }
 
 exports.deactivate = function() {
-  reset()
+  // resetTreeView()
   // Clean up state before the extension is deactivated
   // treeView = null
   // dataProvider = null
   // if (refreshTimer !== null) {
   //   clearInterval(refreshTimer)
   // }
+  compositeDisposable.dispose()
+  compositeListeners.dispose()
 }
 
 nova.commands.register('todo.addPath', () => {
@@ -254,8 +222,12 @@ nova.commands.register('todo.sort', () => {
 // nova.config.observe('todo.global-ignore-names', reloadData)
 // nova.config.observe('todo.global-ignore-extensions', reloadData)
 // nova.fs.watch()
+// async function watch() {
+
+// }
+
 if (nova.workspace.path !== undefined && nova.workspace.path !== null) {
-  nova.fs.watch(null, onChange)
+  // watch()
   // It is not necessary to observe the workspace config because the file system watch detects these changes.
 
 } else {

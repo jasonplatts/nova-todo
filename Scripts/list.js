@@ -3,6 +3,7 @@
 const FUNCTIONS           = require('./functions.js')
 const { WorkspaceSearch } = require('./workspace_search.js')
 const { DocumentSearch }  = require('./document_search.js')
+const { Change }          = require('./change.js')
 const { Group }           = require('./group.js')
 
 exports.List = class List {
@@ -27,7 +28,8 @@ exports.List = class List {
     let filePaths         = await workspaceSearch.search()
     let filteredFilePaths = FUNCTIONS.filterFilePathArray(filePaths, this._config)
 
-    filteredFilePaths.sort(FUNCTIONS.sortByFileName)
+    // SORTING SHOULD OCCUR AT THE DISPLAY LEVEL SO THAT IT RETAINS ORDER FOR CHANGES TOO
+    // filteredFilePaths.sort(FUNCTIONS.sortByFileName)
 
     filteredFilePaths.forEach((filePath) => {
       let documentSearch = new DocumentSearch(this._config)
@@ -59,106 +61,71 @@ exports.List = class List {
     return groupedListItems
   }
 
-  /*
-    Determines if a file path exists in an array of listItem objects.
-  */
-  fileExists(filePath) {
-    let fileFound = false
-    let itemCount = 0
+  async updateOnChange(textEditor) {
+    let fileExcluded          = FUNCTIONS.isExcluded(textEditor.document.path, this._config)
+    let detectListChange      = new Change(textEditor.document, this._config)
+    let documentInCurrentList = detectListChange.documentPathExistsInList(this._items, textEditor.document)
+    let updateOccurred        = false
 
-    filePath = FUNCTIONS.normalizePath(filePath)
+    if (fileExcluded) {
+      console.log('fileExcluded')
+      if (documentInCurrentList) {
+        console.log('documentInCurrentList -- REMOVE')
+        // Remove all listItems with the file path.
+        // this.removeListItems(detectListChange.getFilePathListItemIndexes(this._items))
+        this.removeListItemsByFile(textEditor.document.path)
 
-    while((fileFound == false) && (itemCount < (this.listItems.length))) {
-      let listItemPath = this.listItems[itemCount].path
-
-      if (listItemPath == filePath) {
-        fileFound = true
-      }
-
-      itemCount++
-    }
-
-    return fileFound
-  }
-
-  /*
-    Determines if the listItem objects found in a document
-    match the tags in the existing listItems array.
-  */
-  hasListItemsChanged(filePath) {
-    let newFileSearch = new DocumentSearch(this._config)
-    let newListItems = newFileSearch.searchFile(filePath)
-    let existingListItems = this.getListItemsForFile(filePath)
-
-    if (newListItems.length !== existingListItems.length) {
-      return true
-    } else {
-      let itemCount = 0
-      let itemMatch = true
-
-      while ((itemCount < newListItems.length) && (itemMatch == true)) {
-        if (this.listItemMatch(newListItems[itemCount], existingListItems[itemCount]) == false) {
-          itemMatch = false
-        }
-
-        itemCount++
-      }
-
-      if (itemMatch == true) {
-        return false
+        updateOccurred = true
       } else {
-        return true
+        console.log('!documentInCurrentList -- IGNORE')
+        // File can be ignored as it is excluded and does not exist in list items.
+      }
+    } else if (!fileExcluded) {
+      console.log('!fileExcluded')
+      let listItemsChanged         = await detectListChange.hasListItemsChanged(this._items)
+      console.log(`documentInCurrentList: ${documentInCurrentList}, listItemsChanged: ${listItemsChanged}`)
+      let documentSearch           = new DocumentSearch(this._config)
+      let updatedDocumentListItems = documentSearch.searchOpenDocument(textEditor.document)
+
+      if (documentInCurrentList && listItemsChanged) {
+        // this.removeListItems(detectListChange.getFilePathListItemIndexes(this._items))
+        this.removeListItemsByFile(textEditor.document.path)
+        this.addListItems(updatedDocumentListItems)
+
+        updateOccurred = true
+      } else if (!documentInCurrentList && updatedDocumentListItems > 0) {
+        this.addListItems(updatedDocumentListItems)
+        updateOccurred = true
+      } else if (!documentInCurrentList && updatedDocumentListItems <= 0) {
+        console.log('File is not an existing list item && has no new tags')
+      } else {
+        console.log('File is not an existing list item or tags have not changed')
       }
     }
 
-  }
+    console.log('UPDATE OCCURRED?', updateOccurred)
 
-  listItemMatch(itemA, itemB) {
-    // console.log('ItemA', itemA.name + ', ' + itemA.line + ', ' + itemA.column + ', ' + itemA.position + ', ' + itemA.comment)
-    // console.log('ItemB', itemB.name + ', ' + itemB.line + ', ' + itemB.column + ', ' + itemB.position + ', ' + itemB.comment)
-    if ((itemA.name     == itemB.name) &&
-        (itemA.line     == itemB.line) &&
-        (itemA.column   == itemB.column) &&
-        (itemA.position == itemB.position) &&
-        (itemA.comment  == itemB.comment)) {
-      // console.log('true')
-      return true
-    } else {
-      // console.log('false')
-      return false
-    }
+    return updateOccurred
   }
 
   /*
-    Returns an array of listItem objects with a specified file path.
+    Removes existing list items with a specific file path.
   */
-  getListItemsForFile(filePath) {
-    let existingListItems = []
-
-    filePath = FUNCTIONS.normalizePath(filePath)
-
-    this.listItems.forEach((listItem) => {
-      if (listItem.path == filePath) {
-        existingListItems = [...existingListItems, listItem]
+  removeListItemsByFile(filePath) {
+    this._items = this._items.filter((item) => {
+      if (FUNCTIONS.normalizePath(item.path) !== FUNCTIONS.normalizePath(filePath)) {
+        return item
       }
     })
-
-    return existingListItems
   }
 
-  /*
-    Removes listItems with a specified path and returns a new listItem array
-  */
-  removeFileListItems(filePath) {
-    let removeIndexes = []
-    let itemCount     = 0
+  addListItems(items) {
+    items.forEach((item) => {
+      this.addListItem(item)
+    })
+  }
 
-    for(0; itemCount < this.listItems.length; itemCount++) {
-      if (this.listItems[itemCount].path == filePath ) {
-        removeIndexes = [...removeIndexes, itemCount]
-      }
-    }
-
-    console.log('removeIndexes', removeIndexes)
+  addListItem(item) {
+    this._items = [...this._items, item]
   }
 }

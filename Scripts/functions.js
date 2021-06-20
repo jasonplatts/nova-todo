@@ -129,10 +129,15 @@ exports.filterOpenDocumentArray = function filterOpenDocumentArray(textDocuments
   return textDocuments
 }
 
+/*
+  Evaluates a given file path, returning true if it should be excluded.
+*/
 exports.isExcluded = function isExcluded(filePath, config) {
-  if ((this.isAllowedExtension(filePath, config.excludedExtensions) == false) ||
-      (this.isAllowedPath(filePath, config.excludedPaths) == false) ||
-      (this.isAllowedName(filePath, config.excludedNames) == false)) {
+  let normalizedPath = this.normalizePath(filePath)
+
+  if ((this.isAllowedExtension(normalizedPath, config.excludedExtensions) == false) ||
+      (this.isAllowedPath(normalizedPath, config.excludedPaths) == false) ||
+      (this.isAllowedName(normalizedPath, config.excludedNames) == false)) {
     return true
   } else {
     return false
@@ -162,7 +167,7 @@ exports.normalizePath = function normalizePath(path) {
   Format extension errors in the console.
 */
 exports.showConsoleError = function showConsoleError(error) {
-  let prefix = 'TODO Extension Error:'
+  let prefix = 'TODO Extension --'
   console.log(prefix, error)
 }
 
@@ -181,4 +186,18 @@ exports.cleanArray = function cleanArray(array) {
   array = array.map(element => element.trim())
 
   return array
+}
+
+/*
+  This is a purely development related function to loop through list items, returning useful data.
+*/
+exports.dig = function dig(listItems) {
+  console.log('---------- DIAGNOSTICS SRT ---------- ')
+
+  listItems.forEach((item, index) => {
+    console.log(`Index: ${index} Name: ${item.name}, Path: ${item.path}, Comment: ${item.comment}`)
+  })
+
+  console.log('# Elements:', listItems.length)
+  console.log('---------- DIAGNOSTICS END ---------- ')
 }

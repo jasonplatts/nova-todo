@@ -1,0 +1,99 @@
+'use strict'
+
+const FUNCTIONS          = require('./functions.js')
+const { DocumentSearch } = require('./document_search.js')
+
+exports.Change = class Change {
+  constructor(textDocument, config) {
+    this._textDocument = textDocument
+    this._config       = config
+  }
+
+  /*
+    Determines if the listItem objects found in a document
+    match the tags in the existing listItems array.
+  */
+  hasListItemsChanged(listItems) {
+    // Might need to do some detection here of what type of workspace, like on load.
+    // Document from open editor might need to be passed instead of filepath.
+    // Some automation might be possible by checking if file exists, if not, normalize it.
+    let documentSearch    = new DocumentSearch(this._config)
+    let newListItems      = documentSearch.searchOpenDocument(this._textDocument)
+
+    let existingListItems = this.findExistingListItemsByFilePath(listItems)
+
+    console.log('LENGTHS: newListItems, existingListItems', newListItems.length + ' - ' + existingListItems.length)
+    if (newListItems.length !== existingListItems.length) {
+      return true
+    } else {
+      let itemCount = 0
+      let itemMatch = true
+
+      while ((itemCount < newListItems.length) && (itemMatch == true)) {
+        if (this.listItemMatch(newListItems[itemCount], existingListItems[itemCount]) == false) {
+          itemMatch = false
+        }
+
+        itemCount++
+      }
+      console.log('itemMatch', itemMatch)
+      if (itemMatch == true) {
+        return false
+      } else {
+        return true
+      }
+    }
+  }
+
+  listItemMatch(itemA, itemB) {
+    console.log('ItemA', itemA.name + ', ' + itemA.line + ', ' + itemA.column + ', ' + itemA.comment)
+    console.log('ItemB', itemB.name + ', ' + itemB.line + ', ' + itemB.column + ', ' + itemB.comment)
+    if ((itemA.name     == itemB.name) &&
+        (itemA.line     == itemB.line) &&
+        (itemA.column   == itemB.column) &&
+        (itemA.comment  == itemB.comment)) {
+      console.log('true')
+      return true
+    } else {
+      console.log('false')
+      return false
+    }
+  }
+
+  /*
+    Determines if a document path exists in an array of listItem objects.
+  */
+  documentPathExistsInList(listItems) {
+    let fileFound = false
+    let itemCount = 0
+
+    let filePath = FUNCTIONS.normalizePath(this._textDocument.path)
+
+    while((fileFound == false) && (itemCount < (listItems.length))) {
+      let listItemPath = FUNCTIONS.normalizePath(listItems[itemCount].path)
+
+      if (listItemPath == filePath) {
+        fileFound = true
+      }
+
+      itemCount++
+    }
+
+    return fileFound
+  }
+
+  /*
+    Returns an array of listItem objects with a specified file path.
+  */
+  findExistingListItemsByFilePath(listItems) {
+    let existingListItems = []
+
+    listItems.forEach((listItem) => {
+      if (FUNCTIONS.normalizePath(listItem.path) == FUNCTIONS.normalizePath(this._textDocument.path)) {
+        existingListItems = [...existingListItems, listItem]
+      }
+    })
+
+    return existingListItems
+  }
+}
