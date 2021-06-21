@@ -22,21 +22,22 @@ exports.activate = async function() {
     config = new Configuration()
     list   = new List(config)
 
-    await list.loadItems()
+    if (FUNCTIONS.isWorkspace()) {
+      await list.loadItems()
 
-    loadTreeView()
-    loadActiveEditors()
+      loadTreeView()
+    } else {
+      setTimeout(reloadTreeView, 10000)
+    }
   } catch (error) {
     FUNCTIONS.showConsoleError(error)
   }
 }
 
-function loadActiveEditors() {
-  let openEditors = nova.workspace.textEditors
-
-  openEditors.forEach((textEditor) => {
-    nova.subscriptions.add(textEditor.onDidSave(onChange))
-  })
+function resetTreeView() {
+  treeViewDisposables.dispose()
+  novaTreeViewObjects.dataProvider = null
+  novaTreeViewObjects.treeView     = null
 }
 
 /*
@@ -56,20 +57,21 @@ function loadTreeView() {
   treeViewDisposables.add(novaTreeViewObjects.treeView)
 }
 
-function resetTreeView() {
-  treeViewDisposables.dispose()
-  novaTreeViewObjects.dataProvider = null
-  novaTreeViewObjects.treeView     = null
+async function reloadTreeView() {
+  await resetTreeView()
+  await list.loadItems()
+  await loadTreeView()
+  novaTreeViewObjects.treeView.reload()
 }
-
 async function onChange(textEditor) {
   try {
     let updated = await list.updateOnChange(textEditor)
-
+    console.log('updated', updated)
     if (updated == true) {
       await resetTreeView()
       await loadTreeView()
       novaTreeViewObjects.treeView.reload()
+      console.log('done')
     }
   } catch (error) {
     FUNCTIONS.showConsoleError(error)
@@ -78,6 +80,22 @@ async function onChange(textEditor) {
 
 exports.deactivate = function() {
   treeViewDisposables.dispose()
+}
+
+nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddTextEditor))
+
+/*
+  This function is a callback function to the onDidAddTextEditor event listener.
+  It fires for each open editor at the time the extension is activated
+  and any time a new editor is opened.
+*/
+async function onAddTextEditor(textEditor) {
+  nova.subscriptions.add(textEditor.onDidSave(onChange))
+
+  // Local workspaces get all tags on load and only need to be monitored on save.
+  if (!FUNCTIONS.isWorkspace()) {
+    onChange(textEditor)
+  }
 }
 
 nova.commands.register('todo.addPath', () => {
@@ -133,8 +151,8 @@ nova.commands.register('todo.doubleClick', () => {
 //   )
 })
 
-nova.commands.register('todo.refresh', () => {
-  // reloadData()
+nova.commands.register('todo.refresh', async() => {
+  reloadTreeView()
 })
 
 nova.commands.register('todo.sort', () => {

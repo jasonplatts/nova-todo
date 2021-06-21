@@ -19,7 +19,6 @@ exports.Change = class Change {
 
     let existingListItems = this.findExistingListItemsByFilePath(listItems)
 
-    console.log('LENGTHS: newListItems, existingListItems', newListItems.length + ' - ' + existingListItems.length)
     if (newListItems.length !== existingListItems.length) {
       return true
     } else {
@@ -33,7 +32,7 @@ exports.Change = class Change {
 
         itemCount++
       }
-      console.log('itemMatch', itemMatch)
+
       if (itemMatch == true) {
         return false
       } else {
@@ -43,16 +42,12 @@ exports.Change = class Change {
   }
 
   listItemMatch(itemA, itemB) {
-    console.log('ItemA', itemA.name + ', ' + itemA.line + ', ' + itemA.column + ', ' + itemA.comment)
-    console.log('ItemB', itemB.name + ', ' + itemB.line + ', ' + itemB.column + ', ' + itemB.comment)
     if ((itemA.name     == itemB.name) &&
         (itemA.line     == itemB.line) &&
         (itemA.column   == itemB.column) &&
         (itemA.comment  == itemB.comment)) {
-      console.log('true')
       return true
     } else {
-      console.log('false')
       return false
     }
   }
