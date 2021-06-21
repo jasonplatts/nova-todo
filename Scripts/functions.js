@@ -22,18 +22,6 @@ exports.isWorkspace = function isWorkspace() {
 }
 
 /*
-  Sorts an array of Nova file paths by file name alphabetically.
-  Called in conjunction with the JS sort function.
-  Eg: filePathArray.sort(this.sortByFileName);
-*/
-exports.sortByFileName = function sortByFileName(a, b) {
-  a = nova.path.basename(a).toLowerCase()
-  b = nova.path.basename(b).toLowerCase()
-
-  return a > b ? 1 : b > a ? -1 : 0
-}
-
-/*
   Evaluates if a specific file or directory should be excluded
   based on a provided array of names.
 */
