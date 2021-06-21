@@ -28,9 +28,6 @@ exports.List = class List {
     let filePaths         = await workspaceSearch.search()
     let filteredFilePaths = FUNCTIONS.filterFilePathArray(filePaths, this._config)
 
-    // SORTING SHOULD OCCUR AT THE DISPLAY LEVEL SO THAT IT RETAINS ORDER FOR CHANGES TOO
-    // filteredFilePaths.sort(FUNCTIONS.sortByFileName)
-
     filteredFilePaths.forEach((filePath) => {
       let documentSearch = new DocumentSearch(this._config)
       listItems = [...listItems, ...documentSearch.searchFile(filePath)]
@@ -55,10 +52,15 @@ exports.List = class List {
   }
 
   get items() {
-    let group            = new Group()
-    let groupedListItems = group.groupListItems(this._items, this._config.groupBy)
+    let group        = null
+    let groupeditems = null
 
-    return groupedListItems
+    this.sortItemsByFileName()
+
+    group        = new Group()
+    groupeditems = group.groupListItems(this._items, this._config.groupBy)
+
+    return groupeditems
   }
 
   async updateOnChange(textEditor) {
@@ -68,27 +70,20 @@ exports.List = class List {
     let updateOccurred        = false
 
     if (fileExcluded) {
-      console.log('fileExcluded')
+      // File can be ignored as it is excluded and does not exist in list items.
       if (documentInCurrentList) {
-        console.log('documentInCurrentList -- REMOVE')
-        // Remove all listItems with the file path.
-        // this.removeListItems(detectListChange.getFilePathListItemIndexes(this._items))
         this.removeListItemsByFile(textEditor.document.path)
 
         updateOccurred = true
-      } else {
-        console.log('!documentInCurrentList -- IGNORE')
-        // File can be ignored as it is excluded and does not exist in list items.
       }
     } else if (!fileExcluded) {
-      console.log('!fileExcluded')
       let listItemsChanged         = await detectListChange.hasListItemsChanged(this._items)
-      console.log(`documentInCurrentList: ${documentInCurrentList}, listItemsChanged: ${listItemsChanged}`)
       let documentSearch           = new DocumentSearch(this._config)
       let updatedDocumentListItems = documentSearch.searchOpenDocument(textEditor.document)
 
+      // File can be ignored if not in current list and has no tags detected
+      // File can also be ignored if not in current list or tags have not changed.
       if (documentInCurrentList && listItemsChanged) {
-        // this.removeListItems(detectListChange.getFilePathListItemIndexes(this._items))
         this.removeListItemsByFile(textEditor.document.path)
         this.addListItems(updatedDocumentListItems)
 
@@ -96,16 +91,32 @@ exports.List = class List {
       } else if (!documentInCurrentList && updatedDocumentListItems > 0) {
         this.addListItems(updatedDocumentListItems)
         updateOccurred = true
-      } else if (!documentInCurrentList && updatedDocumentListItems <= 0) {
-        console.log('File is not an existing list item && has no new tags')
-      } else {
-        console.log('File is not an existing list item or tags have not changed')
       }
     }
 
-    console.log('UPDATE OCCURRED?', updateOccurred)
-
     return updateOccurred
+  }
+
+  /*
+    Sorts the list items according to file name.
+  */
+  sortItemsByFileName() {
+    this._items.sort(function(itemA, itemB) {
+      // The path.split('/').pop() returns the file name from the file path.
+      let fileNameA = itemA.path.split('/').pop().toLowerCase()
+      let fileNameB = itemB.path.split('/').pop().toLowerCase()
+
+      if (fileNameA < fileNameB) {
+        return -1
+      }
+
+      if (fileNameA > fileNameB) {
+        return 1
+      }
+
+      // File names are equal
+      return 0
+    })
   }
 
   /*
