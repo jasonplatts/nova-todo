@@ -51,9 +51,12 @@ alt="workspace Extension Preferences">
 
 ## Planned Future Features
 
+* Add additional custom tags.
+* Filtering of tags by name.
+
+The following features *may* be added if the functionality is made available through the Nova API.
 * Tag highlighting within the code.
 * Tag notification in the sidebar icon.
-* Improvements to tag detection performance when file changes are made in the workspace.
 
 ## Report a Bug or Feature Request
 
