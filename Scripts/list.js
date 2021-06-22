@@ -25,8 +25,7 @@ exports.List = class List {
   async loadWorkspaceEnvironment() {
     let listItems         = []
     let workspaceSearch   = new WorkspaceSearch(nova.workspace.path, this._config)
-    let filePaths         = await workspaceSearch.search()
-    let filteredFilePaths = FUNCTIONS.filterFilePathArray(filePaths, this._config)
+    let filteredFilePaths = FUNCTIONS.filterFilePathArray(await workspaceSearch.search(), this._config)
 
     filteredFilePaths.forEach((filePath) => {
       let documentSearch = new DocumentSearch(this._config)

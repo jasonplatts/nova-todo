@@ -13,31 +13,59 @@ var novaTreeViewObjects = {
 }
 var treeViewDisposables = new CompositeDisposable()
 
-exports.activate = async function() {
-  try {
-    console.clear()
-    console.log('TODO EXTENSION ACTIVATED')
-    console.log('Workspace Environment?', FUNCTIONS.isWorkspace())
+exports.activate = function() {
+  // try {
+  console.clear()
+  console.log('TODO EXTENSION ACTIVATED')
+  console.log('Workspace Environment?', FUNCTIONS.isWorkspace())
 
-    config = new Configuration()
-    list   = new List(config)
+  config = new Configuration()
+  list   = new List(config)
 
-    if (FUNCTIONS.isWorkspace()) {
-      await list.loadItems()
-
-      loadTreeView()
-    } else {
-      setTimeout(reloadTreeView, 10000)
-    }
-  } catch (error) {
-    FUNCTIONS.showConsoleError(error)
+  if (FUNCTIONS.isWorkspace()) {
+    list.loadItems()
+      .then(loadTreeView)
+      .catch(error => FUNCTIONS.showConsoleError(error))
+  } else {
+    setTimeout(reloadTreeView, 10000)
   }
+  // } catch (error) {
+  //   FUNCTIONS.showConsoleError(error)
+  // }
 }
 
-function resetTreeView() {
-  treeViewDisposables.dispose()
-  novaTreeViewObjects.dataProvider = null
-  novaTreeViewObjects.treeView     = null
+// function getTagFilter() {
+//   let request = new NotificationRequest('foobar-not-found')
+//
+//   request.title = nova.localize('foobar not found')
+//   request.body = nova.localize('hmm')
+//
+//   request.type = 'input'
+//   request.actions = [nova.localize('ok'), nova.localize('ignore')]
+//
+//   let promise = nova.notifications.add(request)
+//   promise.then(reply => {
+//     console.log(reply)
+//   }, error => {
+//     console.error(error)
+//   })
+// }
+
+function displayError() {
+  let request = new NotificationRequest('load-error')
+
+  request.title = nova.localize('Loading Error')
+  request.body = nova.localize('Tags could not be loaded for this local workspace. For help, please leave a bug report on the extension github page.')
+
+  // request.type = 'input'
+  request.actions = [nova.localize('ok')]
+
+  let promise = nova.notifications.add(request)
+  promise.then(reply => {
+    console.log(reply)
+  }, error => {
+    console.error(error)
+  })
 }
 
 /*
@@ -57,21 +85,31 @@ function loadTreeView() {
   treeViewDisposables.add(novaTreeViewObjects.treeView)
 }
 
+function resetTreeView() {
+  treeViewDisposables.dispose()
+  novaTreeViewObjects.dataProvider = null
+  novaTreeViewObjects.treeView     = null
+}
+
 async function reloadTreeView() {
   await resetTreeView()
   await list.loadItems()
   await loadTreeView()
   novaTreeViewObjects.treeView.reload()
 }
+
+function refreshTreeView() {
+  resetTreeView()
+  loadTreeView()
+  novaTreeViewObjects.treeView.reload()
+}
+
 async function onChange(textEditor) {
   try {
     let updated = await list.updateOnChange(textEditor)
-    console.log('updated', updated)
+
     if (updated == true) {
-      await resetTreeView()
-      await loadTreeView()
-      novaTreeViewObjects.treeView.reload()
-      console.log('done')
+      refreshTreeView()
     }
   } catch (error) {
     FUNCTIONS.showConsoleError(error)
@@ -82,6 +120,12 @@ exports.deactivate = function() {
   treeViewDisposables.dispose()
 }
 
+function onRemove(textEditor) {
+  console.log('remove', textEditor.document.path)
+  list.removeListItemsByFile(textEditor.document.path)
+  refreshTreeView()
+}
+
 nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddTextEditor))
 
 /*
@@ -89,11 +133,13 @@ nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddTextEditor))
   It fires for each open editor at the time the extension is activated
   and any time a new editor is opened.
 */
-async function onAddTextEditor(textEditor) {
+function onAddTextEditor(textEditor) {
   nova.subscriptions.add(textEditor.onDidSave(onChange))
 
-  // Local workspaces get all tags on load and only need to be monitored on save.
+  // Local workspaces get all tags on load and only need to be monitored when a document is saved.
   if (!FUNCTIONS.isWorkspace()) {
+    // The onDidDestroy event listener callback is not immediately run like onDidSave
+    nova.subscriptions.add(textEditor.onDidDestroy(onRemove))
     onChange(textEditor)
   }
 }

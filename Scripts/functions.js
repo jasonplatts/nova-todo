@@ -164,7 +164,7 @@ exports.normalizePath = function normalizePath(path) {
 */
 exports.showConsoleError = function showConsoleError(error) {
   let prefix = 'TODO Extension --'
-  console.log(prefix, error)
+  console.error(prefix, error)
 }
 
 /*
