@@ -144,17 +144,14 @@ exports.isExcluded = function isExcluded(filePath, config) {
   Removes the preceding Volumes and HDD portion of a standard returned path.
 */
 exports.normalizePath = function normalizePath(path) {
-  // console.log('ORIGINAL PATH', path)
   // The first element returned from split is anything before the first separator.
   // This will be empty string if nothing is before the first separator.
   let firstDirectory = path.split('/', 2)[1]
 
   if (firstDirectory == 'Volumes') {
     let newPath = '/' + path.split('/').slice(3).join('/')
-    // console.log('NEW PATH', newPath)
     return newPath
   } else {
-    // console.log('PATH', path)
     return path
   }
 }
