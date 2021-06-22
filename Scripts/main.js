@@ -131,24 +131,20 @@ function addWorkspaceIgnorePath(path) {
 }
 
 nova.commands.register('todo.doubleClick', () => {
-//   let selection = treeView.selection
-//
-//   let path = selection.map((e) => e.filePath)
-//   let line = selection.map((e) => e.line)
-//   let column = selection.map((e) => e.column)
-//
-//   let fileStatus = nova.workspace.openFile(path, [line, column])
-//
-//   fileStatus.then (
-//     function() {
-//       let editor = nova.workspace.activeTextEditor
-//       let position = parseInt(selection.map((e) => e.position))
-//       let range = new Range(position, position)
-//
-//       editor.selectedRange = range
-//       editor.scrollToPosition(position)
-//     }
-//   )
+  let selection  = novaTreeViewObjects.treeView.selection
+  let path       = selection.map(e => e.path)
+  let line       = selection.map(e => e.line)
+  let column     = selection.map(e => e.column)
+
+  nova.workspace.openFile(path, [line, column])
+    .then(textEditor => {
+      let position = parseInt(selection.map(e => e.position))
+      let range    = new Range(position, position)
+
+      textEditor.selectedRange = range
+      textEditor.scrollToPosition(position)
+    })
+    .catch(error => FUNCTIONS.showConsoleError(error))
 })
 
 nova.commands.register('todo.refresh', async() => {
