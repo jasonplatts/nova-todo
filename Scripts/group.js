@@ -65,6 +65,7 @@ exports.Group = class Group {
     Sets the attributes of a child list item when grouping by file name.
   */
   setFileChildAttributes(childListItem) {
+    childListItem.name            = childListItem.tag
     childListItem.image           = this.getTagIconImage(childListItem.name)
     childListItem.command         = 'todo.doubleClick'
     childListItem.descriptiveText = `${childListItem.comment} (Ln: ${childListItem.line}, Col: ${childListItem.column})`
@@ -112,6 +113,7 @@ exports.Group = class Group {
   */
   setTagChildAttributes(childListItem) {
     childListItem.name    = nova.path.basename(childListItem.path)
+    childListItem.image   = null
     childListItem.tooltip = childListItem.path
     childListItem.command = 'todo.doubleClick'
 

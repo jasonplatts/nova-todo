@@ -473,10 +473,10 @@
           "placeholderImage": "sidebar-placeholder",
           "headerCommands": [
             {
-              "title": "Sort",
-              "image": "sort",
-              "tooltip": "Sort By",
-              "command": "todo.sort"
+              "title": "Group",
+              "image": "group",
+              "tooltip": "Group By",
+              "command": "todo.group"
             },
             {
               "title": "Refresh",

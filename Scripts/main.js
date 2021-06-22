@@ -160,14 +160,9 @@ nova.commands.register('todo.refresh', async() => {
   reloadTreeView()
 })
 
-nova.commands.register('todo.sort', () => {
-//   if (sortBy == 'file') {
-//     sortBy = 'tag'
-//   } else {
-//     sortBy = 'file'
-//   }
-//
-//   reloadData(sortBy)
+nova.commands.register('todo.group', () => {
+  config.groupBy = (config.groupBy == 'tag') ? 'file' : 'tag'
+  refreshTreeView()
 })
 
 // nova.config.observe('todo.global-case-sensitive-tag-matching', reloadData)

@@ -65,6 +65,8 @@ exports.DocumentSearch = class DocumentSearch {
       lineMatches.forEach((match) => {
         let listItem      = new ListItem(match.name)
 
+        // Tag must be recorded separately from name in order to reset name after changing grouping.
+        listItem.tag      = match.name
         listItem.line     = i + 1
         listItem.column   = match.column
         listItem.position = docmentLineStartPosition + (match.column - 1)

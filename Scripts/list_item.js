@@ -47,6 +47,7 @@ exports.ListItem = class ListItem {
     this.path             = null
     this.tooltip          = ''
 
+    this.tag              = null
     this.remote           = false
     this.line             = null
     this.column           = null
