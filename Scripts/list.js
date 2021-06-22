@@ -62,43 +62,39 @@ exports.List = class List {
     return groupeditems
   }
 
-  updateOnChange(textEditor) {
-    let promise = new Promise((resolve) => {
-      let fileExcluded          = FUNCTIONS.isExcluded(textEditor.document.path, this._config)
-      let detectListChange      = new Change(textEditor.document, this._config)
-      let documentInCurrentList = detectListChange.documentPathExistsInList(this._items, textEditor.document)
-      let updateOccurred        = false
+  async updateOnChange(textEditor) {
+    let fileExcluded          = FUNCTIONS.isExcluded(textEditor.document.path, this._config)
+    let detectListChange      = new Change(textEditor.document, this._config)
+    let documentInCurrentList = detectListChange.documentPathExistsInList(this._items, textEditor.document)
+    let updateOccurred        = false
 
-      if (fileExcluded) {
-        // File can be ignored as it is excluded and does not exist in list items.
-        if (documentInCurrentList) {
-          this.removeListItemsByFile(textEditor.document.path)
+    if (fileExcluded) {
+      // File can be ignored as it is excluded and does not exist in list items.
+      if (documentInCurrentList) {
+        this.removeListItemsByFile(textEditor.document.path)
 
-          updateOccurred = true
-        }
-      } else if (!fileExcluded) {
-        let listItemsChanged         = detectListChange.hasListItemsChanged(this._items)
-        let documentSearch           = new DocumentSearch(this._config)
-        let updatedDocumentListItems = documentSearch.searchOpenDocument(textEditor.document)
-
-        // File can be ignored if not in current list and has no tags detected
-        // File can also be ignored if not in current list or tags have not changed.
-        if (documentInCurrentList && listItemsChanged) {
-          this.removeListItemsByFile(textEditor.document.path)
-          this.addListItems(updatedDocumentListItems)
-
-          updateOccurred = true
-        } else if (!documentInCurrentList && updatedDocumentListItems.length > 0) {
-          console.log(updatedDocumentListItems[0].name)
-          this.addListItems(updatedDocumentListItems)
-          updateOccurred = true
-        }
+        updateOccurred = true
       }
+    } else if (!fileExcluded) {
+      let listItemsChanged         = detectListChange.hasListItemsChanged(this._items)
+      let documentSearch           = new DocumentSearch(this._config)
+      let updatedDocumentListItems = documentSearch.searchOpenDocument(textEditor.document)
 
-      resolve(updateOccurred)
-    })
+      // File can be ignored if not in current list and has no tags detected
+      // File can also be ignored if not in current list or tags have not changed.
+      if (documentInCurrentList && listItemsChanged) {
+        this.removeListItemsByFile(textEditor.document.path)
+        this.addListItems(updatedDocumentListItems)
 
-    return promise
+        updateOccurred = true
+      } else if (!documentInCurrentList && updatedDocumentListItems.length > 0) {
+        console.log(updatedDocumentListItems[0].name)
+        this.addListItems(updatedDocumentListItems)
+        updateOccurred = true
+      }
+    }
+
+    return updateOccurred
   }
 
   /*
