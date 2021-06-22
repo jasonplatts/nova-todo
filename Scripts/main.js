@@ -71,13 +71,16 @@ function refreshTreeView() {
 }
 
 function onChange(textEditor) {
-  list.updateOnChange(textEditor)
-    .then(updated => {
-      if (updated === true) {
-        refreshTreeView()
-      }
-    })
-    .catch(error => FUNCTIONS.showConsoleError(error))
+  // Prevents the extension from attempting to evaluate a brand new unsaved document.
+  if (textEditor.document.isUntitled !== true) {
+    list.updateOnChange(textEditor)
+      .then(updated => {
+        if (updated === true) {
+          refreshTreeView()
+        }
+      })
+      .catch(error => FUNCTIONS.showConsoleError(error))
+  }
 }
 
 nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddTextEditor))
