@@ -14,7 +14,6 @@ var novaTreeViewObjects = {
 var treeViewDisposables = new CompositeDisposable()
 
 exports.activate = function() {
-  // try {
   console.clear()
   console.log('TODO EXTENSION ACTIVATED')
   console.log('Workspace Environment?', FUNCTIONS.isWorkspace())
@@ -29,43 +28,10 @@ exports.activate = function() {
   } else {
     setTimeout(reloadTreeView, 10000)
   }
-  // } catch (error) {
-  //   FUNCTIONS.showConsoleError(error)
-  // }
 }
 
-// function getTagFilter() {
-//   let request = new NotificationRequest('foobar-not-found')
-//
-//   request.title = nova.localize('foobar not found')
-//   request.body = nova.localize('hmm')
-//
-//   request.type = 'input'
-//   request.actions = [nova.localize('ok'), nova.localize('ignore')]
-//
-//   let promise = nova.notifications.add(request)
-//   promise.then(reply => {
-//     console.log(reply)
-//   }, error => {
-//     console.error(error)
-//   })
-// }
-
-function displayError() {
-  let request = new NotificationRequest('load-error')
-
-  request.title = nova.localize('Loading Error')
-  request.body = nova.localize('Tags could not be loaded for this local workspace. For help, please leave a bug report on the extension github page.')
-
-  // request.type = 'input'
-  request.actions = [nova.localize('ok')]
-
-  let promise = nova.notifications.add(request)
-  promise.then(reply => {
-    console.log(reply)
-  }, error => {
-    console.error(error)
-  })
+exports.deactivate = function() {
+  treeViewDisposables.dispose()
 }
 
 /*
@@ -104,26 +70,14 @@ function refreshTreeView() {
   novaTreeViewObjects.treeView.reload()
 }
 
-async function onChange(textEditor) {
-  try {
-    let updated = await list.updateOnChange(textEditor)
-
-    if (updated == true) {
-      refreshTreeView()
-    }
-  } catch (error) {
-    FUNCTIONS.showConsoleError(error)
-  }
-}
-
-exports.deactivate = function() {
-  treeViewDisposables.dispose()
-}
-
-function onRemove(textEditor) {
-  console.log('remove', textEditor.document.path)
-  list.removeListItemsByFile(textEditor.document.path)
-  refreshTreeView()
+function onChange(textEditor) {
+  list.updateOnChange(textEditor)
+    .then(updated => {
+      if (updated === true) {
+        refreshTreeView()
+      }
+    })
+    .catch(error => FUNCTIONS.showConsoleError(error))
 }
 
 nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddTextEditor))
@@ -139,7 +93,7 @@ function onAddTextEditor(textEditor) {
   // Local workspaces get all tags on load and only need to be monitored when a document is saved.
   if (!FUNCTIONS.isWorkspace()) {
     // The onDidDestroy event listener callback is not immediately run like onDidSave
-    nova.subscriptions.add(textEditor.onDidDestroy(onRemove))
+    nova.subscriptions.add(textEditor.onDidDestroy(onChange))
     onChange(textEditor)
   }
 }
