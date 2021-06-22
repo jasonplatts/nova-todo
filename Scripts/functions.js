@@ -167,6 +167,16 @@ exports.showConsoleError = function showConsoleError(error) {
   console.error(prefix, error)
 }
 
+exports.showNotification = function showNotification(title, body) {
+  let notification = new NotificationRequest('todo-notification')
+
+  notification.title   = title
+  notification.body    = body
+  notification.actions = [nova.localize('OK')]
+
+  nova.notifications.add(notification)
+}
+
 /*
   Returns an array that has been stripped of null, blank, and undefined elements.
 */

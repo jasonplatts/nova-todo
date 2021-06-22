@@ -43,7 +43,8 @@ exports.DocumentSearch = class DocumentSearch {
     let documentMatches = this.searchLines(lines)
 
     documentMatches.forEach((listItem) => {
-      listItem.path = textDocument.path
+      listItem.path   = textDocument.path
+      listItem.remote = textDocument.isRemote
     })
 
     return documentMatches
