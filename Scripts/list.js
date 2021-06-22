@@ -51,15 +51,19 @@ exports.List = class List {
   }
 
   get items() {
-    let group        = null
-    let groupeditems = null
+    if (this._items.length > 0) {
+      let group        = null
+      let groupeditems = []
 
-    this.sortItemsByFileName()
+      this.sortItemsByFileName()
 
-    group        = new Group()
-    groupeditems = group.groupListItems(this._items, this._config.groupBy)
+      group        = new Group()
+      groupeditems = group.groupListItems(this._items, this._config.groupBy)
 
-    return groupeditems
+      return groupeditems
+    } else {
+      return this._items
+    }
   }
 
   async updateOnChange(textEditor) {
