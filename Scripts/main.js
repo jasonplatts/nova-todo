@@ -1,6 +1,7 @@
 'use strict'
 
 const FUNCTIONS         = require('./functions.js')
+const { Configuration } = require('./configuration.js')
 const { List }          = require('./list.js')
 const { DataProvider }  = require('./data_provider.js')
 
@@ -77,8 +78,8 @@ function addConfigurationMonitoring() {
   nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-names', reloadTreeView))
   nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-extensions', reloadTreeView))
 
-  list.config.tags.forEach(tag => {
-    nova.subscriptions.add(nova.config.onDidChange(`todo.global-keyword-${tag}`, reloadTreeView))
+  Configuration.PREFERENCE_TAGS.forEach(tag => {
+    nova.subscriptions.add(nova.config.onDidChange(`todo.global-tag-${tag}`, reloadTreeView))
   })
 }
 
