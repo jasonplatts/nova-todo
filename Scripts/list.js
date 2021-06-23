@@ -14,7 +14,8 @@ exports.List = class List {
   }
 
   async loadItems() {
-    this._config = new Configuration()
+    let config   = new Configuration()
+    this._config = await config.load()
 
     if (FUNCTIONS.isWorkspace()) {
       this._items = await this.loadWorkspaceEnvironment()

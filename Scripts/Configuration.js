@@ -4,13 +4,15 @@ const FUNCTIONS = require('./functions.js')
   Class handles the retrieval of default and user preference configurations
 */
 exports.Configuration = class Configuration {
-  constructor() {
+  async load() {
     this._groupBy               = 'file'
     this._tags                  = this.loadTags()
     this._caseSensitiveMatching = this.loadCaseSensitiveMatching()
     this._excludedNames         = this.loadExcludedNames()
     this._excludedPaths         = this.loadExcludedPaths()
     this._excludedExtensions    = this.loadExcludedExtensions()
+
+    return this
   }
 
   static get DEFAULT_TAGS() {
