@@ -23,7 +23,10 @@ exports.activate = function() {
 
   if (FUNCTIONS.isWorkspace()) {
     list.loadItems()
-      .then(loadTreeView)
+      .then(() => {
+        loadTreeView()
+        addConfigurationMonitoring()
+      })
       .catch(error => FUNCTIONS.showConsoleError(error))
   } else {
     setTimeout(reloadTreeView, 10000)
@@ -57,11 +60,28 @@ function resetTreeView() {
   novaTreeViewObjects.treeView     = null
 }
 
+function addConfigurationMonitoring() {
+  nova.subscriptions.add(nova.config.onDidChange('todo.global-case-sensitive-tag-matching', reloadTreeView))
+  nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-names', reloadTreeView))
+  nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-extensions', reloadTreeView))
+
+  config.tags.forEach(tag => {
+   nova.subscriptions.add(nova.config.onDidChange(`todo.global-keyword-${tag}`, reloadTreeView))
+  })
+}
+
 async function reloadTreeView() {
-  await resetTreeView()
-  await list.loadItems()
-  await loadTreeView()
-  novaTreeViewObjects.treeView.reload()
+  try {
+    console.log('1', config.caseSensitiveMatching)
+    config = new Configuration()
+    await resetTreeView()
+    await list.loadItems()
+    await loadTreeView()
+    novaTreeViewObjects.treeView.reload()
+    console.log('2', config.caseSensitiveMatching)
+  } catch(error) {
+    FUNCTIONS.showConsoleError(error)
+  }
 }
 
 function refreshTreeView() {
@@ -82,8 +102,6 @@ function onChange(textEditor) {
       .catch(error => FUNCTIONS.showConsoleError(error))
   }
 }
-
-nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddTextEditor))
 
 /*
   This function is a callback function to the onDidAddTextEditor event listener.
@@ -150,6 +168,10 @@ function openFile(selection) {
   }
 }
 
+// Workspace Event Listeners
+nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddTextEditor))
+
+// Command Registration
 nova.commands.register('todo.openFile', () => {
   openFile(novaTreeViewObjects.treeView.selection)
 })
@@ -166,13 +188,3 @@ nova.commands.register('todo.group', () => {
   config.groupBy = (config.groupBy == 'tag') ? 'file' : 'tag'
   refreshTreeView()
 })
-
-nova.config.onDidChange('todo.global-case-sensitive-tag-matching', () => {
-  console.log('HERE')
-})
-// nova.config.observe('todo.global-case-sensitive-tag-matching', reloadData)
-// nova.config.observe('todo.global-ignore-names', reloadData)
-// nova.config.observe('todo.global-ignore-extensions', reloadData)
-// PREFERENCE_KEYWORDS.forEach(keyword => {
-//   nova.config.observe(`todo.global-keyword-${keyword}`, reloadData)
-// })

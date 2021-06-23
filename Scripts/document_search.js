@@ -13,6 +13,7 @@ exports.DocumentSearch = class DocumentSearch {
     matches as ListItem objects.
   */
   searchFile(filePath) {
+    console.log('CSM?', this._config.caseSensitiveMatching)
     try {
       let file        = nova.fs.open(filePath)
       let lines       = file.readlines()
@@ -102,7 +103,7 @@ exports.DocumentSearch = class DocumentSearch {
 
       while(lineMatchIndex >= 0) {
         this.extractCommentFromLine(tag, lineMatchIndex, line)
-
+        console.log('matches(tag)', tag)
         if (this.isTag(tag, lineMatchIndex, line)) {
           lineMatches = [...lineMatches, {
             name: tag,

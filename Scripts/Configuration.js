@@ -104,7 +104,7 @@ exports.Configuration = class Configuration {
     return caseSensitive
   }
 
-  get CaseSensitiveMatching() {
+  get caseSensitiveMatching() {
     return this._caseSensitiveMatching
   }
 
