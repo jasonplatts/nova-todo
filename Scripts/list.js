@@ -1,18 +1,21 @@
 'use strict'
 
 const FUNCTIONS           = require('./functions.js')
+const { Configuration }   = require('./configuration.js')
 const { WorkspaceSearch } = require('./workspace_search.js')
 const { DocumentSearch }  = require('./document_search.js')
 const { Change }          = require('./change.js')
 const { Group }           = require('./group.js')
 
 exports.List = class List {
-  constructor(config) {
-    this._config = config
+  constructor() {
+    this._config = null
     this._items  = []
   }
 
   async loadItems() {
+    this._config = new Configuration()
+
     if (FUNCTIONS.isWorkspace()) {
       this._items = await this.loadWorkspaceEnvironment()
     } else {
@@ -48,6 +51,14 @@ exports.List = class List {
     })
 
     return listItems
+  }
+
+  toggleGroupBy() {
+    this._config.toggleGroupBy()
+  }
+
+  get config() {
+    return this._config
   }
 
   get items() {

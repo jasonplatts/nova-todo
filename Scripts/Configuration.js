@@ -45,6 +45,10 @@ exports.Configuration = class Configuration {
     }
   }
 
+  toggleGroupBy() {
+    this._groupBy = (this._groupBy == 'tag') ? 'file' : 'tag'
+  }
+
   /*
     Returns array of tag tags used for search. Includes default tags
     and the tags selected by the user in the workspace preferences.

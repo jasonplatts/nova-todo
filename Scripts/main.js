@@ -1,11 +1,9 @@
 'use strict'
 
 const FUNCTIONS         = require('./functions.js')
-const { Configuration } = require('./configuration.js')
 const { List }          = require('./list.js')
 const { DataProvider }  = require('./data_provider.js')
 
-var config              = null
 var list                = null
 var novaTreeViewObjects = {
   dataProvider: null,
@@ -18,8 +16,7 @@ exports.activate = function() {
   console.log('TODO EXTENSION ACTIVATED')
   console.log('Workspace Environment?', FUNCTIONS.isWorkspace())
 
-  config = new Configuration()
-  list   = new List(config)
+  list   = new List()
 
   if (FUNCTIONS.isWorkspace()) {
     list.loadItems()
@@ -65,20 +62,19 @@ function addConfigurationMonitoring() {
   nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-names', reloadTreeView))
   nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-extensions', reloadTreeView))
 
-  config.tags.forEach(tag => {
-   nova.subscriptions.add(nova.config.onDidChange(`todo.global-keyword-${tag}`, reloadTreeView))
+  list.config.tags.forEach(tag => {
+    nova.subscriptions.add(nova.config.onDidChange(`todo.global-keyword-${tag}`, reloadTreeView))
   })
 }
 
 async function reloadTreeView() {
   try {
-    console.log('1', config.caseSensitiveMatching)
-    config = new Configuration()
+    // console.log('1', list.config.caseSensitiveMatching)
     await resetTreeView()
     await list.loadItems()
     await loadTreeView()
     novaTreeViewObjects.treeView.reload()
-    console.log('2', config.caseSensitiveMatching)
+    // console.log('2', list.config.caseSensitiveMatching)
   } catch(error) {
     FUNCTIONS.showConsoleError(error)
   }
@@ -185,6 +181,6 @@ nova.commands.register('todo.refresh', async() => {
 })
 
 nova.commands.register('todo.group', () => {
-  config.groupBy = (config.groupBy == 'tag') ? 'file' : 'tag'
+  list.toggleGroupBy()
   refreshTreeView()
 })
