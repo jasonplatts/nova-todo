@@ -42,6 +42,11 @@ exports.Group = class Group {
         listItems[listItems.length - 1].addChild(childListItem)
       })
 
+      // Set the remote status of parent to that of the child.
+      if (listItems[listItems.length - 1].children.length > 0) {
+        listItems[listItems.length - 1].remote = listItems[listItems.length - 1].children[0].remote
+      }
+
       listItems[listItems.length - 1].descriptiveText = '(' + listItems[listItems.length - 1].children.length + ')'
     })
 
@@ -67,7 +72,6 @@ exports.Group = class Group {
   setFileChildAttributes(childListItem) {
     childListItem.name            = childListItem.tag
     childListItem.image           = this.getTagIconImage(childListItem.name)
-    childListItem.command         = 'todo.doubleClick'
     childListItem.descriptiveText = `${childListItem.comment} (Ln: ${childListItem.line}, Col: ${childListItem.column})`
 
     return childListItem
@@ -115,7 +119,6 @@ exports.Group = class Group {
     childListItem.name    = nova.path.basename(childListItem.path)
     childListItem.image   = null
     childListItem.tooltip = childListItem.path
-    childListItem.command = 'todo.doubleClick'
 
     return childListItem
   }

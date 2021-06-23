@@ -107,12 +107,6 @@ nova.commands.register('todo.addPath', () => {
 //   nova.workspace.config.set('todo.selected-ignore-path', '')
 })
 
-nova.commands.register('todo.openFile', () => {
-//   let selection = treeView.selection
-//
-//   nova.workspace.openFile(selection.map((e) => e.filePath))
-})
-
 nova.commands.register('todo.ignoreFile', () => {
 //   let selection = treeView.selection
 //
@@ -133,18 +127,13 @@ function addWorkspaceIgnorePath(path) {
 //   nova.workspace.config.set('todo.workspace-ignore-paths', workspaceIgnorePaths)
 }
 
-nova.commands.register('todo.doubleClick', () => {
-  let selection  = novaTreeViewObjects.treeView.selection
-  let remote     = selection.map(e => e.remote)
-  let path       = selection.map(e => e.path)
-  let line       = selection.map(e => e.line)
-  let column     = selection.map(e => e.column)
+function openFile(selection) {
+  selection  = novaTreeViewObjects.treeView.selection
 
-  // The Nova API does not currently support setting the activeEditor or opening remote files.
-  if (FUNCTIONS.isWorkspace() || remote == false) {
-    nova.workspace.openFile(path, [line, column])
+  if (((selection[0].remote) == false) && (selection[0].path !== null)) {
+    nova.workspace.openFile(selection[0].path, [selection[0].line, selection[0].column])
       .then(textEditor => {
-        let position = parseInt(selection.map(e => e.position))
+        let position = parseInt(selection[0].position)
         let range    = new Range(position, position)
 
         textEditor.selectedRange = range
@@ -152,8 +141,18 @@ nova.commands.register('todo.doubleClick', () => {
       })
       .catch(error => FUNCTIONS.showConsoleError(error))
   } else {
-    FUNCTIONS.showNotification('Feature Not Supported in Remote Environment', 'Nova does not support opening of remote files or setting of the active editor, which is required for navigating to this tag. If important to you, please submit a feature request to Panic for additional remote file support.')
+    if ((selection[0].remote) == true) {
+      FUNCTIONS.showNotification('Feature Not Supported in Remote Environment', 'Nova does not support opening of remote files or setting of the active editor, which is required for navigating to this tag. If important to you, please submit a feature request to Panic for additional remote file support.')
+    }
   }
+}
+
+nova.commands.register('todo.openFile', () => {
+  openFile(novaTreeViewObjects.treeView.selection)
+})
+
+nova.commands.register('todo.doubleClick', () => {
+  openFile(novaTreeViewObjects.treeView.selection)
 })
 
 nova.commands.register('todo.refresh', async() => {

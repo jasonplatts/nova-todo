@@ -38,7 +38,7 @@ exports.ListItem = class ListItem {
     */
     this.name             = name
     this.collapsibleState = TreeItemCollapsibleState.None
-    this.command          = null
+    this.command          = 'todo.doubleClick'
     this.color            = null
     this.contextValue     = null
     this.descriptiveText  = ''
