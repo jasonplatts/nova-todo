@@ -142,7 +142,10 @@ function openFile(selection) {
       .catch(error => FUNCTIONS.showConsoleError(error))
   } else {
     if ((selection[0].remote) == true) {
-      FUNCTIONS.showNotification('Feature Not Supported in Remote Environment', 'Nova does not support opening of remote files or setting of the active editor, which is required for navigating to this tag. If important to you, please submit a feature request to Panic for additional remote file support.')
+      FUNCTIONS.showNotification('Feature Not Supported in Remote Environment',
+        'Nova does not support opening of remote files or setting of the active editor, ' +
+        'which is required for navigating to this tag. If important to you, please ' +
+        'submit a feature request to Panic for additional remote file support.')
     }
   }
 }
@@ -164,6 +167,9 @@ nova.commands.register('todo.group', () => {
   refreshTreeView()
 })
 
+nova.config.onDidChange('todo.global-case-sensitive-tag-matching', () => {
+  console.log('HERE')
+})
 // nova.config.observe('todo.global-case-sensitive-tag-matching', reloadData)
 // nova.config.observe('todo.global-ignore-names', reloadData)
 // nova.config.observe('todo.global-ignore-extensions', reloadData)
