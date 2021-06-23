@@ -154,6 +154,4 @@ exports.Group = class Group {
   getUniqueTags(listItems) {
     return [...new Set(listItems.map(item => item.name))]
   }
-
-
 }

@@ -61,7 +61,7 @@ function loadTreeView() {
 }
 
 /*
-  Refreshes the sidebar treeView without the overhead of reloading a list.
+  Refreshes the sidebar treeView without the data reloading overhead.
 */
 function resetTreeView() {
   treeViewDisposables.dispose()
