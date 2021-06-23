@@ -11,6 +11,9 @@ var novaTreeViewObjects = {
 }
 var treeViewDisposables = new CompositeDisposable()
 
+/*
+  Function runs when the Nova TODO extension is first activated.
+*/
 exports.activate = function() {
   console.clear()
   console.log('TODO EXTENSION ACTIVATED')
@@ -30,11 +33,17 @@ exports.activate = function() {
   }
 }
 
+/*
+  Function runs when the Nova TODO extension is deactivated.
+*/
 exports.deactivate = function() {
   treeViewDisposables.dispose()
 }
 
 /*
+  Loads the Nova sidebar treeView instance with data provided by the DataProvider instance.
+  The DataProvider uses the List class to generate its data.
+
   NOTE: At time of writing, the TreeView is not editable once it is part of
   the DataProvider object. Therefore, editable ListItem objects are handled
   using an instance of the custom ListItems class. The TreeView is then
@@ -51,12 +60,18 @@ function loadTreeView() {
   treeViewDisposables.add(novaTreeViewObjects.treeView)
 }
 
+/*
+  Refreshes the sidebar treeView without the overhead of reloading a list.
+*/
 function resetTreeView() {
   treeViewDisposables.dispose()
   novaTreeViewObjects.dataProvider = null
   novaTreeViewObjects.treeView     = null
 }
 
+/*
+  Adds event listeners for each of the extension configuration options.
+*/
 function addConfigurationMonitoring() {
   nova.subscriptions.add(nova.config.onDidChange('todo.global-case-sensitive-tag-matching', reloadTreeView))
   nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-names', reloadTreeView))
@@ -67,25 +82,35 @@ function addConfigurationMonitoring() {
   })
 }
 
+/*
+  Reloads the tag data and configuration, then refreshes the sidebar treeView instance.
+*/
 async function reloadTreeView() {
   try {
     // console.log('1', list.config.caseSensitiveMatching)
     await resetTreeView()
     await list.loadItems()
     await loadTreeView()
-    novaTreeViewObjects.treeView.reload()
     // console.log('2', list.config.caseSensitiveMatching)
   } catch(error) {
     FUNCTIONS.showConsoleError(error)
   }
 }
 
+/*
+  Refreshes the sidebar treeView without reloading the tag data
+  and configuration, which requires much less overhead.
+*/
 function refreshTreeView() {
   resetTreeView()
   loadTreeView()
   novaTreeViewObjects.treeView.reload()
 }
 
+/*
+  Function is used when a Nova textEditor object is added or destroyed to
+  update the tag list with changes after initial loading.
+*/
 function onChange(textEditor) {
   // Prevents the extension from attempting to evaluate a brand new unsaved document.
   if (textEditor.document.isUntitled !== true) {
@@ -115,24 +140,6 @@ function onAddTextEditor(textEditor) {
   }
 }
 
-nova.commands.register('todo.addPath', () => {
-//   addWorkspaceIgnorePath(nova.workspace.config.get('todo.selected-ignore-path'))
-//
-//   nova.workspace.config.set('todo.selected-ignore-path', '')
-})
-
-nova.commands.register('todo.ignoreFile', () => {
-//   let selection = treeView.selection
-//
-//   addWorkspaceIgnorePath(nova.path.normalize(selection.map((e) => e.filePath)))
-})
-
-nova.commands.register('todo.ignoreParentDirectory', () => {
-//   let selection = treeView.selection
-//
-//   addWorkspaceIgnorePath(nova.path.dirname(selection.map((e) => e.filePath)))
-})
-
 function addWorkspaceIgnorePath(path) {
 //   path = nova.path.normalize(path)
 //   let workspaceIgnorePaths = nova.workspace.config.get('todo.workspace-ignore-paths') + ',' + path
@@ -141,6 +148,9 @@ function addWorkspaceIgnorePath(path) {
 //   nova.workspace.config.set('todo.workspace-ignore-paths', workspaceIgnorePaths)
 }
 
+/*
+  Function opens a local file to a specified location, if available.
+*/
 function openFile(selection) {
   selection  = novaTreeViewObjects.treeView.selection
 
@@ -164,10 +174,28 @@ function openFile(selection) {
   }
 }
 
-// Workspace Event Listeners
+// Editor Event Listeners
 nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddTextEditor))
 
 // Command Registration
+nova.commands.register('todo.addPath', () => {
+//   addWorkspaceIgnorePath(nova.workspace.config.get('todo.selected-ignore-path'))
+//
+//   nova.workspace.config.set('todo.selected-ignore-path', '')
+})
+
+nova.commands.register('todo.ignoreFile', () => {
+//   let selection = treeView.selection
+//
+//   addWorkspaceIgnorePath(nova.path.normalize(selection.map((e) => e.filePath)))
+})
+
+nova.commands.register('todo.ignoreParentDirectory', () => {
+//   let selection = treeView.selection
+//
+//   addWorkspaceIgnorePath(nova.path.dirname(selection.map((e) => e.filePath)))
+})
+
 nova.commands.register('todo.openFile', () => {
   openFile(novaTreeViewObjects.treeView.selection)
 })
