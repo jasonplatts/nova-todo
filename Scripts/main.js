@@ -74,6 +74,11 @@ function resetTreeView() {
   Adds event listeners for each of the extension configuration options.
 */
 function addConfigurationMonitoring() {
+  addGlobalConfigurationMonitoring()
+  addWorkspaceConfigurationMonitoring()
+}
+
+function addGlobalConfigurationMonitoring() {
   nova.subscriptions.add(nova.config.onDidChange('todo.global-case-sensitive-tag-matching', reloadTreeView))
   nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-names', reloadTreeView))
   nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-extensions', reloadTreeView))
@@ -81,6 +86,12 @@ function addConfigurationMonitoring() {
   Configuration.PREFERENCE_TAGS.forEach(tag => {
     nova.subscriptions.add(nova.config.onDidChange(`todo.global-tag-${tag}`, reloadTreeView))
   })
+}
+
+function addWorkspaceConfigurationMonitoring() {
+  if (FUNCTIONS.isWorkspace()) {
+    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-case-sensitive-tag-matching', reloadTreeView))
+  }
 }
 
 /*
