@@ -91,6 +91,15 @@ function addGlobalConfigurationMonitoring() {
 function addWorkspaceConfigurationMonitoring() {
   if (FUNCTIONS.isWorkspace()) {
     nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-case-sensitive-tag-matching', reloadTreeView))
+    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-custom-tags', reloadTreeView))
+
+    Configuration.PREFERENCE_TAGS.forEach(tag => {
+      nova.subscriptions.add(nova.config.onDidChange(`todo.workspace-tag-${tag}`, reloadTreeView))
+    })
+
+    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-ignore-paths', reloadTreeView))
+    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-ignore-names', reloadTreeView))
+    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-ignore-extensions', reloadTreeView))
   }
 }
 
