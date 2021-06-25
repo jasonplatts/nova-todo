@@ -6,11 +6,11 @@ const FUNCTIONS = require('./functions.js')
 exports.Configuration = class Configuration {
   async load() {
     this._groupBy               = 'file'
-    this._tags                  = this.loadTags()
-    this._caseSensitiveMatching = this.loadCaseSensitiveMatching()
-    this._excludedNames         = this.loadExcludedNames()
-    this._excludedPaths         = this.loadExcludedPaths()
-    this._excludedExtensions    = this.loadExcludedExtensions()
+    this._tags                  = await this.loadTags()
+    this._caseSensitiveMatching = await this.loadCaseSensitiveMatching()
+    this._excludedNames         = await this.loadExcludedNames()
+    this._excludedPaths         = await this.loadExcludedPaths()
+    this._excludedExtensions    = await this.loadExcludedExtensions()
 
     return this
   }
@@ -55,7 +55,7 @@ exports.Configuration = class Configuration {
     Returns array of tag tags used for search. Includes default tags
     and the tags selected by the user in the workspace preferences.
   */
-  loadTags() {
+  async loadTags() {
     let additionalTags = []
 
     /*
@@ -88,7 +88,7 @@ exports.Configuration = class Configuration {
     Returns a boolean value of true if only to match upper case (TODO:) or false if matching
     both upper and lower case (TODO: and todo:).
   */
-  loadCaseSensitiveMatching() {
+  async loadCaseSensitiveMatching() {
     let caseSensitive = true
     let global        = nova.config.get('todo.global-case-sensitive-tag-matching')
     let workspace     = nova.workspace.config.get('todo.workspace-case-sensitive-tag-matching')
@@ -118,7 +118,7 @@ exports.Configuration = class Configuration {
     Returns array of excluded file and directory names, including default exclusions
     and global and workspace user preference exclusions.
   */
-  loadExcludedNames() {
+  async loadExcludedNames() {
     let workspaceIgnoreNames = []
     let globalIgnoreNames    = []
 
@@ -148,7 +148,7 @@ exports.Configuration = class Configuration {
     Returns array of excluded file extensions, including default exclusions
     and global and workspace user preference exclusions.
   */
-  loadExcludedExtensions() {
+  async loadExcludedExtensions() {
     let workspaceIgnoreExtensions = []
     let globalIgnoreExtensions    = []
 
@@ -186,7 +186,7 @@ exports.Configuration = class Configuration {
   /*
     Returns array of excluded paths specified by the user in the workspace preferences.
   */
-  loadExcludedPaths() {
+  async loadExcludedPaths() {
     let workspaceIgnorePaths = []
 
     if (FUNCTIONS.isWorkspace()) {
