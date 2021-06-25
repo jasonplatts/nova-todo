@@ -162,20 +162,20 @@ function onAddTextEditor(textEditor) {
 }
 
 function addWorkspaceIgnorePath(path) {
-  let workspaceIgnorePaths = nova.workspace.config.get('todo.workspace-ignore-paths') +
-    ',' + FUNCTIONS.normalizePath(path)
-
-  workspaceIgnorePaths = workspaceIgnorePaths.split(',')
-  workspaceIgnorePaths = workspaceIgnorePaths.map(path => path.trim())
-  workspaceIgnorePaths = workspaceIgnorePaths.filter(path => path)
-  workspaceIgnorePaths = workspaceIgnorePaths.join(', ')
-  // ,/Users/jasonplatts/Sites/railswire/railswire/app,,/Users/jasonplatts/Sites/railswire/railswire/lib,,,
-  console.log(workspaceIgnorePaths)
-  console.log(typeof(workspaceIgnorePaths))
-  console.log(workspaceIgnorePaths.length)
-  // workspaceIgnorePaths = workspaceIgnorePaths.replace('null,', '')
-
-  nova.workspace.config.set('todo.workspace-ignore-paths', workspaceIgnorePaths)
+//   let workspaceIgnorePaths = nova.workspace.config.get('todo.workspace-ignore-paths') +
+//     ',' + FUNCTIONS.normalizePath(path)
+//
+//   // workspaceIgnorePaths = workspaceIgnorePaths.split(',')
+//   // workspaceIgnorePaths = workspaceIgnorePaths.map(path => path.trim())
+//   // workspaceIgnorePaths = workspaceIgnorePaths.filter(path => path)
+//   // workspaceIgnorePaths = workspaceIgnorePaths.join(', ')
+//   // ,/Users/jasonplatts/Sites/railswire/railswire/app,,/Users/jasonplatts/Sites/railswire/railswire/lib,,,
+//   console.log(workspaceIgnorePaths)
+//   console.log(typeof(workspaceIgnorePaths))
+//   console.log(workspaceIgnorePaths.length)
+//   // workspaceIgnorePaths = workspaceIgnorePaths.replace('null,', '')
+//
+//   nova.workspace.config.set('todo.workspace-ignore-paths', workspaceIgnorePaths)
 }
 
 /*

@@ -5,12 +5,14 @@ const FUNCTIONS = require('./functions.js')
 */
 exports.Configuration = class Configuration {
   async load() {
+    await this.updatePreVersion3Settings()
+
     this._groupBy               = 'file'
     this._tags                  = await this.loadTags()
     this._caseSensitiveMatching = await this.loadCaseSensitiveMatching()
-    this._excludedNames         = await this.loadExcludedNames()
-    this._excludedPaths         = await this.loadExcludedPaths()
-    this._excludedExtensions    = await this.loadExcludedExtensions()
+    // this._excludedNames         = await this.loadExcludedNames()
+    // this._excludedPaths         = await this.loadExcludedPaths()
+    // this._excludedExtensions    = await this.loadExcludedExtensions()
 
     return this
   }
@@ -179,6 +181,9 @@ exports.Configuration = class Configuration {
     return excludedExtensions
   }
 
+  /*
+    Returns the excluded extensions.
+  */
   get excludedExtensions() {
     return this._excludedExtensions
   }
@@ -201,7 +206,101 @@ exports.Configuration = class Configuration {
     return workspaceIgnorePaths
   }
 
+  /*
+    Returns the excluded paths.
+  */
   get excludedPaths() {
     return this._excludedPaths
+  }
+
+  /*
+    Updates settings created prior to version 3.
+  */
+  async updatePreVersion3Settings() {
+    try {
+      this.removeSelectedIgnorePath()
+      this.updateExcludedNamesToV3()
+      this.updateExcludedPathsToV3()
+      this.updateExcludedExtensionsToV3()
+    } catch (error) {
+      FUNCTIONS.showConsoleError(error)
+    }
+
+    return true
+  }
+
+  /*
+    Method removes the 'todo.selected-ignore-path' removed in TODO version 3.
+  */
+  removeSelectedIgnorePath() {
+    if (nova.workspace.config.get('todo.selected-ignore-path') !== null) {
+      nova.workspace.config.set('todo.selected-ignore-path', null)
+    }
+  }
+
+  /*
+    Updates the excluded names configuration string used in TODO version 1-2, to an
+    array compatible with the stringArray configuration UI used in TODO version 3.
+    This feature was added to the Nova API in V4.
+  */
+  updateExcludedNamesToV3() {
+    let tempGlobalNames    = nova.config.get('todo.global-ignore-names')
+    let tempWorkspaceNames = nova.workspace.config.get('todo.workspace-ignore-names')
+
+    if (typeof(tempGlobalNames) === 'string') {
+      let globalNames = this.formatStringConfigsToArray(tempGlobalNames)
+      nova.config.set('todo.global-ignore-names', globalNames)
+    }
+
+    if (typeof(tempWorkspaceNames) === 'string') {
+      let workspaceNames = this.formatStringConfigsToArray(tempWorkspaceNames)
+      nova.workspace.config.set('todo.workspace-ignore-names', workspaceNames)
+    }
+  }
+
+  /*
+    Updates the excluded paths configuration string used in TODO version 1-2, to an
+    array compatible with the pathArray configuration UI used in TODO version 3.
+    This feature was added to the Nova API in V4.
+  */
+  updateExcludedPathsToV3() {
+    let tempPaths = nova.workspace.config.get('todo.workspace-ignore-paths')
+
+    if (typeof(tempPaths) === 'string') {
+      let pathArray = this.formatStringConfigsToArray(tempPaths)
+      pathArray = pathArray.map(path => FUNCTIONS.normalizePath(path))
+      nova.workspace.config.set('todo.workspace-ignore-paths', pathArray)
+    }
+  }
+
+  /*
+    Updates the excluded extensions configuration string used in TODO version 1-2, to an
+    array compatible with the stringArray configuration UI used in TODO version 3.
+    This feature was added to the Nova API in V4.
+  */
+  updateExcludedExtensionsToV3() {
+    let tempGlobalExtensions    = nova.config.get('todo.global-ignore-extensions')
+    let tempWorkspaceExtensions = nova.workspace.config.get('todo.workspace-ignore-extensions')
+
+    if (typeof(tempGlobalExtensions) === 'string') {
+      let globalExtensions = this.formatStringConfigsToArray(tempGlobalExtensions)
+      nova.config.set('todo.global-ignore-extensions', globalExtensions)
+    }
+
+    if (typeof(tempWorkspaceExtensions) === 'string') {
+      let workspaceExtensions = this.formatStringConfigsToArray(tempWorkspaceExtensions)
+      nova.workspace.config.set('todo.workspace-ignore-extensions', workspaceExtensions)
+    }
+  }
+
+  /*
+    Converts configuration strings when upgrading to version 3 from a prior version.
+  */
+  formatStringConfigsToArray(string) {
+    let array = string.split(',')
+    array = array.map(path => path.trim()) // Removes any additional whitespace around elements.
+    array = array.filter(path => path) // Removes blank elements.
+
+    return array
   }
 }
