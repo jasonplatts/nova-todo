@@ -162,11 +162,11 @@ function onAddTextEditor(textEditor) {
 }
 
 function addWorkspaceIgnorePath(path) {
-//   path = nova.path.normalize(path)
-//   let workspaceIgnorePaths = nova.workspace.config.get('todo.workspace-ignore-paths') + ',' + path
-//   workspaceIgnorePaths = workspaceIgnorePaths.replace('null,', '')
-//
-//   nova.workspace.config.set('todo.workspace-ignore-paths', workspaceIgnorePaths)
+  let workspaceIgnorePaths = nova.workspace.config.get('todo.workspace-ignore-paths') +
+    ',' + FUNCTIONS.normalizePath(path)
+  workspaceIgnorePaths = workspaceIgnorePaths.replace('null,', '')
+
+  nova.workspace.config.set('todo.workspace-ignore-paths', workspaceIgnorePaths)
 }
 
 /*
@@ -200,9 +200,9 @@ nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddTextEditor))
 
 // Command Registration
 nova.commands.register('todo.addPath', () => {
-//   addWorkspaceIgnorePath(nova.workspace.config.get('todo.selected-ignore-path'))
-//
-//   nova.workspace.config.set('todo.selected-ignore-path', '')
+  addWorkspaceIgnorePath(nova.workspace.config.get('todo.selected-ignore-path'))
+
+  nova.workspace.config.set('todo.selected-ignore-path', '')
 })
 
 nova.commands.register('todo.ignoreFile', () => {
