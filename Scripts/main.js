@@ -16,9 +16,11 @@ var treeViewDisposables = new CompositeDisposable()
   Function runs when the Nova TODO extension is first activated.
 */
 exports.activate = function() {
-  console.clear()
-  console.log('TODO EXTENSION ACTIVATED')
-  console.log('Workspace Environment?', FUNCTIONS.isWorkspace())
+  if (nova.inDevMode()) {
+    console.clear()
+    console.log('TODO EXTENSION ACTIVATED')
+    console.log('Workspace Environment?', FUNCTIONS.isWorkspace())
+  }
 
   list   = new List()
 
@@ -108,11 +110,9 @@ function addWorkspaceConfigurationMonitoring() {
 */
 async function reloadTreeView() {
   try {
-    // console.log('1', list.config.caseSensitiveMatching)
     await resetTreeView()
     await list.loadItems()
     await loadTreeView()
-    // console.log('2', list.config.caseSensitiveMatching)
   } catch(error) {
     FUNCTIONS.showConsoleError(error)
   }

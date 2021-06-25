@@ -104,7 +104,6 @@ exports.List = class List {
 
         updateOccurred = true
       } else if (!documentInCurrentList && updatedDocumentListItems.length > 0) {
-        console.log(updatedDocumentListItems[0].name)
         this.addListItems(updatedDocumentListItems)
         updateOccurred = true
       }

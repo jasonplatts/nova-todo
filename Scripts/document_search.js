@@ -13,7 +13,6 @@ exports.DocumentSearch = class DocumentSearch {
     matches as ListItem objects.
   */
   searchFile(filePath) {
-    // console.log('CSM?', this._config.caseSensitiveMatching)
     try {
       let file        = nova.fs.open(filePath)
       let lines       = file.readlines()
