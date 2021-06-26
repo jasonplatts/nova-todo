@@ -178,15 +178,19 @@ exports.showNotification = function showNotification(title, body) {
   Returns an array that has been stripped of null, blank, and undefined elements.
 */
 exports.cleanArray = function cleanArray(array) {
-  array = array.filter(function(element) {
-    element = element.trim()
+  if (array !== null) {
+    array = array.filter(function(element) {
+      element = element.trim()
 
-    if (element !== null && element !== '' && element!== undefined) {
-      return element
-    }
-  })
+      if (element !== null && element !== '' && element!== undefined) {
+        return element
+      }
+    })
 
-  array = array.map(element => element.trim())
+    array = array.map(element => element.trim())
+  } else {
+    array = []
+  }
 
   return array
 }
