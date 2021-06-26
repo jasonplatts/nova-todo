@@ -10,9 +10,10 @@ exports.Configuration = class Configuration {
     this._groupBy               = 'file'
     this._tags                  = await this.loadTags()
     this._caseSensitiveMatching = await this.loadCaseSensitiveMatching()
-    // this._excludedNames         = await this.loadExcludedNames()
-    // this._excludedPaths         = await this.loadExcludedPaths()
-    // this._excludedExtensions    = await this.loadExcludedExtensions()
+
+    this._excludedNames         = await this.loadExcludedNames()
+    this._excludedPaths         = await this.loadExcludedPaths()
+    this._excludedExtensions    = await this.loadExcludedExtensions()
 
     return this
   }
@@ -126,11 +127,9 @@ exports.Configuration = class Configuration {
 
     if (FUNCTIONS.isWorkspace()) {
       workspaceIgnoreNames = nova.workspace.config.get('todo.workspace-ignore-names')
-      workspaceIgnoreNames = workspaceIgnoreNames.split(',')
     }
 
     globalIgnoreNames = nova.config.get('todo.global-ignore-names')
-    globalIgnoreNames = globalIgnoreNames.split(',')
 
     let excludedNames = [
       ...Configuration.DEFAULT_EXCLUDED_NAMES,
@@ -156,11 +155,9 @@ exports.Configuration = class Configuration {
 
     if (FUNCTIONS.isWorkspace()) {
       workspaceIgnoreExtensions = nova.workspace.config.get('todo.workspace-ignore-extensions')
-      workspaceIgnoreExtensions = workspaceIgnoreExtensions.split(',')
     }
 
     globalIgnoreExtensions = nova.config.get('todo.global-ignore-extensions')
-    globalIgnoreExtensions = globalIgnoreExtensions.split(',')
 
     let excludedExtensions = [
       ...Configuration.DEFAULT_EXCLUDED_EXTENSIONS,
@@ -196,10 +193,7 @@ exports.Configuration = class Configuration {
 
     if (FUNCTIONS.isWorkspace()) {
       workspaceIgnorePaths = nova.workspace.config.get('todo.workspace-ignore-paths')
-      workspaceIgnorePaths = workspaceIgnorePaths.split(',')
-      workspaceIgnorePaths = workspaceIgnorePaths.map(function (path) {
-        return nova.path.normalize(path)
-      })
+      workspaceIgnorePaths = workspaceIgnorePaths.map((path) => nova.path.normalize(path))
       workspaceIgnorePaths = FUNCTIONS.cleanArray(workspaceIgnorePaths)
     }
 
