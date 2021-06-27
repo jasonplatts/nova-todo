@@ -1,3 +1,11 @@
+## Version 3.0
+
+* Dramatically improved performance with rewritten extension.
+* Improved stability.
+* Added support for remote server environments.
+* Added env and venv as default ignored directories (Issue #21).
+* Fixed issue causing configuration changes to not save (Issue #8).
+
 ## Version 2.3.1
 
 * Updated extension documentation to clarify updating ignored file and folder name preferences.
@@ -30,7 +38,7 @@
 
 ## Version 1.3
 
-* Updated extension to set the cursor position when opening a tag item.  
+* Updated extension to set the cursor position when opening a tag item.
 
 ## Version 1.2
 
@@ -51,7 +59,7 @@
 
 ## Version 0.5
 
-* Added the ability to search for additional keyword tags, such as ERROR, INFO, and NOTE, in preferences (Issue #4).
+* Added the ability to search for additional tags, such as ERROR, INFO, and NOTE, in preferences (Issue #4).
 * Fixed issue causing extension to fail when in an environment without a workspace (Issue #6).
 * Modified tree view to display file names alphabetically.
 * Fixed double loading of tree view items occurring in some situations.
