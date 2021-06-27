@@ -15,24 +15,31 @@ var treeViewDisposables = new CompositeDisposable()
 /*
   Function runs when the Nova TODO extension is first activated.
 */
-exports.activate = function() {
+exports.activate = async function() {
   if (nova.inDevMode()) {
     console.clear()
     console.log('TODO EXTENSION ACTIVATED')
     console.log('Workspace Environment?', FUNCTIONS.isWorkspace())
   }
 
-  list   = new List()
+  list = new List()
+  await list.loadConfig()
+  addGlobalConfigurationMonitoring()
 
+  // Workspace environments load via initial egrep, then update on save via extension search.
+  // Local non-workspace and remote load items when editors are added and update on save. Both via extension search.
   if (FUNCTIONS.isWorkspace()) {
-    list.loadItems()
-      .then(() => {
-        loadTreeView()
-        addConfigurationMonitoring()
-      })
-      .catch(error => FUNCTIONS.showConsoleError(error))
+    try {
+      await list.loadItems()
+      loadTreeView()
+      addWorkspaceConfigurationMonitoring()
+      nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddWorkspaceTextEditor))
+    } catch (error) {
+      FUNCTIONS.showConsoleError(error)
+    }
   } else {
-    setTimeout(reloadTreeView, 10000)
+    // Editor Event Listeners
+    nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddNonWorkspaceTextEditor))
   }
 }
 
@@ -70,39 +77,6 @@ function resetTreeView() {
   treeViewDisposables.dispose()
   novaTreeViewObjects.dataProvider = null
   novaTreeViewObjects.treeView     = null
-}
-
-/*
-  Adds event listeners for each of the extension configuration options.
-*/
-function addConfigurationMonitoring() {
-  addGlobalConfigurationMonitoring()
-  addWorkspaceConfigurationMonitoring()
-}
-
-function addGlobalConfigurationMonitoring() {
-  nova.subscriptions.add(nova.config.onDidChange('todo.global-case-sensitive-tag-matching', reloadTreeView))
-  nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-names', reloadTreeView))
-  nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-extensions', reloadTreeView))
-
-  Configuration.PREFERENCE_TAGS.forEach(tag => {
-    nova.subscriptions.add(nova.config.onDidChange(`todo.global-tag-${tag}`, reloadTreeView))
-  })
-}
-
-function addWorkspaceConfigurationMonitoring() {
-  if (FUNCTIONS.isWorkspace()) {
-    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-case-sensitive-tag-matching', reloadTreeView))
-    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-custom-tags', reloadTreeView))
-
-    Configuration.PREFERENCE_TAGS.forEach(tag => {
-      nova.subscriptions.add(nova.config.onDidChange(`todo.workspace-tag-${tag}`, reloadTreeView))
-    })
-
-    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-ignore-paths', reloadTreeView))
-    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-ignore-names', reloadTreeView))
-    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-ignore-extensions', reloadTreeView))
-  }
 }
 
 /*
@@ -148,17 +122,22 @@ function onChange(textEditor) {
 /*
   This function is a callback function to the onDidAddTextEditor event listener.
   It fires for each open editor at the time the extension is activated
-  and any time a new editor is opened.
+  and any time a new editor is opened. This is used for workspace environments.
 */
-function onAddTextEditor(textEditor) {
+function onAddWorkspaceTextEditor(textEditor) {
   nova.subscriptions.add(textEditor.onDidSave(onChange))
+}
 
-  // Local workspaces get all tags on load and only need to be monitored when a document is saved.
-  if (!FUNCTIONS.isWorkspace()) {
-    // The onDidDestroy event listener callback is not immediately run like onDidSave
-    nova.subscriptions.add(textEditor.onDidDestroy(onChange))
-    onChange(textEditor)
-  }
+/*
+  This function is a callback function to the onDidAddTextEditor event listener.
+  It fires for each open editor at the time the extension is activated
+  and any time a new editor is opened. This is used for local non-workspace and
+  remote environments.
+*/
+function onAddNonWorkspaceTextEditor(textEditor) {
+  onChange(textEditor)
+  nova.subscriptions.add(textEditor.onDidSave(onChange))
+  nova.subscriptions.add(textEditor.onDidDestroy(onChange))
 }
 
 function addWorkspaceIgnorePath(path) {
@@ -204,8 +183,40 @@ function openFile(selection) {
   }
 }
 
-// Editor Event Listeners
-nova.subscriptions.add(nova.workspace.onDidAddTextEditor(onAddTextEditor))
+/*
+  Adds event listeners for each of the global extension configuration options.
+*/
+async function addGlobalConfigurationMonitoring() {
+  nova.subscriptions.add(nova.config.onDidChange('todo.global-case-sensitive-tag-matching', reloadTreeView))
+  nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-names', reloadTreeView))
+  nova.subscriptions.add(nova.config.onDidChange('todo.global-ignore-extensions', reloadTreeView))
+
+  Configuration.PREFERENCE_TAGS.forEach(tag => {
+    nova.subscriptions.add(nova.config.onDidChange(`todo.global-tag-${tag}`, reloadTreeView))
+  })
+
+  return true
+}
+
+/*
+  Adds event listeners for each of the workspace extension configuration options.
+*/
+async function addWorkspaceConfigurationMonitoring() {
+  if (FUNCTIONS.isWorkspace()) {
+    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-case-sensitive-tag-matching', reloadTreeView))
+    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-custom-tags', reloadTreeView))
+
+    Configuration.PREFERENCE_TAGS.forEach(tag => {
+      nova.subscriptions.add(nova.config.onDidChange(`todo.workspace-tag-${tag}`, reloadTreeView))
+    })
+
+    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-ignore-paths', reloadTreeView))
+    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-ignore-names', reloadTreeView))
+    nova.subscriptions.add(nova.workspace.config.onDidChange('todo.workspace-ignore-extensions', reloadTreeView))
+  }
+
+  return true
+}
 
 // Command Registration
 nova.commands.register('todo.addPath', () => {
@@ -215,7 +226,14 @@ nova.commands.register('todo.addPath', () => {
 })
 
 nova.commands.register('todo.ignoreFile', () => {
-//   let selection = treeView.selection
+  let selection = novaTreeViewObjects.treeView.selection
+
+  if (FUNCTIONS.isWorkspace() && (selection[0].remote !== true)) {
+    if (selection[0].path !== null) {
+      console.log('here',FUNCTIONS.normalizePath(selection[0].path))
+      // nova.workspace.config.set('todo.workspace-ignore-paths', workspaceIgnorePaths)
+    }
+  }
 //
 //   addWorkspaceIgnorePath(nova.path.normalize(selection.map((e) => e.filePath)))
 })

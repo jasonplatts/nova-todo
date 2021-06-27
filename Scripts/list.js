@@ -13,9 +13,15 @@ exports.List = class List {
     this._items  = []
   }
 
-  async loadItems() {
+  async loadConfig() {
     let config   = new Configuration()
     this._config = await config.load()
+
+    return true
+  }
+
+  async loadItems() {
+    await this.loadConfig()
 
     if (FUNCTIONS.isWorkspace()) {
       this._items = await this.loadWorkspaceEnvironment()
@@ -79,6 +85,12 @@ exports.List = class List {
   }
 
   async updateOnChange(textEditor) {
+    // For non-workspace environments, the updateOnChange method will be called before
+    // the list.loadItems that otherwise loads the config.
+    if (this._config === null) {
+      await this.loadConfig()
+    }
+
     let fileExcluded          = FUNCTIONS.isExcluded(textEditor.document.path, this._config)
     let detectListChange      = new Change(textEditor.document, this._config)
     let documentInCurrentList = detectListChange.documentPathExistsInList(this._items, textEditor.document)
