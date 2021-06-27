@@ -452,7 +452,7 @@
           "id": "todo",
           "name": "TODOS",
           "allowMultiple": false,
-          "placeholderText": "No tags found.\nMonitoring workspace...",
+          "placeholderText": "No tags found.\nMonitoring...",
           "placeholderImage": "sidebar-placeholder",
           "headerCommands": [
             {
