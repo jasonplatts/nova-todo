@@ -1,8 +1,10 @@
 ## Version 3.0
 
-* Extension rewritten to provide increased performance and stability.
+* Dramatically improved performance with rewritten extension.
+* Improved stability.
 * Added support for remote server environments.
 * Added env and venv as default ignored directories (Issue #21).
+* Fixed issue causing configuration changes to not save (Issue #8).
 
 ## Version 2.3.1
 
