@@ -474,11 +474,11 @@
               "command": "todo.openFile"
             },
             {
-              "title": "Ignore File",
+              "title": "Ignore File in Current Workspace",
               "command": "todo.ignoreFile"
             },
             {
-              "title": "Ignore Parent Directory",
+              "title": "Ignore Parent Directory in Current Workspace",
               "command": "todo.ignoreParentDirectory"
             }
           ]

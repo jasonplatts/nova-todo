@@ -140,23 +140,6 @@ function onAddNonWorkspaceTextEditor(textEditor) {
   nova.subscriptions.add(textEditor.onDidDestroy(onChange))
 }
 
-function addWorkspaceIgnorePath(path) {
-//   let workspaceIgnorePaths = nova.workspace.config.get('todo.workspace-ignore-paths') +
-//     ',' + FUNCTIONS.normalizePath(path)
-//
-//   // workspaceIgnorePaths = workspaceIgnorePaths.split(',')
-//   // workspaceIgnorePaths = workspaceIgnorePaths.map(path => path.trim())
-//   // workspaceIgnorePaths = workspaceIgnorePaths.filter(path => path)
-//   // workspaceIgnorePaths = workspaceIgnorePaths.join(', ')
-//   // ,/Users/jasonplatts/Sites/railswire/railswire/app,,/Users/jasonplatts/Sites/railswire/railswire/lib,,,
-//   console.log(workspaceIgnorePaths)
-//   console.log(typeof(workspaceIgnorePaths))
-//   console.log(workspaceIgnorePaths.length)
-//   // workspaceIgnorePaths = workspaceIgnorePaths.replace('null,', '')
-//
-//   nova.workspace.config.set('todo.workspace-ignore-paths', workspaceIgnorePaths)
-}
-
 /*
   Function opens a local file to a specified location, if available.
 */
@@ -219,29 +202,41 @@ async function addWorkspaceConfigurationMonitoring() {
 }
 
 // Command Registration
-nova.commands.register('todo.addPath', () => {
-  addWorkspaceIgnorePath(nova.workspace.config.get('todo.selected-ignore-path'))
-
-  nova.workspace.config.set('todo.selected-ignore-path', '')
-})
-
 nova.commands.register('todo.ignoreFile', () => {
-  let selection = novaTreeViewObjects.treeView.selection
+  try {
+    let selection = novaTreeViewObjects.treeView.selection
 
-  if (FUNCTIONS.isWorkspace() && (selection[0].remote !== true)) {
-    if (selection[0].path !== null) {
-      console.log('here',FUNCTIONS.normalizePath(selection[0].path))
-      // nova.workspace.config.set('todo.workspace-ignore-paths', workspaceIgnorePaths)
+    if (FUNCTIONS.isWorkspace() && (selection[0].remote !== true)) {
+      if (selection[0].path !== null) {
+        nova.workspace.config.set('todo.workspace-ignore-paths', FUNCTIONS.normalizePath(selection[0].path))
+      }
+    } else {
+      FUNCTIONS.showNotification('Feature Not Supported in Non-Workspace Environments',
+        'This extension does not support the exclusion of file paths in local non-workspace or remote envionrments. ' +
+        'If you wish to ignore a file or directory name, please add it to the TODO global configuration options.')
     }
+  } catch (error) {
+    FUNCTIONS.showConsoleError(error)
   }
-//
-//   addWorkspaceIgnorePath(nova.path.normalize(selection.map((e) => e.filePath)))
 })
 
 nova.commands.register('todo.ignoreParentDirectory', () => {
-//   let selection = treeView.selection
-//
-//   addWorkspaceIgnorePath(nova.path.dirname(selection.map((e) => e.filePath)))
+  try {
+    let selection = novaTreeViewObjects.treeView.selection
+
+    if (FUNCTIONS.isWorkspace() && (selection[0].remote !== true)) {
+      if (selection[0].path !== null) {
+        let parentDir = nova.path.dirname(selection[0].path)
+        nova.workspace.config.set('todo.workspace-ignore-paths', parentDir)
+      }
+    } else {
+      FUNCTIONS.showNotification('Feature Not Supported in Remote Environment',
+        'This extension does not support the exclusion of file paths in local non-workspace or remote envionrments. ' +
+        'If you wish to ignore a file or directory name, please add it to the TODO global configuration options.')
+    }
+  } catch (error) {
+    FUNCTIONS.showConsoleError(error)
+  }
 })
 
 nova.commands.register('todo.openFile', () => {
