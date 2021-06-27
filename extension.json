@@ -4,7 +4,7 @@
   "organization": "Jason Platts",
   "description": "Displays tags, such as TODO and FIXME, within a sidebar tree view.",
   "license":"MIT",
-  "version": "2.3.1",
+  "version": "3.0",
   "repository":"https://github.com/jasonplatts/nova-todo",
   "bugs":"https://github.com/jasonplatts/nova-todo/issues",
   "funding":"https://github.com/sponsors/jasonplatts",
@@ -40,7 +40,7 @@
     {
       "key": "todo.include-global-tags.section",
       "title": "Global Included Tags",
-      "description": "TODO and FIXME tags are always searched. However, additional tags can be added below. Keep in mind that too many tags can cause slow performance in larger workspaces.",
+      "description": "TODO and FIXME tags are always searched. However, additional tags can be added below.",
       "type": "section",
       "children": [
         {
@@ -198,7 +198,7 @@
         {
           "key": "todo.global-ignore-names",
           "title": "Ignored Names",
-          "description": "Provide a list of comma separated directory and file names that should be ignored in all workspaces. File names must include the file extension. For example: test.txt, example.js, sample.php. Several names are ignored by default, including node_modules, tmp, .git, vendor, .nova, and .gitignore.",
+          "description": "Add directory and file names that should be ignored in all workspaces. File names must include the file extension. For example: test.txt, example.js, sample.php. Several names are ignored by default, including node_modules, tmp, .git, vendor, .nova, and .gitignore.",
           "type": "stringArray"
         }
       ]
@@ -212,7 +212,7 @@
         {
           "key": "todo.global-ignore-extensions",
           "title": "Ignored Extensions",
-          "description": "Provide a list of comma separated file extensions that should be ignored. Extensions can include the \".\" before the extension, but it is not required. For example: txt, js, php.",
+          "description": "Add file extensions that should be ignored. Extensions can include the \".\" before the extension, but it is not required. For example: txt, js, php.",
           "type": "stringArray"
         }
       ]
@@ -238,7 +238,7 @@
     {
       "key": "todo.include-workspace-tags.section",
       "title": "Workspace Included Tags",
-      "description": "TODO and FIXME tags are always searched. However, additional tags can be added below. Keep in mind that too many tags can cause slow performance in larger workspaces.",
+      "description": "TODO and FIXME tags are always searched. However, additional tags can be added below.",
       "type": "section",
       "children": [
         {
@@ -404,7 +404,7 @@
         {
           "key": "todo.workspace-ignore-paths",
           "title": "Ignored Paths",
-          "description": "Provide a list of comma separated directory and file names that should be ignored by the extension in the current workspace.",
+          "description": "Add directory and file names that should be ignored by the extension in the current workspace.",
           "type": "pathArray",
           "allowFiles": true,
           "allowFolders": true
@@ -420,7 +420,7 @@
         {
           "key": "todo.workspace-ignore-names",
           "title": "Ignored Names",
-          "description": "Provide a list of comma separated directory and file names that should be ignored in the current workspace. File names must include the file extension. For example: test.txt, example.js, sample.php.",
+          "description": "Add directory and file names that should be ignored in the current workspace. File names must include the file extension. For example: test.txt, example.js, sample.php.",
           "type": "stringArray"
         }
       ]
@@ -434,7 +434,7 @@
         {
           "key": "todo.workspace-ignore-extensions",
           "title": "Ignored Extensions",
-          "description": "Provide a list of comma separated file extensions that should be ignored. Extensions can include the \".\" before the extension, but it is not required. For example: txt, js, php.",
+          "description": "Add file extensions that should be ignored in the current workspace. Extensions can include the \".\" before the extension, but it is not required. For example: txt, js, php.",
           "type": "stringArray"
         }
       ]
