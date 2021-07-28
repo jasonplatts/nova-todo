@@ -3,7 +3,10 @@ module.exports = {
     'commonjs': true,
     'es6': true
   },
-  'extends': 'eslint:recommended',
+  'extends': [
+    'eslint:recommended',
+    'plugin:markdown/recommended'
+  ],
   'globals': {
     'Atomics': 'readonly',
     'SharedArrayBuffer': 'readonly'
