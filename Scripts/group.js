@@ -47,7 +47,7 @@ exports.Group = class Group {
         listItems[listItems.length - 1].remote = listItems[listItems.length - 1].children[0].remote
       }
 
-      listItems[listItems.length - 1].descriptiveText = '(' + listItems[listItems.length - 1].children.length + ')'
+      listItems[listItems.length - 1].descriptiveText = `(${listItems[listItems.length - 1].children.length})`
     })
 
     return listItems
@@ -91,6 +91,8 @@ exports.Group = class Group {
       let childListItems = ungroupedListItems.filter(
         listItem => listItem.name == uniqueTag
       )
+
+      listItems[listItems.length - 1].descriptiveText = `(${childListItems.length})`
 
       childListItems.forEach(childListItem => {
         childListItem = this.setTagChildAttributes(childListItem)
