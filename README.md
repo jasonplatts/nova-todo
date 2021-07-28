@@ -69,7 +69,7 @@ alt="workspace Extension Preferences">
 * Add additional custom tags.
 * Filtering of tags by name.
 
-The following features *may* be added if the functionality is made available through the Nova API.
+*The following features may be added if the functionality is made available through the Nova API.*
 * Navigating to tags in documents within remote environments.
 * Tag highlighting within the code.
 * Tag notification in the sidebar icon.
