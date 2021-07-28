@@ -132,9 +132,10 @@ exports.DocumentSearch = class DocumentSearch {
     in which case it is recognized as a tag.
   */
   isTag(tag, lineMatchIndex, line) {
+    let prevChar = line.charAt(lineMatchIndex - 1)
     let nextChar = line.charAt(lineMatchIndex + tag.length)
 
-    if (nextChar == ':' || nextChar == ']') {
+    if ((nextChar == ':' || nextChar == ']') && (prevChar !== '_')) {
       return true
     } else {
       return false

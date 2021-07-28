@@ -255,3 +255,5 @@ nova.commands.register('todo.group', () => {
   list.toggleGroupBy()
   refreshTreeView()
 })
+
+// TODO: Add reloading when adding or deleting files from project.
