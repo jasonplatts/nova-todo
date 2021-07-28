@@ -33,7 +33,6 @@ exports.WorkspaceSearch = class WorkspaceSearch {
 
       return egrepResponse.stdout
     } catch (error) {
-      FUNCTIONS.showConsoleError(error)
       return []
     }
   }
@@ -83,18 +82,11 @@ exports.WorkspaceSearch = class WorkspaceSearch {
           resolve(processResponse)
         } else {
           processDisposables.dispose()
-          FUNCTIONS.showConsoleError(processResponse)
-          reject(processResponse)
+          reject()
         }
       }))
 
-      try {
-        process.start()
-      } catch (error) {
-        processDisposables.dispose()
-        FUNCTIONS.showConsoleError(error.message)
-        reject(processResponse)
-      }
+      process.start()
     })
   }
 }
