@@ -1,4 +1,4 @@
-## Version 3.1
+## Version 3.0.1
 
 * Fixed improper detection of tags when preceded by an underscore.
 * Added the tag count after the tag name when sorting by tag instead of filename.
