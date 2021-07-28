@@ -1,3 +1,7 @@
+## Version 3.1
+
+* Fixed improper detection of tags when preceded by an underscore.
+
 ## Version 3.0
 
 * Dramatically improved performance with rewritten extension.
