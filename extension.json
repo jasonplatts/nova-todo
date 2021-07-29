@@ -2,7 +2,7 @@
   "identifier": "jasonplatts.TODO",
   "name": "TODO",
   "organization": "Jason Platts",
-  "description": "Displays tags, such as TODO and FIXME, within a sidebar tree view.",
+  "description": "Displays tags, such as TODO and FIXME, in a sidebar.",
   "license":"MIT",
   "version": "3.0.1",
   "repository":"https://github.com/jasonplatts/nova-todo",

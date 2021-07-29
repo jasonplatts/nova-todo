@@ -1,6 +1,6 @@
 # TODO Extension for Panic's Nova Code Editor
 
-Displays tags, such as TODO and FIXME, within a sidebar tree view in Panic's macOS code editor, Nova.
+Displays tags, such as TODO and FIXME, in a sidebar in Panic's macOS code editor, Nova.
 
 ### *Now Supports Remote Environments*
 
