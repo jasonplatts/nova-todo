@@ -1,3 +1,7 @@
+## Version 3.0.2
+
+* Added support in markdown files.
+
 ## Version 3.0.1
 
 * Fixed improper detection of tags when preceded by an underscore.
