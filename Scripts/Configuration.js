@@ -34,7 +34,7 @@ exports.Configuration = class Configuration {
   }
 
   static get DEFAULT_EXCLUDED_EXTENSIONS() {
-    return ['.json', '.map', '.md']
+    return ['.json', '.map']
   }
 
   get groupBy() {
