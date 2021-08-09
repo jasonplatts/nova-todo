@@ -144,24 +144,28 @@ function onAddNonWorkspaceTextEditor(textEditor) {
   Function opens a local file to a specified location, if available.
 */
 function openFile(selection) {
-  selection  = novaTreeViewObjects.treeView.selection
+  if (novaTreeViewObjects.treeView.selection !== null) {
+    selection  = novaTreeViewObjects.treeView.selection
 
-  if (((selection[0].remote) == false) && (selection[0].path !== null)) {
-    nova.workspace.openFile(selection[0].path, [selection[0].line, selection[0].column])
-      .then(textEditor => {
-        let position = parseInt(selection[0].position)
-        let range    = new Range(position, position)
+    if (selection[0] !== undefined) {
+      if (((selection[0].remote) == false) && (selection[0].path !== null)) {
+        nova.workspace.openFile(selection[0].path, [selection[0].line, selection[0].column])
+          .then(textEditor => {
+            let position = parseInt(selection[0].position)
+            let range    = new Range(position, position)
 
-        textEditor.selectedRange = range
-        textEditor.scrollToPosition(position)
-      })
-      .catch(error => FUNCTIONS.showConsoleError(error))
-  } else {
-    if ((selection[0].remote) == true) {
-      FUNCTIONS.showNotification('Feature Not Supported in Remote Environment',
-        'Nova does not support opening of remote files or setting of the active editor, ' +
-        'which is required for navigating to this tag. If important to you, please ' +
-        'submit a feature request to Panic for additional remote file support.')
+            textEditor.selectedRange = range
+            textEditor.scrollToPosition(position)
+          })
+          .catch(error => FUNCTIONS.showConsoleError(error))
+      } else {
+        if ((selection[0].remote) == true) {
+          FUNCTIONS.showNotification('Feature Not Supported in Remote Environment',
+            'Nova does not support opening of remote files or setting of the active editor, ' +
+            'which is required for navigating to this tag. If important to you, please ' +
+            'submit a feature request to Panic for additional remote file support.')
+        }
+      }
     }
   }
 }
@@ -224,15 +228,17 @@ nova.commands.register('todo.ignoreParentDirectory', () => {
   try {
     let selection = novaTreeViewObjects.treeView.selection
 
-    if (FUNCTIONS.isWorkspace() && (selection[0].remote !== true)) {
-      if (selection[0].path !== null) {
-        let parentDir = nova.path.dirname(selection[0].path)
-        nova.workspace.config.set('todo.workspace-ignore-paths', parentDir)
+    if (selection[0] !== undefined) {
+      if (FUNCTIONS.isWorkspace() && (selection[0].remote !== true)) {
+        if (selection[0].path !== null) {
+          let parentDir = nova.path.dirname(selection[0].path)
+          nova.workspace.config.set('todo.workspace-ignore-paths', parentDir)
+        }
+      } else {
+        FUNCTIONS.showNotification('Feature Not Supported in Remote Environment',
+          'This extension does not support the exclusion of file paths in local non-workspace or remote envionrments. ' +
+          'If you wish to ignore a file or directory name, please add it to the TODO global configuration options.')
       }
-    } else {
-      FUNCTIONS.showNotification('Feature Not Supported in Remote Environment',
-        'This extension does not support the exclusion of file paths in local non-workspace or remote envionrments. ' +
-        'If you wish to ignore a file or directory name, please add it to the TODO global configuration options.')
     }
   } catch (error) {
     FUNCTIONS.showConsoleError(error)
@@ -240,11 +246,15 @@ nova.commands.register('todo.ignoreParentDirectory', () => {
 })
 
 nova.commands.register('todo.openFile', () => {
-  openFile(novaTreeViewObjects.treeView.selection)
+  if (novaTreeViewObjects.treeView.selection !== null) {
+    openFile(novaTreeViewObjects.treeView.selection)
+  }
 })
 
 nova.commands.register('todo.doubleClick', () => {
-  openFile(novaTreeViewObjects.treeView.selection)
+  if (novaTreeViewObjects.treeView.selection !== null) {
+    openFile(novaTreeViewObjects.treeView.selection)
+  }
 })
 
 nova.commands.register('todo.refresh', async() => {
