@@ -1,3 +1,7 @@
+## Version 3.0.3
+
+* Added upstream tag.
+
 ## Version 3.0.2
 
 * Added support in markdown files.
