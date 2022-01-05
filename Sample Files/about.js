@@ -28,3 +28,4 @@
 // UPDATE: A message goes here.
 // WARN: A message goes here.
 // WARNING: A message goes here.
+// UPSTREAM: Test message.
