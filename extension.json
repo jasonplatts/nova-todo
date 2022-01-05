@@ -388,6 +388,12 @@
           "default": false
         },
         {
+          "key": "todo.workspace-tag-upstream",
+          "title": "UPSTREAM",
+          "type": "boolean",
+          "default": false
+        },
+        {
           "key": "todo.workspace-tag-warn",
           "title": "WARN",
           "type": "boolean",
