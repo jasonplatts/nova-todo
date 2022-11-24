@@ -10,6 +10,7 @@ exports.Configuration = class Configuration {
     this._groupBy               = 'file'
     this._tags                  = await this.loadTags()
     this._caseSensitiveMatching = await this.loadCaseSensitiveMatching()
+    this._whitespaceTagging     = await this.loadWhitespaceTagging()
     this._excludedNames         = await this.loadExcludedNames()
     this._excludedPaths         = await this.loadExcludedPaths()
     this._excludedExtensions    = await this.loadExcludedExtensions()
@@ -114,6 +115,33 @@ exports.Configuration = class Configuration {
 
   get caseSensitiveMatching() {
     return this._caseSensitiveMatching
+  }
+
+  async loadWhitespaceTagging() {
+    let whitespaceTagging = false
+    let global            = nova.config.get('todo.global-whitespace-tagging')
+    let workspace         = nova.config.get('todo.workspace-whitespace-tagging')
+
+      console.log('global whitespace: ' + global)
+    if (global == true || global == false) {
+      whitespaceTagging = global
+    }
+
+    if (FUNCTIONS.isWorkspace() && (workspace !== 'Use Global Preference')) {
+      if (workspace == 'Allowed') {
+        whitespaceTagging = true
+      } else if (workspace == 'Not Allowed') {
+        whitespaceTagging = false
+      }
+      console.log('workspace whitespace: ' + workspace)
+    }
+    console.log('whitespace: ' + whitespaceTagging)
+
+    return whitespaceTagging
+  }
+
+  get whitespaceTagging() {
+    return this._whitespaceTagging
   }
 
   /*

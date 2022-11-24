@@ -34,7 +34,14 @@
           "description": "De-select to match upper case and lower case tags (Eg: TODO: and todo:).",
           "type": "boolean",
           "default": true
-        }
+        },
+        {
+          "key": "todo.global-whitespace-tagging",
+          "title": "Allow whitespace tagging",
+          "description": "Select to allow TODO in additon to TODO: and [TODO]",
+          "type": "boolean",
+          "default": false
+        },
       ]
     },
     {
@@ -238,7 +245,15 @@
           "type": "enum",
           "values": ["Use Global Preference", "Upper Case Only", "Upper and Lower Case"],
           "default": "Use Global Preference"
-        }
+        },
+        {
+          "key": "todo.workspace-whitespace-tagging",
+          "title": "Allow whitespace tagging",
+          "description": "Select to allow TODO in additon to TODO: and [TODO]",
+          "type": "enum",
+          "values": ["Use Global Preference", "Not Allowed", "Allowed"],
+          "default": "Use Global Preference"
+        },
       ]
     },
     {

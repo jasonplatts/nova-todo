@@ -132,10 +132,11 @@ exports.DocumentSearch = class DocumentSearch {
     in which case it is recognized as a tag.
   */
   isTag(tag, lineMatchIndex, line) {
+    console.log('whitespaceTagging: ' + this._config._whitespaceTagging)
     let prevChar = line.charAt(lineMatchIndex - 1)
     let nextChar = line.charAt(lineMatchIndex + tag.length)
 
-    if ((nextChar == ':' || nextChar == ']') && (prevChar !== '_')) {
+    if ((nextChar == ':' || nextChar == ']' || (this._config._whitespaceTagging && (nextChar == ' ' || nextChar == "\t"))) && (prevChar !== '_')) {
       return true
     } else {
       return false
