@@ -122,7 +122,6 @@ exports.Configuration = class Configuration {
     let global            = nova.config.get('todo.global-whitespace-tagging')
     let workspace         = nova.config.get('todo.workspace-whitespace-tagging')
 
-      console.log('global whitespace: ' + global)
     if (global == true || global == false) {
       whitespaceTagging = global
     }
@@ -133,9 +132,7 @@ exports.Configuration = class Configuration {
       } else if (workspace == 'Not Allowed') {
         whitespaceTagging = false
       }
-      console.log('workspace whitespace: ' + workspace)
     }
-    console.log('whitespace: ' + whitespaceTagging)
 
     return whitespaceTagging
   }

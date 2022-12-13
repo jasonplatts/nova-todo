@@ -4,7 +4,7 @@
   "organization": "Jason Platts",
   "description": "Displays tags, such as TODO and FIXME, in a sidebar.",
   "license":"MIT",
-  "version": "3.0.3",
+  "version": "3.1",
   "repository":"https://github.com/jasonplatts/nova-todo",
   "bugs":"https://github.com/jasonplatts/nova-todo/issues",
   "funding":"https://github.com/sponsors/jasonplatts",
