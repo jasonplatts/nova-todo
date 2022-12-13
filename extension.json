@@ -4,7 +4,7 @@
   "organization": "Jason Platts",
   "description": "Displays tags, such as TODO and FIXME, in a sidebar.",
   "license":"MIT",
-  "version": "3.1",
+  "version": "3.1.1",
   "repository":"https://github.com/jasonplatts/nova-todo",
   "bugs":"https://github.com/jasonplatts/nova-todo/issues",
   "funding":"https://github.com/sponsors/jasonplatts",
@@ -41,7 +41,7 @@
           "description": "Select to allow TODO in additon to TODO: and [TODO]",
           "type": "boolean",
           "default": false
-        },
+        }
       ]
     },
     {
@@ -253,7 +253,7 @@
           "type": "enum",
           "values": ["Use Global Preference", "Not Allowed", "Allowed"],
           "default": "Use Global Preference"
-        },
+        }
       ]
     },
     {

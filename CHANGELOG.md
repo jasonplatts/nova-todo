@@ -1,3 +1,7 @@
+## Version 3.1.1
+
+* Fixed internal error preventing extension submission.
+
 ## Version 3.1
 
 * Added support for tag detection with whitespace in addition to the : or [] characters. Many thanks to Seth Battis for this contribution!
