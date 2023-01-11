@@ -490,7 +490,7 @@
             },
             {
               "title": "Refresh",
-              "image": "__builtin.refresh",
+              "image": "refresh",
               "tooltip": "Refresh",
               "command": "todo.refresh"
             }
