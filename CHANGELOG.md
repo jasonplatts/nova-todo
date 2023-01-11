@@ -1,3 +1,7 @@
+## Version 3.1.2
+
+* Improved appearance of some extension icons. Thanks to Pete Schaffner for this contribution!
+
 ## Version 3.1.1
 
 * Fixed internal error preventing extension submission.
