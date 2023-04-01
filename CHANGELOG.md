@@ -1,3 +1,7 @@
+## Version 3.1.3
+
+* Fixed an issue preventing the extension from working correctly on case-sensitive systems.
+
 ## Version 3.1.2
 
 * Improved appearance of some extension icons. Thanks to Pete Schaffner for this contribution!
