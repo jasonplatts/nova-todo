@@ -1,7 +1,7 @@
 const FUNCTIONS = require('./functions.js')
 
 /*
-  Class handles the retrieval of default and user preference configurations
+  Class handles the retrieval of default and user preference configurations.
 */
 exports.Configuration = class Configuration {
   async load() {
