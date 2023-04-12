@@ -199,6 +199,12 @@
           "title": "WARNING",
           "type": "boolean",
           "default": false
+        },
+        {
+          "key": "todo.global-tag-xxx",
+          "title": "XXX",
+          "type": "boolean",
+          "default": false
         }
       ]
     },
@@ -417,6 +423,12 @@
         {
           "key": "todo.workspace-tag-warning",
           "title": "WARNING",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "todo.workspace-tag-xxx",
+          "title": "XXX",
           "type": "boolean",
           "default": false
         }

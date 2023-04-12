@@ -26,7 +26,8 @@ exports.Configuration = class Configuration {
     return [
       'broken', 'bug', 'debug', 'deprecated', 'example', 'error',
       'err', 'fail', 'fatal', 'fix', 'hack', 'idea', 'info', 'note', 'optimize', 'question',
-      'refactor', 'remove', 'review', 'task', 'trace', 'update', 'upstream', 'warn', 'warning'
+      'refactor', 'remove', 'review', 'task', 'trace', 'update', 'upstream', 'warn', 'warning',
+      'xxx'
     ]
   }
 
