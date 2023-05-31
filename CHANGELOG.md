@@ -1,3 +1,7 @@
+## Version 3.1.4
+
+* Added support for the XXX comment prefix. Thanks to Matt Riggott for this contribution!
+
 ## Version 3.1.3
 
 * Fixed an issue preventing the extension from working correctly on case-sensitive systems.
